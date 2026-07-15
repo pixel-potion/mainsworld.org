@@ -1,0 +1,28 @@
+# The merge gate. Runs the exact production build Cloudflare runs
+# (`npm ci` then `npm run build` = docusaurus build) on the Node pinned in
+# `.node-version`, on every PR and every push to main. A broken build — a bad
+# MDX link, a broken doc reference — fails the PR check here, with readable
+# logs, instead of only surfacing as a red Cloudflare deploy after merge.
+name: Build
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+concurrency:
+  group: build-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .node-version
+          cache: npm
+      - run: npm ci
+      - run: npm run build
