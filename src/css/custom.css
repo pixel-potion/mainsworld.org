@@ -1,43 +1,105 @@
 /**
- * Main's World knowledge base — light brand layer over Infima.
- * 90s-summer-beach warmth, kept calm and readable for a docs site.
+ * Main's World knowledge base — brand layer over Infima.
+ *
+ * Palette and type are lifted from the app so this site and mains.world read as
+ * one product: VHS night (#0d0221), the purple→cyan badge gradient, gold for
+ * energy, and the VT323 / Share Tech Mono type stack. Personality lives in the
+ * chrome (navbar, headings, accents); body copy stays boringly readable, because
+ * this is a place people come to read.
  */
 
-@import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=VT323&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Bangers&family=Share+Tech+Mono&family=VT323&display=swap');
 
 :root {
-  --ifm-color-primary: #0e8a86;
-  --ifm-color-primary-dark: #0c7c78;
-  --ifm-color-primary-darker: #0b7571;
-  --ifm-color-primary-darkest: #09605d;
-  --ifm-color-primary-light: #109994;
-  --ifm-color-primary-lighter: #10a09b;
-  --ifm-color-primary-lightest: #13b8b2;
+  /* Brand purple, darkened for AA contrast on white. */
+  --ifm-color-primary: #7526c9;
+  --ifm-color-primary-dark: #6922b5;
+  --ifm-color-primary-darker: #6320ab;
+  --ifm-color-primary-darkest: #521b8d;
+  --ifm-color-primary-light: #8434d6;
+  --ifm-color-primary-lighter: #8b3fd9;
+  --ifm-color-primary-lightest: #a163e1;
+
   --ifm-code-font-size: 95%;
   --ifm-font-family-monospace: 'Share Tech Mono', ui-monospace, SFMono-Regular,
     monospace;
-  --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.08);
+
+  /* Brand tokens, reused below. */
+  --mw-night: #0d0221;
+  --mw-night-raised: #1a0a3e;
+  --mw-cyan: #00d4ff;
+  --mw-purple: #9b30ff;
+  --mw-gold: #ffd700;
+  --mw-sunset: #ff6b35;
+
+  --docusaurus-highlighted-code-line-bg: rgba(155, 48, 255, 0.12);
 }
 
 [data-theme='dark'] {
-  --ifm-color-primary: #37d6cf;
-  --ifm-color-primary-dark: #26c8c1;
-  --ifm-color-primary-darker: #24bdb6;
-  --ifm-color-primary-darkest: #1d9c96;
-  --ifm-color-primary-light: #4bdbd5;
-  --ifm-color-primary-lighter: #57ddd8;
-  --ifm-color-primary-lightest: #7ce6e2;
-  --docusaurus-highlighted-code-line-bg: rgba(255, 255, 255, 0.08);
+  /* Brand cyan reads beautifully on the night background. */
+  --ifm-color-primary: #00d4ff;
+  --ifm-color-primary-dark: #00bfe6;
+  --ifm-color-primary-darker: #00b4d9;
+  --ifm-color-primary-darkest: #0094b3;
+  --ifm-color-primary-light: #1adaff;
+  --ifm-color-primary-lighter: #26ddff;
+  --ifm-color-primary-lightest: #4de5ff;
+
+  --ifm-background-color: var(--mw-night);
+  --ifm-background-surface-color: var(--mw-night-raised);
+  --ifm-navbar-background-color: rgba(13, 2, 33, 0.92);
+  --ifm-footer-background-color: #050110;
+
+  --docusaurus-highlighted-code-line-bg: rgba(0, 212, 255, 0.14);
 }
 
-/* The wordmark gets the VHS terminal typeface; body copy stays highly legible. */
+/* The wordmark gets the VHS terminal face. */
 .navbar__title {
   font-family: 'VT323', monospace;
-  font-size: 1.6rem;
+  font-size: 1.7rem;
   letter-spacing: 0.02em;
 }
 
-.hero__title {
+/* A single hairline of the badge gradient under the navbar — the one piece of
+   pure VHS flourish, and it costs nothing in readability. */
+.navbar {
+  border-bottom: 2px solid transparent;
+  border-image: linear-gradient(
+      90deg,
+      var(--mw-purple),
+      var(--mw-cyan),
+      var(--mw-gold)
+    )
+    1;
+}
+
+/* Page titles carry the personality; h2/h3 stay in the system face so long
+   documents remain scannable. (Docusaurus nests the doc title in a <header>.) */
+.markdown header h1,
+.markdown > h1:first-child {
   font-family: 'VT323', monospace;
+  font-size: 3.4rem;
+  font-weight: 400;
   letter-spacing: 0.01em;
+  line-height: 1.1;
+}
+
+[data-theme='dark'] .markdown header h1,
+[data-theme='dark'] .markdown > h1:first-child {
+  text-shadow: 0 0 24px rgba(0, 212, 255, 0.25);
+}
+
+/* Footer keeps the night sky in both themes. */
+.footer--dark {
+  --ifm-footer-background-color: #050110;
+}
+
+/* Blockquotes read as a strip of tape. */
+blockquote {
+  border-left: 4px solid var(--mw-gold);
+}
+
+/* Keep the logo badge crisp and slightly larger than Infima's default. */
+.navbar__logo {
+  height: 2.1rem;
 }

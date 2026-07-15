@@ -13,7 +13,24 @@ const config: Config = {
   title: "Main's World",
   tagline:
     'The first place online where everyone is a verified human — a SHIP, a Secure Human Interaction Protocol.',
-  favicon: 'img/favicon.ico',
+  favicon: 'img/favicon.svg',
+
+  // Brand assets are the real ones from the app (public/ in the MW repo), so
+  // the knowledge base and mains.world stay visually the same product.
+  headTags: [
+    {
+      tagName: 'link',
+      attributes: {rel: 'apple-touch-icon', sizes: '180x180', href: '/img/apple-touch-icon.png'},
+    },
+    {
+      tagName: 'link',
+      attributes: {rel: 'icon', type: 'image/png', sizes: '32x32', href: '/img/favicon-32.png'},
+    },
+    {
+      tagName: 'meta',
+      attributes: {name: 'theme-color', content: '#0d0221'},
+    },
+  ],
 
   future: {
     v4: true, // Improve compatibility with the upcoming Docusaurus v4
@@ -58,7 +75,7 @@ const config: Config = {
   ],
 
   themeConfig: {
-    image: 'img/social-card.jpg',
+    image: 'img/og.png',
     colorMode: {
       respectPrefersColorScheme: true,
     },
@@ -66,7 +83,7 @@ const config: Config = {
       title: "Main's World",
       logo: {
         alt: "Main's World",
-        src: 'img/logo.svg',
+        src: 'img/favicon.svg',
       },
       items: [
         {type: 'docSidebar', sidebarId: 'knowledge', position: 'left', label: 'Learn'},
