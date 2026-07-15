@@ -1,0 +1,43 @@
+/**
+ * Main's World knowledge base — light brand layer over Infima.
+ * 90s-summer-beach warmth, kept calm and readable for a docs site.
+ */
+
+@import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=VT323&display=swap');
+
+:root {
+  --ifm-color-primary: #0e8a86;
+  --ifm-color-primary-dark: #0c7c78;
+  --ifm-color-primary-darker: #0b7571;
+  --ifm-color-primary-darkest: #09605d;
+  --ifm-color-primary-light: #109994;
+  --ifm-color-primary-lighter: #10a09b;
+  --ifm-color-primary-lightest: #13b8b2;
+  --ifm-code-font-size: 95%;
+  --ifm-font-family-monospace: 'Share Tech Mono', ui-monospace, SFMono-Regular,
+    monospace;
+  --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.08);
+}
+
+[data-theme='dark'] {
+  --ifm-color-primary: #37d6cf;
+  --ifm-color-primary-dark: #26c8c1;
+  --ifm-color-primary-darker: #24bdb6;
+  --ifm-color-primary-darkest: #1d9c96;
+  --ifm-color-primary-light: #4bdbd5;
+  --ifm-color-primary-lighter: #57ddd8;
+  --ifm-color-primary-lightest: #7ce6e2;
+  --docusaurus-highlighted-code-line-bg: rgba(255, 255, 255, 0.08);
+}
+
+/* The wordmark gets the VHS terminal typeface; body copy stays highly legible. */
+.navbar__title {
+  font-family: 'VT323', monospace;
+  font-size: 1.6rem;
+  letter-spacing: 0.02em;
+}
+
+.hero__title {
+  font-family: 'VT323', monospace;
+  letter-spacing: 0.01em;
+}
