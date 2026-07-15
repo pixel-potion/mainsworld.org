@@ -25,18 +25,19 @@ npm run build    # static output in ./build
 npm run serve    # preview the production build locally
 ```
 
-## Deployment — Cloudflare Pages
+## Deployment — Cloudflare Workers (static assets)
 
-Hosted on Cloudflare Pages to match the rest of the Main's World stack. Connect
-this repo in the Cloudflare dashboard with:
+Deployed as a static-assets Cloudflare Worker (see `wrangler.jsonc`, which serves
+the `./build` output). In the Worker's **Settings → Build**:
 
 - **Build command:** `npm run build`
-- **Build output directory:** `build`
-- **Node version:** 20 or newer
+- **Deploy command:** `npx wrangler deploy`
+- **Root directory:** `/`
+- Node is pinned to 22 via `.node-version`.
 
-Point the `mainsworld.org` domain at the Pages project. Every merge to `main`
-then publishes automatically. (The default `npm run deploy` script targets GitHub
-Pages and is **not** used here.)
+Every push to `main` then builds and publishes automatically. Point the
+`mainsworld.org` domain at the Worker under **Domains**. (The default
+`npm run deploy` script targets GitHub Pages and is **not** used here.)
 
 ## Contributing
 

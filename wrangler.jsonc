@@ -1,0 +1,11 @@
+{
+  // Deploys the built Docusaurus site as a static-assets Cloudflare Worker.
+  // The dashboard build step runs `npm run build` (output → ./build), then the
+  // deploy step runs `npx wrangler deploy`, which uploads ./build as assets.
+  "name": "mainsworld-org",
+  "compatibility_date": "2025-01-01",
+  "assets": {
+    "directory": "./build",
+    "not_found_handling": "404-page"
+  }
+}
