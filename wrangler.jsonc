@@ -6,6 +6,13 @@
   "compatibility_date": "2025-01-01",
   "assets": {
     "directory": "./build",
+    // Unknown paths get the Docusaurus 404 page instead of a bare one. Named
+    // here because Cloudflare's autoconfig PR would have quietly dropped it.
     "not_found_handling": "404-page"
+  },
+  // Workers Logs. Nothing runs here but the assets handler, so this buys
+  // request and error visibility — not debugging for code we don't have.
+  "observability": {
+    "enabled": true
   }
 }
