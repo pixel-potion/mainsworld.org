@@ -6,10 +6,19 @@ description: The full argument for Main's World and SHIP — why the attention e
 
 # Whitepaper
 
-The [Manifesto](/manifesto) says what we believe. [What is SHIP](/what-is-ship)
-names the category. This is the argument underneath both: why the internet feels
-the way it does, what actually changes when every account is provably a real
-person, and why that's hard for anyone else to copy.
+## What is Main's World?
+
+Main's World is a social app built on a map of the real world. Every account
+belongs to a real, verified human being — and no account says who that human
+is. You post photos and videos (**tapes**) from the places you're actually at,
+you choose who can see each one, and when other people appreciate what you
+made, you earn something real.
+
+That's the whole product in one breath. The rest of this page is the argument
+underneath it: why the internet feels the way it does, what actually changes
+when every account is provably a real person, and why that's hard for anyone
+else to copy. The [Manifesto](/manifesto) says what we believe, and
+[What is SHIP](/what-is-ship) names the category.
 
 It's written to be read by anyone. Nothing here needs a technical background, and
 every term is explained where it first appears.
