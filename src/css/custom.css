@@ -1,17 +1,43 @@
 /**
  * Main's World knowledge base — brand layer over Infima.
  *
- * Palette and type are lifted from the app so this site and mains.world read as
- * one product: VHS night (#0d0221), the purple→cyan badge gradient, gold for
- * energy, and the VT323 / Share Tech Mono type stack. Personality lives in the
- * chrome (navbar, headings, accents); body copy stays boringly readable, because
- * this is a place people come to read.
+ * The palette and type are lifted from the app, so this site and mains.world
+ * read as one product. The app keeps its colours as literals scattered through
+ * components; this file is the closest thing either repo has to a written
+ * palette, so the roles are named here.
+ *
+ * Personality lives in the chrome — navbar, titles, accents. Body copy stays
+ * boringly readable, because this is a place people come to read.
  */
 
 @import url('https://fonts.googleapis.com/css2?family=Bangers&family=Share+Tech+Mono&family=VT323&display=swap');
 
 :root {
-  /* Brand purple, darkened for AA contrast on white. */
+  /* ── Type, in the roles the app gives them ──────────────────────────────
+     Bangers      — display: the wordmark, titles, buttons. (app: 75 uses)
+     VT323        — the terminal face: small labels and readouts. (144 uses)
+     Share Tech Mono — values and code. (20 uses)
+     Body copy is deliberately none of the above. */
+  --mw-font-display: 'Bangers', 'Impact', sans-serif;
+  --mw-font-terminal: 'VT323', monospace;
+
+  /* ── The palette, as the app actually uses it ───────────────────────────
+     Ordered by how much of the app is made of them. */
+  --mw-gold: #ffd700; /* energy, appreciation, the daily 10 */
+  --mw-sunset: #ff6b35; /* the primary accent; rewind */
+  --mw-cyan: #00d4ff; /* the badge gradient's cold end */
+  --mw-green: #00ff88; /* live — the jog dial, an active Main */
+  --mw-purple: #9b30ff; /* the badge gradient's warm end; fast-forward */
+  --mw-coral: #ff6b6b; /* the only negative colour: downvotes, empty pockets */
+  --mw-night: #0d0221; /* the VHS night everything sits on */
+  --mw-night-raised: #1a0a3e; /* one step up from night */
+  --mw-pink: #ff6bcb; /* your own tapes */
+  --mw-amber: #ff9500; /* vibes in motion */
+
+  /* Brand purple, darkened for AA contrast on white. #9b30ff itself fails
+     against a light background, so light mode gets a derived shade rather
+     than the literal token — the one place this site departs from the app,
+     and it departs on purpose. */
   --ifm-color-primary: #7526c9;
   --ifm-color-primary-dark: #6922b5;
   --ifm-color-primary-darker: #6320ab;
@@ -23,14 +49,6 @@
   --ifm-code-font-size: 95%;
   --ifm-font-family-monospace: 'Share Tech Mono', ui-monospace, SFMono-Regular,
     monospace;
-
-  /* Brand tokens, reused below. */
-  --mw-night: #0d0221;
-  --mw-night-raised: #1a0a3e;
-  --mw-cyan: #00d4ff;
-  --mw-purple: #9b30ff;
-  --mw-gold: #ffd700;
-  --mw-sunset: #ff6b35;
 
   --docusaurus-highlighted-code-line-bg: rgba(155, 48, 255, 0.12);
 }
@@ -53,11 +71,14 @@
   --docusaurus-highlighted-code-line-bg: rgba(0, 212, 255, 0.14);
 }
 
-/* The wordmark gets the VHS terminal face. */
+/* The wordmark, set exactly as the app sets it: Bangers, wide tracking.
+   It used to be VT323, which borrowed the app's *label* face for its
+   loudest piece of type — the two sites spelled the same name differently. */
 .navbar__title {
-  font-family: 'VT323', monospace;
-  font-size: 1.7rem;
-  letter-spacing: 0.02em;
+  font-family: var(--mw-font-display);
+  font-size: 1.6rem;
+  font-weight: 400;
+  letter-spacing: 0.12em;
 }
 
 /* A single hairline of the badge gradient under the navbar — the one piece of
@@ -77,17 +98,23 @@
    documents remain scannable. (Docusaurus nests the doc title in a <header>.) */
 .markdown header h1,
 .markdown > h1:first-child {
-  font-family: 'VT323', monospace;
-  font-size: 3.4rem;
+  font-family: var(--mw-font-display);
+  font-size: 3rem;
   font-weight: 400;
-  letter-spacing: 0.01em;
-  line-height: 1.1;
+  letter-spacing: 0.04em;
+  line-height: 1.15;
 }
 
 [data-theme='dark'] .markdown header h1,
 [data-theme='dark'] .markdown > h1:first-child {
   text-shadow: 0 0 24px rgba(0, 212, 255, 0.25);
 }
+
+/* h2/h3 deliberately stay in the system face. VT323 was tried here and lost:
+   its strokes are thin enough that a heading came out lighter than the bold
+   body text beneath it, which inverts the hierarchy in exactly the documents
+   that most need scanning. The brand gets the title; the reader gets the rest.
+   --mw-font-terminal stays defined for accents that want it. */
 
 /* Footer keeps the night sky in both themes. */
 .footer--dark {
@@ -97,6 +124,24 @@
 /* Blockquotes read as a strip of tape. */
 blockquote {
   border-left: 4px solid var(--mw-gold);
+}
+
+/* Admonitions borrow the app's meanings rather than Infima's defaults:
+   green is live, gold is energy/attention, coral is the only bad news. */
+[data-theme='dark'] .alert--success {
+  --ifm-alert-border-color: var(--mw-green);
+}
+
+[data-theme='dark'] .alert--warning {
+  --ifm-alert-border-color: var(--mw-gold);
+}
+
+[data-theme='dark'] .alert--danger {
+  --ifm-alert-border-color: var(--mw-coral);
+}
+
+[data-theme='dark'] .alert--info {
+  --ifm-alert-border-color: var(--mw-cyan);
 }
 
 /* Keep the logo badge crisp and slightly larger than Infima's default. */
