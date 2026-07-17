@@ -30,6 +30,10 @@ Main's World has its own vocabulary. Here's what everything means.
   what you made. You can't buy it or give it to yourself. See
   [The economy](/the-economy).
 - **Time travel (◀◀)** — rewinding the map's timeline to revisit earlier moments.
+- **Throwback (◀◀ THROWBACK)** — a tape posted from your gallery after the fact.
+  Its timestamp is when the photo was actually taken, and it carries a small
+  ◀◀ THROWBACK marker so it isn't mistaken for a live moment. See
+  [Tapes](/how-it-works/tapes).
 - **Zero-knowledge proof** — the cryptography that lets Main's World confirm
   you're a real, unique human without ever learning who you are.
 - **World App** — the app that verifies you're a real human when you join Main's
