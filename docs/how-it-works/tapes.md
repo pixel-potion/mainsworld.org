@@ -21,6 +21,14 @@ That's why Main's World is a map you can travel through. Rewind the timeline
 (the app calls it **time travel**, marked ◀◀) and you can revisit what happened
 somewhere at an earlier moment — your own story, and the shared story of a place.
 
+## Throwbacks
+
+Not every moment gets recorded the instant it happens. A **throwback** is a tape
+you post from your photo gallery after the fact. It keeps the moment honest: the
+tape's timestamp is when the photo was actually taken, not when you posted it,
+and the tape wears a small **◀◀ THROWBACK** marker so no one mistakes it for a
+live moment. Time travel to the day it happened and it's there, in its place.
+
 ## Appreciation, not likes
 
 Instead of "likes," Main's World has **appreciation**. Giving a tape a ▲ is a
