@@ -10,6 +10,10 @@ Main's World has its own vocabulary. Here's what everything means.
 
 - **Main** — a person on Main's World. Everyone is a verified, real human. (You're
   a Main.)
+- **Stage name** — the name a Main chooses to go by. Every stage name is unique:
+  capitalization and spacing don't make a name different, so once someone is
+  "DJ Neon", nobody else can be "dj neon". You can change or clear yours whenever
+  you like, and a name you give up becomes free for someone else to take.
 - **SHIP** — a **Secure Human Interaction Protocol**: the category Main's World
   belongs to. See [What is SHIP](/what-is-ship).
 - **Tape** — a post: a photo or video moment, recorded where and when you are.
