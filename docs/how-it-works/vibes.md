@@ -29,10 +29,32 @@ When you're at a vibe, the moments you record become part of its story, and they
 take on the vibe's world (SKY, LAND, or DEEP). A vibe is the shared thread; the
 tapes are the beads on it.
 
+## Plan a vibe ahead
+
+A vibe doesn't have to start right now. On LAND and DEEP — your connections'
+world and your private one — you can set one up like an event:
+
+- **Pick a start time**, up to 60 days out. Until then the vibe waits on the map
+  as a countdown pin, and joining it is an RSVP — everyone who joined is on it
+  the moment it goes live.
+- **Pick an end time, if you want one.** With an end stated, the vibe runs until
+  then and wraps up on time. Without one, it fades on its own once the gathering
+  goes quiet.
+- **Pick a place.** A vibe normally drops right where you're standing. A planned
+  vibe can happen somewhere else: search an address or a venue and put it there.
+
+Vibes in the public SKY always start right now — a public broadcast is a live
+thing.
+
+## Find your way there
+
+Every vibe shows the address of its spot. Tap the address and it opens in your
+phone's maps app, ready for directions.
+
 ## What's here today, and what's coming
 
-Live vibes work today. Bigger ideas — planning vibes ahead of time, browsing
-them by category, and turning gatherings into lasting groups — are on the
+Live vibes and planned-ahead vibes work today. Bigger ideas — inviting people
+who haven't joined yet, and turning gatherings into lasting groups — are on the
 **[Roadmap](/roadmap)**. We label what's live and what's still ahead so this page
 stays honest.
 

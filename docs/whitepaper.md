@@ -241,13 +241,13 @@ the [Roadmap](/roadmap) for detail.
 
 **Live today:** the three worlds on a real map, tapes with photos and video, time
 travel through the map's timeline, appreciation and comments, friending and
-following, the two-balance economy, and the first version of vibes.
+following, the two-balance economy, and the first version of vibes — including
+vibes planned ahead, with a start, an end, and a place.
 
 **Coming:** vibes you drop *into* like a room, with the camera as the main action
-and everything you shoot staying private until it ends. Scheduled vibes you can
-plan ahead. Crews as first-class groups with shared wallets. And **SPACE** — a
-fourth world for gatherings with no place at all, where distance becomes social
-rather than physical.
+and everything you shoot staying private until it ends. Crews as first-class
+groups with shared wallets. And **SPACE** — a fourth world for gatherings with no
+place at all, where distance becomes social rather than physical.
 
 ## 6. Open questions
 
