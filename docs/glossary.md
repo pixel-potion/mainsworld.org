@@ -24,6 +24,9 @@ Main's World has its own vocabulary. Here's what everything means.
   - **DEEP** — private: yours alone, unless you tag someone in.
 - **Vibe** — a live, shared gathering on the map that no one owns. See
   [Vibes](/how-it-works/vibes).
+- **Future Vibe** — a vibe planned ahead of time, with a start, an optional end,
+  and a place. Joining one before it starts is an RSVP. See
+  [Vibes](/how-it-works/vibes).
 - **Crew** — a lasting group that can create together and share what it earns
   (planned). See [Crews](/how-it-works/crews).
 - **Appreciation (▲)** — the way you tell someone their moment mattered. Giving a
