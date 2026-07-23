@@ -25,6 +25,14 @@ person using a zero-knowledge proof — cryptography that proves you're human
 without exposing your identity. Each real person can hold only one account, so
 bots and fake accounts simply can't exist here, even though everyone's private.
 
+### Can I message people?
+
+Yes — if you've connected with them. Connected Mains can open a conversation in
+**World Chat**, World App's end-to-end encrypted messenger, straight from
+Main's World. Messaging stays between people who chose each other in person;
+there are no cold messages from strangers. See
+[the worlds & privacy](/how-it-works/the-worlds).
+
 ### Is my data being sold or used for ads?
 
 No. Main's World has no advertisers — the people using it are who it's for, not
