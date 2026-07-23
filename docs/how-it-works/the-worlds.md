@@ -26,6 +26,21 @@ couldn't — a private (DEEP) moment becomes visible to the people you tag. Tagg
 never makes something more public than the world you chose; it just invites
 specific people in.
 
+## Messaging your connections
+
+Once you and another Main have connected, you can message each other through
+**World Chat** — World App's own end-to-end encrypted chat between verified
+humans. A small chat button appears beside each of your connections; tapping it
+opens a drafted conversation in World Chat, and nothing is sent until you choose
+to send it.
+
+One honest trade to know about: reaching someone on World Chat works through
+their **World App username**, so once two Mains connect, each can see the
+other's username. That link exists only between the two of you — never for
+pending requests, never for strangers — and it mirrors what connecting already
+means here: you met in person and chose each other. To everyone else, you stay
+anonymous.
+
 ## Your identity: real, and anonymous
 
 Main's World is built on a promise that sounds like a contradiction until you see

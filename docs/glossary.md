@@ -45,3 +45,7 @@ Main's World has its own vocabulary. Here's what everything means.
   you're a real, unique human without ever learning who you are.
 - **World App** — the app that verifies you're a real human when you join Main's
   World.
+- **World Chat** — World App's own end-to-end encrypted messenger between
+  verified humans. Mains who have connected can message each other there,
+  straight from Main's World. See
+  [the worlds & privacy](/how-it-works/the-worlds).
