@@ -144,6 +144,9 @@ Every tape lives in exactly one of three worlds, and you choose which:
 Privacy here isn't a settings page you're expected never to find. It's the first
 choice you make about anything you post. And it only ever widens by your hand: no
 algorithm promotes your private moment into public view, because no algorithm can.
+Even the one way a moment travels beyond its world — a view-only **special link**
+its creator can mint for a single tape or vibe, and kill at any time — exists
+only by that creator's hand.
 
 ### Tapes
 
