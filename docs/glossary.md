@@ -18,6 +18,9 @@ Main's World has its own vocabulary. Here's what everything means.
   belongs to. See [What is SHIP](/what-is-ship).
 - **Tape** — a post: a photo or video moment, recorded where and when you are.
   See [Tapes](/how-it-works/tapes).
+- **RunPal import** — a planned way to send a completed RunPal run to Main's
+  World as a tape, with its summary, privacy-trimmed route and GPX file, and run
+  photos. It isn't live yet. See [Tapes](/how-it-works/tapes).
 - **The worlds** — the three settings that decide who can see a tape:
   - **SKY** — public: anyone can see it.
   - **LAND** — your connections: only people you've connected with.

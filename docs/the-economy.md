@@ -54,6 +54,19 @@ busy day). To be crystal clear about what that is and isn't:
 - Buying credits **never** gives you $MAIN. The earned currency can only come
   from other people appreciating you. That line is deliberate and permanent.
 
+## RunPal imports (coming)
+
+The planned RunPal connection will use one energy credit the first time a
+particular run is successfully imported into your Main's World account.
+
+Sending a later edit or resync of that same run will be free, including after
+you disconnect and reconnect RunPal. A failed or unfinished import won't spend a
+credit. Deleting an imported tape later won't return the credit, and later
+syncs can't recreate that tape.
+
+This policy will begin only when the RunPal connection ships. The connection is
+not live yet.
+
 ## What's live, and what's not
 
 Main's World runs this as a points-style economy today — the giving, the daily

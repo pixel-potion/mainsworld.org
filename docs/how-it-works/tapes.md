@@ -29,6 +29,20 @@ tape's timestamp is when the photo was actually taken, not when you posted it,
 and the tape wears a small **◀◀ THROWBACK** marker so no one mistakes it for a
 live moment. Time travel to the day it happened and it's there, in its place.
 
+## RunPal run tapes (coming)
+
+A planned RunPal connection will let you send a completed run to Main's World as
+one tape. The tape can carry the run's summary, its privacy-trimmed route and GPX
+file, and up to five photos from the run.
+
+Every imported run will begin in **LAND**, with no one tagged in. You can then
+edit the tape or move it to another world like any tape you made in Main's
+World. Disconnecting RunPal will stop future imports and updates, but it won't
+remove tapes already in your world.
+
+This connection is not live yet. It will appear here as a regular feature once
+the full flow has been tested and released.
+
 ## Appreciation, not likes
 
 Instead of "likes," Main's World has **appreciation**. Giving a tape a ▲ is a

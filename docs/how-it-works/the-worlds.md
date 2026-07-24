@@ -19,6 +19,21 @@ to be simple enough to hold in your head.
 That's it. No confusing settings, no per-post checkboxes buried in a menu. You
 pick a world, and the world tells you who's there.
 
+## Imported runs start in LAND (coming)
+
+The planned RunPal connection will ask for your approval before the two apps are
+connected. When you choose to send a completed run, RunPal can share its
+summary, a privacy-trimmed route and GPX file, and up to five run photos with
+Main's World. The hidden parts of your route are removed before Main's World
+receives it.
+
+The resulting tape will start in **LAND**, so only your connections can see it.
+No one is tagged automatically. You can later edit the tape or choose a
+different world yourself. Disconnecting RunPal will stop future imports and
+updates; it won't change or remove tapes that are already here.
+
+This connection is still being prepared and is not live yet.
+
 ## Tagging opens a door
 
 Tagging someone you're connected with lets them see a moment they otherwise

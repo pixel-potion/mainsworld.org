@@ -25,6 +25,20 @@ The app's navigation is being reshaped around the two things that matter most:
 **vibes** (live gatherings) and **moments** (the tapes people share), with a
 simple way to create and to search.
 
+## RunPal run imports
+
+A planned connection with RunPal will let a runner send a completed run to
+Main's World as a tape. Each tape can include the run summary, a privacy-trimmed
+route and GPX file, and up to five run photos. It will begin in LAND, and the
+Main can edit it or choose another world afterward.
+
+The first successful import of a particular run will cost 1 energy credit.
+Later edits and resyncs of that same run will be free. Disconnecting RunPal will
+stop future imports and updates without removing tapes already shared.
+
+This is **not live yet**. The connection will ship only after the complete
+connect, import, privacy, and disconnect flow has been tested.
+
 ## Following
 
 Alongside mutual connections, a lighter, one-way **follow** — for keeping up with
