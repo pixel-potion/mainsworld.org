@@ -51,6 +51,19 @@ thing.
 Every vibe shows the address of its spot. Tap the address and it opens in your
 phone's maps app, ready for directions.
 
+## Let people watch from outside
+
+If you're on a vibe, you can share it as a **special link** — a web link that
+lets anyone see the vibe in any browser: the gathering, who's there, and the
+moments its people have chosen to publish. The person opening it doesn't need
+World App or an account, and they can only watch — a special link never puts
+anyone on the vibe. Joining still works the way it always has: in person,
+through the vibe's pass.
+
+Any member can revoke the special link at any time, and every copy of it stops
+working. There's more on how special links respect the worlds in
+**[the worlds & privacy](/how-it-works/the-worlds)**.
+
 ## What's here today, and what's coming
 
 Live vibes and planned-ahead vibes work today. Bigger ideas — inviting people

@@ -36,6 +36,11 @@ Main's World has its own vocabulary. Here's what everything means.
 - **$MAIN** — the earned currency, created only when other real people appreciate
   what you made. You can't buy it or give it to yourself. See
   [The economy](/the-economy).
+- **Special link** — a web link a creator can make for one of their tapes (or a
+  vibe they're part of) that lets anyone watch that one thing in any browser —
+  no World App, no account. View-only, and revocable at any time: killing the
+  link kills every copy. See
+  [the worlds & privacy](/how-it-works/the-worlds).
 - **Time travel (◀◀)** — rewinding the map's timeline to revisit earlier moments.
 - **Throwback (◀◀ THROWBACK)** — a tape posted from your gallery after the fact.
   Its timestamp is when the photo was actually taken, and it carries a small

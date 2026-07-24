@@ -26,6 +26,28 @@ couldn't — a private (DEEP) moment becomes visible to the people you tag. Tagg
 never makes something more public than the world you chose; it just invites
 specific people in.
 
+## Special links open a window
+
+Sometimes the person you want to show a moment to isn't on Main's World at all —
+a parent, a friend abroad, anyone without the app. For that there's the
+**special link**.
+
+As the creator, you can share one of your tapes (or a vibe you're part of) as a
+special link — an ordinary web link that opens that one thing, view-only, in any
+web browser. The person you send it to doesn't need World App, doesn't need an
+account, and doesn't see anything else of yours.
+
+A few things keep this honest:
+
+- **Only the creator can make one.** Nobody else can open a window into your
+  private worlds — not even the people already allowed inside them.
+- **Watching only.** A special link never lets anyone appreciate, comment, or
+  join. It's a window, not a door.
+- **You can kill it.** Revoke a special link at any time and every copy of it,
+  everywhere, stops working immediately.
+- **One thing, not your world.** The link opens the single tape or vibe it was
+  made for. The rest of LAND and DEEP stays exactly as walled as before.
+
 ## Messaging your connections
 
 Once you and another Main have connected, you can message each other through

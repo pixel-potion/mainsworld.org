@@ -41,4 +41,16 @@ comment on a private moment stays as private as the moment itself.
 
 To learn what a ▲ actually gives someone, read **[The economy](/the-economy)**.
 
+## Sharing a tape outside
+
+Every tape can be shared as a link. A public (SKY) tape's link opens for
+anyone, since the tape was public to begin with.
+
+For a tape in LAND or DEEP, sharing it as its author creates a **special
+link** — a web link that lets anyone watch that one tape in any browser, no
+World App and no account needed. It's view-only, and you can revoke it whenever
+you like from the tape's edit screen, which instantly kills every copy of the
+link. The details live in
+**[the worlds & privacy](/how-it-works/the-worlds)**.
+
 Next: **[Vibes](/how-it-works/vibes)** — when moments become a gathering.
