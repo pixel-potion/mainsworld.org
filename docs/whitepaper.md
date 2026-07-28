@@ -116,7 +116,7 @@ Consider what you can build once fake accounts don't exist:
 - **You can give people something free, every day** — because "everyone" is a
   countable number of humans, not an unbounded number of registrations.
 - **Appreciation can be worth something** — because it can't be manufactured. A
-  thousand upvotes from a thousand humans is a fact about the world.
+  thousand thumbs up from a thousand humans is a fact about the world.
 - **Actions can cost something** — because there's no supply of fresh accounts to
   reset the cost.
 - **You don't need to police speech at scale** — because the volume problem was
@@ -186,16 +186,16 @@ Two balances, and they never mix.
 
 Three rules hold the whole thing up.
 
-**Appreciation is the only mint.** Receiving a ▲ is the only way $MAIN comes into
-existence. This is the rule everything else defends.
+**Appreciation is the only mint.** Receiving a thumbs up is the only way $MAIN
+comes into existence. This is the rule everything else defends.
 
 **You can't buy your way in.** Money buys credits — the ability to speak — and
 credits are never $MAIN. You cannot purchase the thing that measures whether
 people valued what you made. You can buy a ticket to play. You cannot buy the
 score.
 
-**You can't pay yourself.** Appreciation always costs the giver and always pays
-someone else. There is no self-directed loop, anywhere.
+**You can't pay yourself.** Appreciation always costs the giver and never pays
+the giver. There is no self-directed loop, anywhere.
 
 Read those together and something unusual falls out: **the only way to gain is to
 give, and the only way to be worth anything is for someone else to decide you

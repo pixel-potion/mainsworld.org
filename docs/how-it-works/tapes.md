@@ -37,9 +37,9 @@ flipping through a box of photos, not scrolling a feed.
 ## How long a tape stays on the map
 
 The map shows what's current, not everything that ever happened. A tape stays
-on the map for **two weeks**, and appreciation keeps it around longer: each ▲
-a tape collects adds about half a day to its stay, up to a maximum of four
-weeks for the most loved tapes.
+on the map for **two weeks**, and appreciation keeps it around longer: each
+thumbs up a tape collects adds about half a day to its stay, up to a maximum
+of four weeks for the most loved tapes.
 
 A tape never dims early. It looks just as bold on its last day as on its
 first, and only in its final half hour does it quietly fade out.
@@ -58,15 +58,19 @@ live moment. Time travel to the day it happened and it's there, in its place.
 
 ## Appreciation, not likes
 
-Instead of "likes," Main's World has **appreciation**. Giving a tape a ▲ is a
-genuine gift to the person who made it — it's the one and only way anyone earns
-the community's currency. There's a ▼ too, for honest signal, but it never takes
-anything away from the author.
+Instead of "likes," Main's World has **appreciation**. Giving a tape a
+**thumbs up** is a genuine gift to the person who made it — it's the one and
+only way anyone earns the community's currency. There is no downvote: if a
+tape isn't for you, you simply move on. You can take a thumbs up back at any
+time and give it again later, and you can even give one to your own tape —
+though appreciating your own work never pays you anything.
 
-You can also **comment** on a tape. Comments follow the tape's world, so a
-comment on a private moment stays as private as the moment itself.
+You can also **comment** on a tape, and comments can collect a thumbs up of
+their own. Comments follow the tape's world, so a comment on a private moment
+stays as private as the moment itself.
 
-To learn what a ▲ actually gives someone, read **[The economy](/the-economy)**.
+To learn what a thumbs up actually gives someone, read
+**[The economy](/the-economy)**.
 
 ## Sharing a tape outside
 

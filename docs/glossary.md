@@ -29,8 +29,10 @@ Main's World has its own vocabulary. Here's what everything means.
   [Vibes](/how-it-works/vibes).
 - **Crew** — a lasting group that can create together and share what it earns
   (planned). See [Crews](/how-it-works/crews).
-- **Appreciation (▲)** — the way you tell someone their moment mattered. Giving a
-  ▲ gifts the maker a unit of $MAIN. It's the only way $MAIN is created.
+- **Appreciation (thumbs up)** — the way you tell someone their moment
+  mattered. Giving one gifts the maker a unit of $MAIN; it's the only way
+  $MAIN is created. There are no downvotes, and appreciating your own tape
+  never pays you.
 - **Energy credits** — your daily fuel for doing things (posting, appreciating,
   commenting). You get 10 a day.
 - **$MAIN** — the earned currency, created only when other real people appreciate
