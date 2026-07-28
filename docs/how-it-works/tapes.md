@@ -34,6 +34,20 @@ more tap opens a tape itself, and the map flies to where it was recorded behind
 it; closing the tape returns you to the list. Browsing a busy corner feels like
 flipping through a box of photos, not scrolling a feed.
 
+## How long a tape stays on the map
+
+The map shows what's current, not everything that ever happened. A tape stays
+on the map for **two weeks**, and appreciation keeps it around longer: each ▲
+a tape collects adds about half a day to its stay, up to a maximum of four
+weeks for the most loved tapes.
+
+A tape never dims early. It looks just as bold on its last day as on its
+first, and only in its final half hour does it quietly fade out.
+
+Leaving the map is not being deleted — the tape keeps its place and its
+moment, and time travel will always find it. Rewind to when it was fresh, and
+it's right there again.
+
 ## Throwbacks
 
 Not every moment gets recorded the instant it happens. A **throwback** is a tape

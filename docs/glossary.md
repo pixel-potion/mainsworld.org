@@ -50,6 +50,11 @@ Main's World has its own vocabulary. Here's what everything means.
   Its timestamp is when the photo was actually taken, and it carries a small
   ◀◀ THROWBACK marker so it isn't mistaken for a live moment. See
   [Tapes](/how-it-works/tapes).
+- **Ghost dot** — a small, faint, world-colored dot on the map marking a moment
+  you can't open from where you are: a tape in another world, or a
+  connections-only tape from someone you haven't connected with yet. It shows
+  only that something is there — never who or what. See
+  [the worlds & privacy](/how-it-works/the-worlds).
 - **Zero-knowledge proof** — the cryptography that lets Main's World confirm
   you're a real, unique human without ever learning who you are.
 - **World App** — the app that verifies you're a real human when you join Main's
