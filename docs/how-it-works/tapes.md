@@ -17,9 +17,22 @@ Two things make a tape different from an ordinary post:
 - **Where.** A tape is anchored to the spot on the map where it was recorded.
 - **When.** A tape remembers its moment in time, not just its place.
 
-That's why Main's World is a map you can travel through. Rewind the timeline
-(the app calls it **time travel**, marked ◀◀) and you can revisit what happened
-somewhere at an earlier moment — your own story, and the shared story of a place.
+That's why Main's World is a map you can travel through. The rewind button at
+the bottom of the screen unfolds a **tape deck** — playback controls for the
+map itself. Drag the dial (or press anywhere on its timeline) to scrub back
+through time, skip from tape to tape, or jump straight back to the very first
+tape; eject and you're back at now. The app calls all of this **time travel**,
+marked ◀◀: revisit what happened somewhere at an earlier moment — your own
+story, and the shared story of a place.
+
+## Browsing a busy corner of the map
+
+Where several tapes share a spot, the map gathers them into a small **stack of
+photo cards** with a count of how many are inside. Tap a stack and the map
+glides closer while the feed opens, listing just the tapes in that stack. One
+more tap opens a tape itself, and the map flies to where it was recorded behind
+it; closing the tape returns you to the list. Browsing a busy corner feels like
+flipping through a box of photos, not scrolling a feed.
 
 ## Throwbacks
 
