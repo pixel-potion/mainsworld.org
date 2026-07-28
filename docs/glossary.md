@@ -41,7 +41,11 @@ Main's World has its own vocabulary. Here's what everything means.
   no World App, no account. View-only, and revocable at any time: killing the
   link kills every copy. See
   [the worlds & privacy](/how-it-works/the-worlds).
-- **Time travel (◀◀)** — rewinding the map's timeline to revisit earlier moments.
+- **Tape deck** — the strip of time-travel controls that unfolds from the
+  rewind button at the bottom of the map: scrub the timeline, skip between
+  tapes, or eject back to now. See [Tapes](/how-it-works/tapes).
+- **Time travel (◀◀)** — rewinding the map's timeline, using the tape deck, to
+  revisit earlier moments.
 - **Throwback (◀◀ THROWBACK)** — a tape posted from your gallery after the fact.
   Its timestamp is when the photo was actually taken, and it carries a small
   ◀◀ THROWBACK marker so it isn't mistaken for a live moment. See
