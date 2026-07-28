@@ -26,6 +26,25 @@ couldn't — a private (DEEP) moment becomes visible to the people you tag. Tagg
 never makes something more public than the world you chose; it just invites
 specific people in.
 
+## Ghost dots: seeing that something is there
+
+The map never shows you a moment you're not allowed to open. But it can show
+you that something exists. Small, faint dots — each wearing the color of its
+world — mark moments that are out of reach from where you're standing:
+
+- Moments in a world other than the one you're viewing, including your own —
+  handy for spotting where your tapes live across the worlds.
+- Connections-only (LAND) moments from people you haven't connected with yet.
+
+A ghost dot is deliberately empty. It can't be opened, and it carries no
+photo, no label, and no name — nothing about who posted or what. For moments
+you aren't allowed to open, even the spot is softened to a rough area rather
+than an exact point. And private (DEEP) moments never appear at all, not even
+as a dot, to anyone who wasn't invited in.
+
+Ghost dots are an invitation: the world is fuller than your slice of it, and
+connecting with more people — in person, as always — opens more of it up.
+
 ## Special links open a window
 
 Sometimes the person you want to show a moment to isn't on Main's World at all —
