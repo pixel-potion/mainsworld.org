@@ -30,11 +30,11 @@ bots and fake accounts simply can't exist here, even though everyone's private.
 No. Main's World has no advertisers — the people using it are who it's for, not
 the product being sold. There's no name or email to sell in the first place.
 
-### What makes a "tape" different from a normal post?
+### What makes a "moment" different from a normal post?
 
-A tape is anchored to a real **place** and a real **time**. That's what turns
+A moment is anchored to a real **place** and a real **time**. That's what turns
 Main's World into a map you can travel through — you can rewind to see what
-happened somewhere at an earlier moment. See [Tapes](/how-it-works/tapes).
+happened somewhere earlier. See [Moments](/how-it-works/moments).
 
 ### What is $MAIN? Can I cash it out?
 

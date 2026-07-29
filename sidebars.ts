@@ -13,7 +13,7 @@ const sidebars: SidebarsConfig = {
       collapsed: false,
       items: [
         'how-it-works/the-worlds',
-        'how-it-works/tapes',
+        'how-it-works/moments',
         'how-it-works/vibes',
         'how-it-works/crews',
       ],

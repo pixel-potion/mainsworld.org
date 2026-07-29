@@ -42,4 +42,4 @@ So the feed is full of real people, and none of them had to give up their
 privacy to be there. That combination is the foundation the rest of Main's World
 is built on.
 
-Next: **[Tapes](/how-it-works/tapes)** — how you share a moment.
+Next: **[Moments](/how-it-works/moments)** — how you share one.

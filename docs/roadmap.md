@@ -23,7 +23,8 @@ Live vibes work today. The bigger vision:
 ## A clearer way around
 
 The app's navigation is being reshaped around the two things that matter most:
-**vibes** (live gatherings) and **moments** (the tapes people share), with a
+**vibes** (live gatherings) and **moments** (the photos and videos people
+share), with a
 simple way to create and to search.
 
 ## Following

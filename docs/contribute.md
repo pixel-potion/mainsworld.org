@@ -46,7 +46,7 @@ keep contributions:
 
 ## Style notes
 
-- Say **tapes** (not posts), **Mains** (the people), **vibes**, **crews**, and the
+- Say **moments** (not posts), **Mains** (the people), **vibes**, **crews**, and the
   three worlds **SKY / LAND / DEEP**. The [Glossary](/glossary) is the reference.
 - Prefer short sentences and concrete words.
 - Link generously to other pages so readers can find their way.

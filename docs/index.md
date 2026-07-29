@@ -22,7 +22,7 @@ here is a real, verified human, and you stay anonymous while you're at it.
 - **[What is SHIP?](/what-is-ship)** — the idea in plain language, and why it's a
   category of its own.
 - **[Manifesto](/manifesto)** — what we believe and the world we're building.
-- **[How Main's World works](/how-it-works/the-worlds)** — the worlds, tapes,
+- **[How Main's World works](/how-it-works/the-worlds)** — the worlds, moments,
   vibes, and crews.
 - **[The economy](/the-economy)** — how appreciation between real people is the
   only thing of value.

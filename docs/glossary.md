@@ -12,9 +12,9 @@ Main's World has its own vocabulary. Here's what everything means.
   a Main.)
 - **SHIP** — a **Secure Human Interaction Protocol**: the category Main's World
   belongs to. See [What is SHIP](/what-is-ship).
-- **Tape** — a post: a photo or video moment, recorded where and when you are.
-  See [Tapes](/how-it-works/tapes).
-- **The worlds** — the three settings that decide who can see a tape:
+- **Moment** — a post: a photo or video, recorded where and when you are.
+  See [Moments](/how-it-works/moments).
+- **The worlds** — the three settings that decide who can see a moment:
   - **SKY** — public: anyone can see it.
   - **LAND** — your connections: only people you've connected with.
   - **DEEP** — private: yours alone, unless you tag someone in.
