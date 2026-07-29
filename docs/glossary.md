@@ -26,6 +26,9 @@ Main's World has its own vocabulary. Here's what everything means.
   ▲ gifts the maker a unit of $MAIN. It's the only way $MAIN is created.
 - **Energy credits** — your daily fuel for doing things (posting, appreciating,
   commenting). You get 10 a day.
+- **App connection** — a link you choose to make between Main's World and another
+  app you use, letting that app send moments into your world. You pick which
+  world they land in. Planned, not live yet — see [Roadmap](/roadmap).
 - **$MAIN** — the earned currency, created only when other real people appreciate
   what you made. You can't buy it or give it to yourself. See
   [The economy](/the-economy).
