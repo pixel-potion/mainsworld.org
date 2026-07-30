@@ -127,6 +127,8 @@ const config: Config = {
           title: 'Take part',
           items: [
             {label: 'Open the app', href: 'https://mains.world'},
+            {label: 'Request a feature or report a bug', href: 'https://mainsworld.featurebase.app/'},
+            {label: '@itsamainsworld on X', href: 'https://x.com/itsamainsworld'},
             {label: 'Contribute', to: '/contribute'},
             {label: 'GitHub', href: 'https://github.com/pixel-potion/mainsworld.org'},
           ],

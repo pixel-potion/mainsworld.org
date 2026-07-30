@@ -27,6 +27,14 @@ here is a real, verified human, and you stay anonymous while you're at it.
 - **[The economy](/the-economy)** — how appreciation between real people is the
   only thing of value.
 
+## Find us
+
+- **[Request a feature or report a bug](https://mainsworld.featurebase.app/)** —
+  the public board. Post an idea, vote on someone else's, and watch it move
+  across the [roadmap](https://mainsworld.featurebase.app/dashboard/roadmap).
+- **[@itsamainsworld on X](https://x.com/itsamainsworld)** — where we ship notes.
+- **[Open Main's World](https://mains.world)** — the app itself, inside World App.
+
 ## This is a living document
 
 Everything here can be improved by the community. See a mistake or a gap? Every

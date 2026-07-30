@@ -6,10 +6,19 @@ description: The full argument for Main's World and SHIP — why the attention e
 
 # Whitepaper
 
-The [Manifesto](/manifesto) says what we believe. [What is SHIP](/what-is-ship)
-names the category. This is the argument underneath both: why the internet feels
-the way it does, what actually changes when every account is provably a real
-person, and why that's hard for anyone else to copy.
+## What is Main's World?
+
+Main's World is a social app built on a map of the real world. Every account
+belongs to a real, verified human being — and no account says who that human
+is. You post photos and videos (**moments**) from the places you're actually at,
+you choose who can see each one, and when other people appreciate what you
+made, you earn something real.
+
+That's the whole product in one breath. The rest of this page is the argument
+underneath it: why the internet feels the way it does, what actually changes
+when every account is provably a real person, and why that's hard for anyone
+else to copy. The [Manifesto](/manifesto) says what we believe, and
+[What is SHIP](/what-is-ship) names the category.
 
 It's written to be read by anyone. Nothing here needs a technical background, and
 every term is explained where it first appears.
@@ -107,7 +116,7 @@ Consider what you can build once fake accounts don't exist:
 - **You can give people something free, every day** — because "everyone" is a
   countable number of humans, not an unbounded number of registrations.
 - **Appreciation can be worth something** — because it can't be manufactured. A
-  thousand upvotes from a thousand humans is a fact about the world.
+  thousand thumbs up from a thousand humans is a fact about the world.
 - **Actions can cost something** — because there's no supply of fresh accounts to
   reset the cost.
 - **You don't need to police speech at scale** — because the volume problem was
@@ -135,6 +144,9 @@ Every moment lives in exactly one of three worlds, and you choose which:
 Privacy here isn't a settings page you're expected never to find. It's the first
 choice you make about anything you post. And it only ever widens by your hand: no
 algorithm promotes your private moment into public view, because no algorithm can.
+Even the one way a moment travels beyond its world — a view-only **special link**
+its creator can mint for a single moment or vibe, and kill at any time — exists
+only by that creator's hand.
 
 ### Moments
 
@@ -174,16 +186,16 @@ Two balances, and they never mix.
 
 Three rules hold the whole thing up.
 
-**Appreciation is the only mint.** Receiving a ▲ is the only way $MAIN comes into
-existence. This is the rule everything else defends.
+**Appreciation is the only mint.** Receiving a thumbs up is the only way $MAIN
+comes into existence. This is the rule everything else defends.
 
 **You can't buy your way in.** Money buys credits — the ability to speak — and
 credits are never $MAIN. You cannot purchase the thing that measures whether
 people valued what you made. You can buy a ticket to play. You cannot buy the
 score.
 
-**You can't pay yourself.** Appreciation always costs the giver and always pays
-someone else. There is no self-directed loop, anywhere.
+**You can't pay yourself.** Appreciation always costs the giver and never pays
+the giver. There is no self-directed loop, anywhere.
 
 Read those together and something unusual falls out: **the only way to gain is to
 give, and the only way to be worth anything is for someone else to decide you
@@ -232,13 +244,13 @@ the [Roadmap](/roadmap) for detail.
 
 **Live today:** the three worlds on a real map, moments with photos and video, time
 travel through the map's timeline, appreciation and comments, friending and
-following, the two-balance economy, and the first version of vibes.
+following, the two-balance economy, and the first version of vibes — including
+vibes planned ahead, with a start, an end, and a place.
 
 **Coming:** vibes you drop *into* like a room, with the camera as the main action
-and everything you shoot staying private until it ends. Scheduled vibes you can
-plan ahead. Crews as first-class groups with shared wallets. And **SPACE** — a
-fourth world for gatherings with no place at all, where distance becomes social
-rather than physical.
+and everything you shoot staying private until it ends. Crews as first-class
+groups with shared wallets. And **SPACE** — a fourth world for gatherings with no
+place at all, where distance becomes social rather than physical.
 
 ## 6. Open questions
 

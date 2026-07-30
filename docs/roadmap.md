@@ -12,11 +12,10 @@ about what's live versus what's still ahead.
 
 ## Vibes, in full
 
-Live vibes work today. The bigger vision:
+Live vibes work today, and so does planning one ahead — with a start, an end,
+and a place, and RSVPs before it begins (see [Vibes](/how-it-works/vibes)).
+What's still ahead:
 
-- **Plan ahead.** Set up a vibe for later, so people can find it and show up.
-- **Browse by kind.** Discover vibes near you and by category — a mixer, a live
-  show, a meetup.
 - **Invite anyone.** Bring in friends, and even hold a spot for someone who
   hasn't joined Main's World yet.
 
