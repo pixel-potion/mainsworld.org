@@ -33,7 +33,7 @@ you that something exists. Small, faint dots — each wearing the color of its
 world — mark moments that are out of reach from where you're standing:
 
 - Moments in a world other than the one you're viewing, including your own —
-  handy for spotting where your tapes live across the worlds.
+  handy for spotting where your moments live across the worlds.
 - Connections-only (LAND) moments from people you haven't connected with yet.
 
 A ghost dot is deliberately empty. It can't be opened, and it carries no
@@ -51,7 +51,7 @@ Sometimes the person you want to show a moment to isn't on Main's World at all �
 a parent, a friend abroad, anyone without the app. For that there's the
 **special link**.
 
-As the creator, you can share one of your tapes (or a vibe you're part of) as a
+As the creator, you can share one of your moments (or a vibe you're part of) as a
 special link — an ordinary web link that opens that one thing, view-only, in any
 web browser. The person you send it to doesn't need World App, doesn't need an
 account, and doesn't see anything else of yours.
@@ -64,7 +64,7 @@ A few things keep this honest:
   join. It's a window, not a door.
 - **You can kill it.** Revoke a special link at any time and every copy of it,
   everywhere, stops working immediately.
-- **One thing, not your world.** The link opens the single tape or vibe it was
+- **One thing, not your world.** The link opens the single moment or vibe it was
   made for. The rest of LAND and DEEP stays exactly as walled as before.
 
 ## Messaging your connections
@@ -98,4 +98,4 @@ So the feed is full of real people, and none of them had to give up their
 privacy to be there. That combination is the foundation the rest of Main's World
 is built on.
 
-Next: **[Tapes](/how-it-works/tapes)** — how you share a moment.
+Next: **[Moments](/how-it-works/moments)** — how you share one.

@@ -7,7 +7,7 @@ description: A vibe is a live, shared gathering on the map that no one owns.
 # Vibes
 
 A **vibe** is a live gathering on the map — a get-together that people show up to
-and add to, in real time. If a tape is a single moment, a vibe is a moment that
+and add to, in real time. If a moment is a single beat, a vibe is a beat that
 lots of people are living at once.
 
 ## No one owns a vibe
@@ -23,11 +23,11 @@ before:
 - **Bigger gatherings look bigger.** A vibe's footprint on the map grows with the
   number of people there.
 
-## Tapes feed the vibe
+## Moments feed the vibe
 
 When you're at a vibe, the moments you record become part of its story, and they
 take on the vibe's world (SKY, LAND, or DEEP). A vibe is the shared thread; the
-tapes are the beads on it.
+moments are the beads on it.
 
 ## Plan a vibe ahead
 

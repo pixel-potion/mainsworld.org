@@ -10,7 +10,7 @@ description: The full argument for Main's World and SHIP — why the attention e
 
 Main's World is a social app built on a map of the real world. Every account
 belongs to a real, verified human being — and no account says who that human
-is. You post photos and videos (**tapes**) from the places you're actually at,
+is. You post photos and videos (**moments**) from the places you're actually at,
 you choose who can see each one, and when other people appreciate what you
 made, you earn something real.
 
@@ -133,7 +133,7 @@ person is verified, anonymous, and somewhere.
 
 ### The worlds
 
-Every tape lives in exactly one of three worlds, and you choose which:
+Every moment lives in exactly one of three worlds, and you choose which:
 
 | World        | Who can see it                                   |
 | ------------ | ------------------------------------------------ |
@@ -145,12 +145,12 @@ Privacy here isn't a settings page you're expected never to find. It's the first
 choice you make about anything you post. And it only ever widens by your hand: no
 algorithm promotes your private moment into public view, because no algorithm can.
 Even the one way a moment travels beyond its world — a view-only **special link**
-its creator can mint for a single tape or vibe, and kill at any time — exists
+its creator can mint for a single moment or vibe, and kill at any time — exists
 only by that creator's hand.
 
-### Tapes
+### Moments
 
-A tape is a post, but the word is doing work. It's a photo or video, at a real
+A moment is a post, but the word is doing work. It's a photo or video, at a real
 place, at a real time — you were *there*, *then*. Not content to be optimised. A
 memory with coordinates.
 
@@ -160,7 +160,7 @@ were part of.
 
 ### Vibes
 
-A vibe is a live gathering on the map that tapes feed into. It has one rule that
+A vibe is a live gathering on the map that moments feed into. It has one rule that
 tells you what we're for:
 
 **No one owns a vibe.** You can start one, but it doesn't come alive until someone
@@ -202,8 +202,8 @@ give, and the only way to be worth anything is for someone else to decide you
 were.** Not engagement. Not reach. Not persistence. Somebody else, freely,
 spending something real.
 
-Posting costs a credit, so you post less and mean it more. A tape people love pays
-you back; a tape nobody wanted is spent energy, gone. Nobody is punished — you
+Posting costs a credit, so you post less and mean it more. A moment people love
+pays you back; a moment nobody wanted is spent energy, gone. Nobody is punished — you
 just get a finite number of chances a day to be worth someone's attention, which
 is roughly the deal in real life.
 
@@ -242,7 +242,7 @@ account. That isn't a shortcut. It's the point.
 What's here now, and what's coming. We try to be honest about the difference — see
 the [Roadmap](/roadmap) for detail.
 
-**Live today:** the three worlds on a real map, tapes with photos and video, time
+**Live today:** the three worlds on a real map, moments with photos and video, time
 travel through the map's timeline, appreciation and comments, friending and
 following, the two-balance economy, and the first version of vibes — including
 vibes planned ahead, with a start, an end, and a place.
