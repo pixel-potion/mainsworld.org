@@ -69,6 +69,22 @@ screen — see [Signing in](/how-it-works/signing-in).
 The community. Every page is openly editable on GitHub — see
 [Contribute](/contribute). The app itself is made by the Main's World team.
 
+### Do I have to download something?
+
+Yes, one thing: World App. Main's World is a *mini app*, which means it runs
+inside World App rather than being installed on its own — there is nothing in an
+app store called "Main's World". World App is free, and it's what confirms
+you're a real person without Main's World ever learning who you are.
+[Getting started](/how-it-works/getting-started) walks through the whole path.
+
+### Do I need to find an Orb?
+
+No, not to start. Verifying at an Orb unlocks the Vault, where $MAIN is claimed.
+Posting moments, appreciating other people's, the three worlds, vibes and crews
+all work without it. See [Getting started](/how-it-works/getting-started).
+
 ### How do I actually use the app?
 
-Open **[mains.world](https://mains.world)** in World App to get started.
+Open **[mains.world](https://mains.world)** in World App to get started. If you
+don't have World App yet, start with
+[Getting started](/how-it-works/getting-started).

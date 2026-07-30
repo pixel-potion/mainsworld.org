@@ -16,6 +16,13 @@ Main's World has its own vocabulary. Here's what everything means.
   you like, and a name you give up becomes free for someone else to take.
 - **SHIP** — a **Secure Human Interaction Protocol**: the category Main's World
   belongs to. See [What is SHIP](/what-is-ship).
+- **Mini app** — an app that runs inside World App instead of being installed on
+  its own. Main's World is one, which is why there is nothing in an app store
+  called "Main's World". See
+  [Getting started](/how-it-works/getting-started).
+- **Orb** — a device that confirms in person, once, that you are a unique human.
+  In Main's World it unlocks the Vault, where $MAIN is claimed; everything else
+  works without it. See [Getting started](/how-it-works/getting-started).
 - **Moment** — a post: a photo or video, recorded where and when you are.
   See [Moments](/how-it-works/moments).
 - **The worlds** — the three settings that decide who can see a moment:
