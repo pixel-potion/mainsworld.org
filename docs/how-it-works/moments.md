@@ -78,6 +78,10 @@ the timestamp is when the photo was actually taken, not when you posted it, and
 the moment wears a small **◀◀ THROWBACK** marker so no one mistakes it for a
 live one. Time travel to the day it happened and it's there, in its place.
 
+Its stay on the map is measured from when you **posted** it, though, not from
+when the photo was taken — so a throwback of a photo from years ago still gets
+its full 30 days on the map, the same as anything else you post today.
+
 ## Appreciation, not likes
 
 Instead of "likes," Main's World has **appreciation**. Giving a moment a
