@@ -12,6 +12,7 @@ const sidebars: SidebarsConfig = {
       label: 'How Main’s World works',
       collapsed: false,
       items: [
+        'how-it-works/getting-started',
         'how-it-works/the-worlds',
         'how-it-works/moments',
         'how-it-works/vibes',
