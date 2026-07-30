@@ -1,7 +1,7 @@
 ---
 sidebar_position: 1
 title: The worlds & privacy
-description: SKY, LAND, and DEEP — the three worlds that decide who can see what, and the privacy model underneath.
+description: SKY, LAND, and DEEP — the three worlds that decide who can see what, the X-RAY view that shows them together, and the privacy model underneath.
 ---
 
 # The worlds & privacy
@@ -19,6 +19,32 @@ to be simple enough to hold in your head.
 That's it. No confusing settings, no per-post checkboxes buried in a menu. You
 pick a world, and the world tells you who's there.
 
+## X-RAY: all three at once
+
+The map normally shows you one world at a time. You ride between them with the
+world switch — the dial in the top right corner — and each world has its own
+look, so you always know which one you're standing in.
+
+**X-RAY** is a fourth setting on that dial, and it works differently: instead of
+showing one world, it shows all of them together. Every moment you're already
+allowed to see, from SKY, LAND and DEEP, appears on one map at the same time —
+and each one keeps its own world's color, so you can still tell at a glance
+where anything lives.
+
+It's useful when you want the whole picture of a place rather than one slice of
+it: everything you and your connections have left in a neighborhood, across
+every world, in one view.
+
+Two things are worth being clear about:
+
+- **X-RAY shows you nothing new.** It's exactly the moments the three worlds
+  would each have shown you, gathered into one view. It can't reveal a moment
+  you weren't already allowed to open, and it changes nothing about who can see
+  what.
+- **X-RAY isn't somewhere moments live.** You can't post to it. Every moment
+  still belongs to exactly one of the three worlds — X-RAY is a way of looking,
+  not a place.
+
 ## Tagging opens a door
 
 Tagging someone you're connected with lets them see a moment they otherwise
@@ -33,8 +59,12 @@ you that something exists. Small, faint dots — each wearing the color of its
 world — mark moments that are out of reach from where you're standing:
 
 - Moments in a world other than the one you're viewing, including your own —
-  handy for spotting where your moments live across the worlds.
+  handy for spotting where your moments live across the worlds. (In X-RAY these
+  become ordinary moments you can open, because every world is on screen at
+  once.)
 - Connections-only (LAND) moments from people you haven't connected with yet.
+  These stay dots everywhere, X-RAY included — they're moments you aren't
+  allowed to open, and no view changes that.
 
 A ghost dot is deliberately empty. It can't be opened, and it carries no
 photo, no label, and no name — nothing about who posted or what. For moments
