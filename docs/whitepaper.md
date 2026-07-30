@@ -148,6 +148,12 @@ Even the one way a moment travels beyond its world — a view-only **special lin
 its creator can mint for a single moment or vibe, and kill at any time — exists
 only by that creator's hand.
 
+The map shows one world at a time, with a fourth setting on the world switch,
+**X-RAY**, that shows all three together — every moment you were already allowed
+to see, each still wearing its own world's color. It is a way of looking rather
+than a place: nothing can be posted to it, and it reveals nothing that the three
+worlds would not each have shown you on their own.
+
 ### Moments
 
 A moment is a post, but the word is doing work. It's a photo or video, at a real
@@ -242,10 +248,11 @@ account. That isn't a shortcut. It's the point.
 What's here now, and what's coming. We try to be honest about the difference — see
 the [Roadmap](/roadmap) for detail.
 
-**Live today:** the three worlds on a real map, moments with photos and video, time
-travel through the map's timeline, appreciation and comments, friending and
-following, the two-balance economy, and the first version of vibes — including
-vibes planned ahead, with a start, an end, and a place.
+**Live today:** the three worlds on a real map — plus X-RAY, which shows all
+three at once — moments with photos and video, time travel through the map's
+timeline, appreciation and comments, friending and following, the two-balance
+economy, and the first version of vibes — including vibes planned ahead, with a
+start, an end, and a place.
 
 **Coming:** vibes you drop *into* like a room, with the camera as the main action
 and everything you shoot staying private until it ends. Crews as first-class
