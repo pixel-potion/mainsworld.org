@@ -34,6 +34,28 @@ more tap opens a moment itself, and the map flies to where it was recorded
 behind it; closing the moment returns you to the list. Browsing a busy corner
 feels like flipping through a box of photos, not scrolling a feed.
 
+## Finding a moment
+
+The bar at the bottom of the app holds three things: **moments**, the camera
+button, and **vibes**. Tapping moments slides up a list of everything you're
+allowed to see, newest first, across all three worlds.
+
+Two controls sit at the top of that list:
+
+- **Search.** Type a word and the list keeps only the moments whose label
+  contains it. You are only ever searching what you could already see.
+- **Filters.** The settings button opens a short menu with three choices:
+  - **How far the list reaches** — only what's around you, or everywhere.
+  - **Whose moments are in it** — everyone, the Mains you've connected with,
+    the Mains you [follow](/glossary), or only your own.
+  - **Whether moments that arrived from another app count.** This one waits on
+    [connections to other apps](/roadmap), which aren't live yet.
+
+Your choices are remembered on your device, so the list opens the way you left
+it. Whenever a filter is narrowing what you see, the app marks the settings
+button and names the filter above the list, so a short list always explains
+itself.
+
 ## How long a moment stays on the map
 
 The map shows what's current, not everything that ever happened. A moment stays

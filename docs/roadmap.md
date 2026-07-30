@@ -19,20 +19,6 @@ What's still ahead:
 - **Invite anyone.** Bring in friends, and even hold a spot for someone who
   hasn't joined Main's World yet.
 
-## A clearer way around
-
-The app's navigation is being reshaped around the two things that matter most:
-**vibes** (live gatherings) and **moments** (the photos and videos people
-share), with a
-simple way to create and to search.
-
-## Following
-
-Alongside mutual connections, a lighter, one-way **follow** — for keeping up with
-someone you met at a vibe, or a creator you admire, without asking them to
-connect back. Following will stay public-world only; it never crosses into
-anyone's private space.
-
 ## Connections to other apps
 
 **Not live yet.** Apps you already use will be able to send moments into your
