@@ -16,6 +16,7 @@ const sidebars: SidebarsConfig = {
         'how-it-works/moments',
         'how-it-works/vibes',
         'how-it-works/crews',
+        'how-it-works/signing-in',
       ],
     },
     'the-economy',

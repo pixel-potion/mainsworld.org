@@ -73,6 +73,10 @@ Main's World has its own vocabulary. Here's what everything means.
   simply in another world become moments you can open; the ones you were never
   allowed to open stay dots. See
   [the worlds & privacy](/how-it-works/the-worlds).
+- **Sign-in code** — the square code, and the four characters beside it, that a
+  computer shows so your phone can sign it in. It lasts a few minutes, works
+  once, and should only ever be approved from a screen you are sitting in front
+  of. See [Signing in](/how-it-works/signing-in).
 - **Zero-knowledge proof** — the cryptography that lets Main's World confirm
   you're a real, unique human without ever learning who you are.
 - **World App** — the app that verifies you're a real human when you join Main's

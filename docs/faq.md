@@ -56,6 +56,14 @@ proven safe and reviewed. See [the economy](/the-economy).
 No. You can buy energy credits (voice), but you can't buy $MAIN, and you can't
 appreciate yourself. The only way up is other real people valuing what you make.
 
+### Can I use Main's World on my computer?
+
+Yes. Open [mains.world](https://mains.world) in a browser and you'll be shown a
+square code to scan with World App on your phone; approve it there and the
+computer signs in. Topping up credits and the Vault stay on your phone, because
+they need World App itself. Only ever approve a code you can see on your own
+screen — see [Signing in](/how-it-works/signing-in).
+
 ### Who runs this knowledge base?
 
 The community. Every page is openly editable on GitHub — see
