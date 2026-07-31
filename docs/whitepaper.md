@@ -164,6 +164,19 @@ And you can travel back through the map's timeline to find them again, which is
 the part that surprises people: the map isn't only *now*. It's every *then* you
 were part of.
 
+Proving the person doesn't prove the picture, though. A verified human can still
+post an image a generator made, and that would hollow out the claim the word
+*moment* is making. So moments bound for SKY are checked, and the ones that
+announce themselves as generated — many generators write that into the file — or
+that plainly look it, don't land there. They can still go to LAND or THE DEEP:
+what this protects is the shared public map, not what you keep among your own
+people.
+
+It's a filter, not a proof. The record a generator writes can be stripped out,
+and nothing inside a picture reliably establishes that a camera made it. We'd
+rather say so than claim a guarantee we can't keep — the public map is
+meaningfully more real, not certifiably so.
+
 ### Vibes
 
 A vibe is a live gathering on the map that moments feed into. It has one rule that
