@@ -17,6 +17,13 @@ Two things make a moment different from an ordinary post:
 - **Where.** A moment is anchored to the spot on the map where it was recorded.
 - **When.** A moment remembers the time it happened, not just the place.
 
+A moment also records the **name** of the place, not only the point on the map:
+the city and the country it was recorded in, worked out once when you post it.
+That is what lets the app say a moment happened in Lisbon rather than only at a
+pair of coordinates. If nothing can name the spot — far out at sea, or somewhere
+genuinely remote — the moment simply has no name attached, and is counted as an
+unknown location rather than guessed at.
+
 That's why Main's World is a map you can travel through. The rewind button at
 the bottom of the screen unfolds a **tape deck** — playback controls for the
 map itself. Drag the dial (or press anywhere on its timeline) to scrub back
@@ -24,6 +31,29 @@ through time, skip from moment to moment, or jump straight back to the very
 first one; eject and you're back at now. The app calls all of this **time
 travel**, marked ◀◀: revisit what happened somewhere earlier — your own story,
 and the shared story of a place.
+
+## What the shared totals show
+
+Main's World keeps a page of community totals, and two of them are drawn from
+where and when moments happen: a dotted map of the world, and a grid of the
+week.
+
+Both are deliberately coarse, because they count moments from every world —
+including the ones that are not public.
+
+- The world map is drawn in cells several hundred kilometres across. A lit cell
+  says a moment exists somewhere in that quarter of a continent, and nothing
+  narrower than that.
+- The week grid has one cell per hour of each weekday: a hundred and sixty-eight
+  buckets covering every moment ever recorded.
+
+At that size neither can describe a person or point at a place. The totals are a
+picture of the community, not a record of anybody in it. The city and country
+lists work the same way — they are counts, never a list of who was where.
+
+The hours are read in the local time of wherever each moment was recorded, so
+the grid shows when people actually go out and record something, rather than
+where in the world they happen to live.
 
 ## Browsing a busy corner of the map
 
