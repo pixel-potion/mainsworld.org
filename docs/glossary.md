@@ -58,6 +58,10 @@ Main's World has its own vocabulary. Here's what everything means.
   never pays you.
 - **Energy credits** — your daily fuel for doing things (posting, appreciating,
   commenting). You get 10 a day.
+- **Energy burned** — the running total of energy credits the whole community has
+  spent on posting, appreciating and commenting. Spent credits are gone rather
+  than moved: nothing anyone burns becomes anyone else's balance. See
+  [The economy](/the-economy).
 - **App connection** — a link you choose to make between Main's World and another
   app you use, letting that app send moments into your world. You pick which
   world they land in. Planned, not live yet — see [Roadmap](/roadmap).

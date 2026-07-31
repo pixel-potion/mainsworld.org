@@ -38,6 +38,26 @@ piled on or drained. You can change your mind at any time: take a thumbs up
 back, give it again — only your first one on a moment ever spends energy, and a
 gift, once given, stays given.
 
+## Energy burned
+
+Energy credits are **spent, not transferred**. When you record a moment,
+appreciate someone or leave a comment, the credit it costs is simply gone — it
+does not move into anyone else's balance. The running total of everything the
+community has spent that way is called **energy burned**.
+
+It is worth knowing for two reasons.
+
+It is an honest measure of how much is actually being *made* here. Every unit of
+it was somebody deciding to do something rather than just look.
+
+And it is the counterweight to $MAIN. Appreciation creates $MAIN; doing anything
+at all burns energy. Read together, the two numbers describe the whole economy:
+what it costs to take part, and what taking part turned out to be worth to
+everybody else.
+
+Burning is not the same as paying. Buying credits and then spending them burns
+them — it never creates $MAIN, for you or for anyone.
+
 ## You can't pay yourself
 
 One rule holds the whole thing together: **no one can ever route value to
