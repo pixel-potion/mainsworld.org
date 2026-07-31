@@ -82,6 +82,63 @@ Its stay on the map is measured from when you **posted** it, though, not from
 when the photo was taken — so a throwback of a photo from years ago still gets
 its full 30 days on the map, the same as anything else you post today.
 
+## What can go on the public world
+
+Posting to SKY puts a moment in front of everyone on Main's World, so a check
+runs before it lands there. It looks at whether the moment suits a public,
+all-ages map, and it turns away the things you'd expect: explicit content, hate,
+graphic violence.
+
+**Only the public world is checked.** Posting to your connections (LAND) or
+keeping a moment private (DEEP) doesn't go through any of this — those are yours,
+and they always accept what you give them.
+
+Once in a while the check can't run at all. When that happens a public post is
+refused rather than waved through, and the app asks you to try again. It's the
+cautious way round, and it never touches your other two worlds.
+
+## Real photographs, not generated ones
+
+Main's World is a map of things that actually happened, somewhere, to a real
+person. A picture made by an image generator rather than a camera isn't that, so
+we try to keep generated images off the public map.
+
+Two things help. The first is what a photo says about itself: many image
+generators attach a small record to every file they make, called **Content
+Credentials** — a note tucked inside the image describing how it was produced. If
+that note says the picture was generated, the app tells you before you post, and
+the moment won't go to the public world.
+
+The second is the check above, which also forms a view on whether a picture looks
+generated. It only acts when it's confident. A real photograph is always the
+assumption, and anything uncertain is treated as real.
+
+**Your moment isn't lost.** A photo that can't go to the public world can still be
+posted to your connections or kept private. Nothing is deleted, and posting it
+somewhere else costs you nothing extra.
+
+### What this can and can't do
+
+We'd rather be straight about the limits than overstate them.
+
+This catches pictures that identify themselves, and pictures that are obviously
+generated. It does not catch everything. Anyone determined to get a generated
+image onto the public map can strip the note out of the file and choose a picture
+that doesn't look obviously made — and there's no reliable way to tell from the
+picture alone.
+
+The reverse is worth saying too: there's no way to prove a photograph *did* come
+from a camera. An image with no Content Credentials attached tells us nothing
+either way, and a missing note is never treated as a reason to doubt a photo. Most
+cameras don't add one.
+
+So this is a filter, not a guarantee. It makes the public map meaningfully
+cleaner. It doesn't make it certain.
+
+A check like this can also be wrong in the other direction, and a real photograph
+of yours could occasionally be turned away from the public world. If that happens,
+the moment is still yours — post it to your connections, or keep it private.
+
 ## Appreciation, not likes
 
 Instead of "likes," Main's World has **appreciation**. Giving a moment a
