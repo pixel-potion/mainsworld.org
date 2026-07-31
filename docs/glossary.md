@@ -25,6 +25,11 @@ Main's World has its own vocabulary. Here's what everything means.
   works without it. See [Getting started](/how-it-works/getting-started).
 - **Moment** — a post: a photo or video, recorded where and when you are.
   See [Moments](/how-it-works/moments).
+- **Content Credentials** — a small record some cameras and many image generators
+  tuck inside an image file, describing how the picture was made. Main's World
+  reads it to keep generated images off the public map; a picture without one is
+  never treated as suspect. See
+  [what can go on the public world](/how-it-works/moments).
 - **The worlds** — the three settings that decide who can see a moment:
   - **SKY** — public: anyone can see it.
   - **LAND** — your connections: only people you've connected with.

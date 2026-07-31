@@ -44,6 +44,18 @@ A moment is anchored to a real **place** and a real **time**. That's what turns
 Main's World into a map you can travel through — you can rewind to see what
 happened somewhere earlier. See [Moments](/how-it-works/moments).
 
+### Can people post AI-generated pictures?
+
+Not to the public map, if we can tell. Moments headed for the public world are
+checked, and a picture that says in its own file data that a generator made it —
+or that plainly looks generated — is turned away. It can still go to your
+connections or stay private.
+
+It's a filter, not a guarantee: a determined person can strip that data out, and
+no one can tell a generated picture from a real one every time. The honest
+version is that the public map is meaningfully cleaner, not certain. See
+[Moments](/how-it-works/moments).
+
 ### What is $MAIN? Can I cash it out?
 
 $MAIN is the currency you earn when other real people appreciate what you made.
