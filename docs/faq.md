@@ -76,6 +76,24 @@ computer signs in. Topping up credits and the Vault stay on your phone, because
 they need World App itself. Only ever approve a code you can see on your own
 screen — see [Signing in](/how-it-works/signing-in).
 
+### Does Main's World have a light mode?
+
+Yes, and you don't have to switch it on: the app follows whatever your phone is
+already set to, light or dark, and changes when your phone does. If you would
+rather pin it, open the settings area behind your avatar and look under
+Preferences for **Theme** — Auto follows the phone, or you can hold it on Light
+or Dark. The choice is remembered on that device, the same way the language
+choice is.
+
+The map itself stays dark either way. That is deliberate: the worlds are drawn
+in a night palette, and pale cards over a dark map are easier to read than the
+reverse — the same pairing most map apps use. What changes is everything around
+the map: the sheets, cards, panels and text.
+
+Text and controls are checked against the contrast levels in the Web Content
+Accessibility Guidelines in both themes, so labels, counts and timestamps stay
+readable instead of fading into the surface behind them.
+
 ### Who runs this knowledge base?
 
 The community. Every page is openly editable on GitHub — see
