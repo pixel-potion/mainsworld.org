@@ -45,6 +45,14 @@ Turning the groups that form around vibes into lasting **[crews](/how-it-works/c
 that can create together and share what they earn — with fair, member-approved
 rules.
 
+## Light mode
+
+**Not live.** The app is dark on every phone today. A light mode was briefly
+available and was taken back out, because on real phones in real light too many
+screens were harder to read than the dark ones they replaced. It is being worked
+on again, and it will come back when it is genuinely better to look at rather
+than merely available. There is no date.
+
 ## SPACE — a future world
 
 Today's worlds (SKY, LAND, DEEP) are about *where you physically are*. **SPACE**
