@@ -78,21 +78,24 @@ screen — see [Signing in](/how-it-works/signing-in).
 
 ### Does Main's World have a light mode?
 
-Yes, and you don't have to switch it on: the app follows whatever your phone is
-already set to, light or dark, and changes when your phone does. If you would
-rather pin it, open the settings area behind your avatar and look under
-Preferences for **Theme** — Auto follows the phone, or you can hold it on Light
-or Dark. The choice is remembered on that device, the same way the language
-choice is.
+Not at the moment. The app is dark whatever your phone is set to, and there is
+no theme setting to change it.
 
-The map itself stays dark either way. That is deliberate: the worlds are drawn
-in a night palette, and pale cards over a dark map are easier to read than the
-reverse — the same pairing most map apps use. What changes is everything around
-the map: the sheets, cards, panels and text.
+A light mode was briefly available and has been taken back out. It was not
+ready: on real phones, in real light, too many screens were harder to read than
+the dark ones they replaced. Shipping a half-finished version of it would have
+made the app worse for everyone who tried it, so it has gone back to being
+worked on rather than staying available.
+
+The dark palette is not only a fallback, though. The worlds are drawn in a night
+palette, and that is the look the map is designed around — the same dark-map
+pairing most map apps offer.
 
 Text and controls are checked against the contrast levels in the Web Content
-Accessibility Guidelines in both themes, so labels, counts and timestamps stay
-readable instead of fading into the surface behind them.
+Accessibility Guidelines, so labels, counts and timestamps stay readable instead
+of fading into the surface behind them.
+
+Light mode is on the [Roadmap](/roadmap). There is no date for it.
 
 ### Who runs this knowledge base?
 
