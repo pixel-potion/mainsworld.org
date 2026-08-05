@@ -1,7 +1,7 @@
 ---
 sidebar_position: 1
 title: The worlds & privacy
-description: SKY, LAND, and DEEP — the three worlds that decide who can see what, the X-RAY view that shows them together, and the privacy model underneath.
+description: SKY, LAND, and DEEP — the three worlds that decide who can see what, the OMNI view that shows them together, and the privacy model underneath.
 ---
 
 # The worlds & privacy
@@ -19,19 +19,19 @@ to be simple enough to hold in your head.
 That's it. No confusing settings, no per-post checkboxes buried in a menu. You
 pick a world, and the world tells you who's there.
 
-## X-RAY: all three at once
+## OMNI: all three at once
 
 The map normally shows you one world at a time. You ride between them with the
-world switch in the top right corner: tapping it opens a panel listing the
-worlds, and each world has its own look, so you always know which one you're
-standing in. The same panel holds the settings that narrow what's on the map —
+layered sphere in the top right corner. Tapping the sphere opens a compact panel:
+its SKY, LAND and DEEP layers separate, and you can choose any labeled layer to
+switch worlds. The same panel holds the settings that narrow what's on the map —
 see [Moments](/how-it-works/moments).
 
-**X-RAY** is a fourth choice in that panel, and it works differently: instead of
-showing one world, it shows all of them together. Every moment you're already
-allowed to see, from SKY, LAND and DEEP, appears on one map at the same time —
-and each one keeps its own world's color, so you can still tell at a glance
-where anything lives.
+**OMNI** is the combined all-worlds view. Choose OMNI in the panel, long-press
+the sphere, or double-tap any single layer to bring all three layers together.
+Every moment you're already allowed to see, from SKY, LAND and DEEP, appears on
+one map at the same time — and each one keeps its own world's color, so you can
+still tell at a glance where anything lives.
 
 It's useful when you want the whole picture of a place rather than one slice of
 it: everything you and your connections have left in a neighborhood, across
@@ -39,12 +39,12 @@ every world, in one view.
 
 Two things are worth being clear about:
 
-- **X-RAY shows you nothing new.** It's exactly the moments the three worlds
+- **OMNI shows you nothing new.** It's exactly the moments the three worlds
   would each have shown you, gathered into one view. It can't reveal a moment
   you weren't already allowed to open, and it changes nothing about who can see
   what.
-- **X-RAY isn't somewhere moments live.** You can't post to it. Every moment
-  still belongs to exactly one of the three worlds — X-RAY is a way of looking,
+- **OMNI isn't somewhere moments live.** You can't post to it. Every moment
+  still belongs to exactly one of the three worlds — OMNI is a way of looking,
   not a place.
 
 ## Tagging opens a door
@@ -61,11 +61,11 @@ you that something exists. Small, faint dots — each wearing the color of its
 world — mark moments that are out of reach from where you're standing:
 
 - Moments in a world other than the one you're viewing, including your own —
-  handy for spotting where your moments live across the worlds. (In X-RAY these
+  handy for spotting where your moments live across the worlds. (In OMNI these
   become ordinary moments you can open, because every world is on screen at
   once.)
 - Connections-only (LAND) moments from people you haven't connected with yet.
-  These stay dots everywhere, X-RAY included — they're moments you aren't
+  These stay dots everywhere, OMNI included — they're moments you aren't
   allowed to open, and no view changes that.
 
 A ghost dot is deliberately empty. It can't be opened, and it carries no

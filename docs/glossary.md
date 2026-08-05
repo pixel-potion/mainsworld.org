@@ -34,13 +34,14 @@ Main's World has its own vocabulary. Here's what everything means.
   - **SKY** — public: anyone can see it.
   - **LAND** — your connections: only people you've connected with.
   - **DEEP** — private: yours alone, unless you tag someone in.
-- **X-RAY** — a way of viewing the map that shows all three worlds at once
+- **OMNI** — a combined view of the map that shows all three worlds at once
   instead of one at a time, each moment keeping its own world's color. It shows
   only what you could already see, and you can't post to it — it's a view, not a
   world moments live in. See
   [the worlds & privacy](/how-it-works/the-worlds).
-- **World switch** — the dial in the top right corner of the map that moves you
-  between SKY, LAND and DEEP, or into X-RAY.
+- **World switch** — the layered sphere in the top right corner of the map.
+  Tapping it opens a panel where you can move between SKY, LAND and DEEP, or
+  combine them in OMNI.
 - **Vibe** — a live, shared gathering on the map that no one owns. See
   [Vibes](/how-it-works/vibes).
 - **Future Vibe** — a vibe planned ahead of time, with a start, an optional end,
@@ -85,7 +86,7 @@ Main's World has its own vocabulary. Here's what everything means.
 - **Ghost dot** — a small, faint, world-colored dot on the map marking a moment
   you can't open from where you are: a moment in another world, or a
   connections-only moment from someone you haven't connected with yet. It shows
-  only that something is there — never who or what. In X-RAY, the ones that were
+  only that something is there — never who or what. In OMNI, the ones that were
   simply in another world become moments you can open; the ones you were never
   allowed to open stay dots. See
   [the worlds & privacy](/how-it-works/the-worlds).
