@@ -40,8 +40,8 @@ Main's World has its own vocabulary. Here's what everything means.
   world moments live in. See
   [the worlds & privacy](/how-it-works/the-worlds).
 - **World switch** — the layered sphere in the top right corner of the map.
-  Tapping it opens a panel where you can move between SKY, LAND and DEEP, or
-  combine them in OMNI.
+  Tap another visible slice to move there immediately, or tap the lit slice to
+  open the three-world and map-filter panel.
 - **Vibe** — a live, shared gathering on the map that no one owns. See
   [Vibes](/how-it-works/vibes).
 - **Future Vibe** — a vibe planned ahead of time, with a start, an optional end,

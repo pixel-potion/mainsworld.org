@@ -22,16 +22,15 @@ pick a world, and the world tells you who's there.
 ## OMNI: all three at once
 
 The map normally shows you one world at a time. You ride between them with the
-layered sphere in the top right corner. Tapping the sphere opens a compact panel:
-its SKY, LAND and DEEP layers separate, and you can choose any labeled layer to
-switch worlds. The same panel holds the settings that narrow what's on the map —
-see [Moments](/how-it-works/moments).
+layered sphere in the top right corner. Tap another visible slice to switch
+floors immediately, or tap the lit slice to open a compact panel where SKY, LAND
+and DEEP separate into three labeled choices. The same panel holds the settings
+that narrow what's on the map — see [Moments](/how-it-works/moments).
 
-**OMNI** is the combined all-worlds view. Choose OMNI in the panel, long-press
-the sphere, or double-tap any single layer to bring all three layers together.
-Every moment you're already allowed to see, from SKY, LAND and DEEP, appears on
-one map at the same time — and each one keeps its own world's color, so you can
-still tell at a glance where anything lives.
+**OMNI** is the combined all-worlds view. Every moment you're already allowed to
+see, from SKY, LAND and DEEP, appears on one map at the same time — and each one
+keeps its own world's color, so you can still tell at a glance where anything
+lives.
 
 It's useful when you want the whole picture of a place rather than one slice of
 it: everything you and your connections have left in a neighborhood, across
