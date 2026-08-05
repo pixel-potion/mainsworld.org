@@ -70,21 +70,35 @@ The bar at the bottom of the app holds three things: **moments**, the camera
 button, and **vibes**. Tapping moments slides up a list of everything you're
 allowed to see, newest first, across all three worlds.
 
-Two controls sit at the top of that list:
+**Search** sits at the top of that list. Type a word and the list keeps only
+the moments whose label contains it. You are only ever searching what you could
+already see.
 
-- **Search.** Type a word and the list keeps only the moments whose label
-  contains it. You are only ever searching what you could already see.
-- **Filters.** The settings button opens a short menu with three choices:
-  - **How far the list reaches** — only what's around you, or everywhere.
-  - **Whose moments are in it** — everyone, the Mains you've connected with,
-    the Mains you [follow](/glossary), or only your own.
-  - **Whether moments that arrived from another app count.** This one waits on
-    [connections to other apps](/roadmap), which aren't live yet.
+The list also **groups itself**. Whatever is around you rises to the top under
+a NEARBY heading, and everything else sits below it under GLOBAL. Folding the
+nearby group away is the quick route down to the rest of the world. Nothing is
+hidden by this — it is an ordering, not a filter — and when everything happens
+to be in one group or the other, there are no headings at all.
 
-Your choices are remembered on your device, so the list opens the way you left
-it. Whenever a filter is narrowing what you see, the app marks the settings
-button and names the filter above the list, so a short list always explains
-itself.
+## Narrowing what you see
+
+The **world panel** opens from the world switch in the top right corner. It
+holds the worlds you can move between, and underneath them the settings that
+narrow what's on screen:
+
+- **Whose moments you see** — everyone, the Mains you've connected with, the
+  Mains you [follow](/glossary), or only your own.
+- **Whether moments that arrived from another app count.** This one waits on
+  [connections to other apps](/roadmap), which aren't live yet.
+
+These narrow the **map as well as the list**, so the pins thin out to match
+what you asked for. A moment that a setting filters out doesn't disappear from
+the map — it becomes an anonymous dot, so you can always see that something is
+there rather than wondering whether the map is broken.
+
+Your choices are remembered on your device, so things open the way you left
+them. Whenever something is narrowed, the panel offers a way to show everything
+again, so a short list always explains itself.
 
 ## How long a moment stays on the map
 

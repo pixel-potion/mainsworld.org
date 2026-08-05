@@ -22,10 +22,12 @@ pick a world, and the world tells you who's there.
 ## X-RAY: all three at once
 
 The map normally shows you one world at a time. You ride between them with the
-world switch — the dial in the top right corner — and each world has its own
-look, so you always know which one you're standing in.
+world switch in the top right corner: tapping it opens a panel listing the
+worlds, and each world has its own look, so you always know which one you're
+standing in. The same panel holds the settings that narrow what's on the map —
+see [Moments](/how-it-works/moments).
 
-**X-RAY** is a fourth setting on that dial, and it works differently: instead of
+**X-RAY** is a fourth choice in that panel, and it works differently: instead of
 showing one world, it shows all of them together. Every moment you're already
 allowed to see, from SKY, LAND and DEEP, appears on one map at the same time —
 and each one keeps its own world's color, so you can still tell at a glance
