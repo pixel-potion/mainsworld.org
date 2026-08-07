@@ -17,9 +17,10 @@ before:
 
 - **A vibe isn't alive until people join.** Anyone can *start* one, but it only
   comes to life when others show up.
-- **A vibe ends when everyone leaves.** There's no owner keeping it running, no
-  page that lingers empty forever. When the last person drifts off, the vibe
-  wraps up.
+- **A vibe ends on its own.** There's no owner keeping it running and no page
+  that lingers empty forever. A vibe wraps up when the last person leaves, when
+  it reaches the end time it was given, or after about two hours of quiet —
+  whichever comes first. One nobody joins at all gives up after ten minutes.
 - **Bigger gatherings look bigger.** A vibe's footprint on the map grows with the
   number of people there.
 
@@ -28,6 +29,42 @@ before:
 When you're at a vibe, the moments you record become part of its story, and they
 take on the vibe's world (SKY, LAND, or DEEP). A vibe is the shared thread; the
 moments are the beads on it.
+
+They also stay **inside** the vibe while it's running. Everyone at the gathering
+sees them in its live story, but they don't go out onto the map, and people
+looking in from outside don't see them at all. What happens at the vibe stays
+there until you say otherwise.
+
+## When it's over, you decide what leaves
+
+A vibe ending doesn't publish anything. Once the lights go out, the moments you
+recorded there are yours alone — nobody else can see them, not even the people
+who were with you — and each one waits for you to make a call:
+
+- **Put it on the map**, where it becomes an ordinary moment in the vibe's world
+  and joins the vibe's recap.
+- **Bin it**, and it's gone.
+
+Nothing publishes itself and nothing deletes itself. Moments you don't decide
+about stay private for as long as you leave them there, and the app keeps asking
+until you do.
+
+## The recap reel
+
+An ended vibe leaves a **recap reel** behind for 30 days: a short, tap-through
+story of what the gathering was — how many moments, how many people, how long it
+ran, and then the published moments themselves, in the order they happened. A
+busy vibe doesn't play all of them; the reel picks the most appreciated handful,
+so it stays a highlight reel rather than an archive.
+
+The reel only ever plays published moments. Anything still waiting on someone's
+decision isn't in it, and never will be unless that person puts it on the map.
+So the reel fills out as people work through what they shot — which is why it's
+worth doing your own decisions before you watch it.
+
+After 30 days the vibe and its reel are gone for good. The moments people
+published live on as ordinary moments on the map; the gathering itself doesn't
+linger.
 
 ## Plan a vibe ahead
 
@@ -94,8 +131,9 @@ working. There's more on how special links respect the worlds in
 ## What's here today, and what's coming
 
 Live vibes, planned-ahead vibes, RSVPs, calendar entries, and invitations to your
-existing Mains work today. Bigger ideas — inviting people who haven't joined
-Main's World yet, and turning gatherings into lasting groups — are on the
+existing Mains work today — so do the close-out decisions when a vibe ends and
+the recap reel it leaves behind. Bigger ideas — inviting people who haven't
+joined Main's World yet, and turning gatherings into lasting groups — are on the
 **[Roadmap](/roadmap)**. We label what's live and what's still ahead so this
 page stays honest.
 

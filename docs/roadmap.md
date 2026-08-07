@@ -16,7 +16,9 @@ Live vibes work today, and so does planning one ahead — with a start, an end,
 and a place, and RSVPs before it begins (see [Vibes](/how-it-works/vibes)). The
 agenda groups nearby and global gatherings by when they happen, shows when your
 Mains are going, and lets people who are in a planned vibe prepare a private
-calendar entry.
+calendar entry. When a vibe ends, the people who were there decide which of
+their moments leave, and it leaves a 30-day recap reel behind.
+
 What's still ahead:
 
 - **Invite beyond your Mains.** Hold a spot for someone who hasn't joined Main's
