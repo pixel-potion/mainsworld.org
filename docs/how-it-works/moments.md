@@ -82,9 +82,10 @@ to be in one group or the other, there are no headings at all.
 
 ## Narrowing what you see
 
-The **world panel** opens from the world switch in the top right corner. It
-holds the worlds you can move between, and underneath them the settings that
-narrow what's on screen:
+The **world panel** opens from the world switch in the top right corner — tap
+the lit layer, the one for the world you're already standing in. It holds the
+worlds you can move between, and underneath them the settings that narrow what's
+on screen:
 
 - **Whose moments you see** — everyone, the Mains you've connected with, the
   Mains you [follow](/glossary), or only your own.
@@ -97,8 +98,9 @@ the map — it becomes an anonymous dot, so you can always see that something is
 there rather than wondering whether the map is broken.
 
 Your choices are remembered on your device, so things open the way you left
-them. Whenever something is narrowed, the panel offers a way to show everything
-again, so a short list always explains itself.
+them. When something is narrowed the switch carries a mark saying so, so a short
+list always explains itself — and setting "whose moments" back to everyone
+widens it again.
 
 ## How long a moment stays on the map
 

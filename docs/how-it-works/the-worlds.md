@@ -1,7 +1,7 @@
 ---
 sidebar_position: 1
 title: The worlds & privacy
-description: SKY, LAND, and DEEP — the three worlds that decide who can see what, the X-RAY view that shows them together, and the privacy model underneath.
+description: SKY, LAND, and DEEP — the three worlds that decide who can see what, the OMNI view that shows them together, and the privacy model underneath.
 ---
 
 # The worlds & privacy
@@ -19,19 +19,21 @@ to be simple enough to hold in your head.
 That's it. No confusing settings, no per-post checkboxes buried in a menu. You
 pick a world, and the world tells you who's there.
 
-## X-RAY: all three at once
+## OMNI: all three at once
 
 The map normally shows you one world at a time. You ride between them with the
-world switch in the top right corner: tapping it opens a panel listing the
-worlds, and each world has its own look, so you always know which one you're
-standing in. The same panel holds the settings that narrow what's on the map —
-see [Moments](/how-it-works/moments).
+world switch in the top right corner. It's a small round badge split into three
+layers, one for each world, and the lit layer is the world you're standing in —
+so you always know where you are. Tap one of the other two and you move there
+straight away. Tap the lit one and a panel opens, listing the three worlds along
+with the settings that narrow what's on the map — see
+[Moments](/how-it-works/moments).
 
-**X-RAY** is a fourth choice in that panel, and it works differently: instead of
-showing one world, it shows all of them together. Every moment you're already
-allowed to see, from SKY, LAND and DEEP, appears on one map at the same time —
-and each one keeps its own world's color, so you can still tell at a glance
-where anything lives.
+**OMNI** works differently, and it isn't in that panel: press and hold the world
+switch, and the three layers merge into one. Instead of showing a single world
+it shows all of them together. Every moment you're already allowed to see, from
+SKY, LAND and DEEP, appears on one map at the same time — and each one keeps its
+own world's color, so you can still tell at a glance where anything lives.
 
 It's useful when you want the whole picture of a place rather than one slice of
 it: everything you and your connections have left in a neighborhood, across
@@ -39,12 +41,12 @@ every world, in one view.
 
 Two things are worth being clear about:
 
-- **X-RAY shows you nothing new.** It's exactly the moments the three worlds
+- **OMNI shows you nothing new.** It's exactly the moments the three worlds
   would each have shown you, gathered into one view. It can't reveal a moment
   you weren't already allowed to open, and it changes nothing about who can see
   what.
-- **X-RAY isn't somewhere moments live.** You can't post to it. Every moment
-  still belongs to exactly one of the three worlds — X-RAY is a way of looking,
+- **OMNI isn't somewhere moments live.** You can't post to it. Every moment
+  still belongs to exactly one of the three worlds — OMNI is a way of looking,
   not a place.
 
 ## Tagging opens a door
@@ -61,11 +63,11 @@ you that something exists. Small, faint dots — each wearing the color of its
 world — mark moments that are out of reach from where you're standing:
 
 - Moments in a world other than the one you're viewing, including your own —
-  handy for spotting where your moments live across the worlds. (In X-RAY these
+  handy for spotting where your moments live across the worlds. (In OMNI these
   become ordinary moments you can open, because every world is on screen at
   once.)
 - Connections-only (LAND) moments from people you haven't connected with yet.
-  These stay dots everywhere, X-RAY included — they're moments you aren't
+  These stay dots everywhere, OMNI included — they're moments you aren't
   allowed to open, and no view changes that.
 
 A ghost dot is deliberately empty. It can't be opened, and it carries no
@@ -101,17 +103,18 @@ A few things keep this honest:
 
 ## Messaging your connections
 
-Once you and another Main have connected, you can message each other through
-**World Chat** — World App's own end-to-end encrypted chat between verified
-humans. A small chat button appears beside each of your connections; tapping it
-opens a drafted conversation in World Chat, and nothing is sent until you choose
-to send it.
+There's no messaging inside Main's World at the moment. A button that opened a
+draft conversation in **World Chat** — World App's own end-to-end encrypted chat
+between verified humans — was removed in August 2026, because the way it reached
+World Chat needed rebuilding rather than patching. For now your connections are
+people you find on the map, not an inbox.
 
-One honest trade to know about: reaching someone on World Chat works through
-their **World App username**, so once two Mains connect, each can see the
-other's username. That link exists only between the two of you — never for
-pending requests, never for strangers — and it mirrors what connecting already
-means here: you met in person and chose each other. To everyone else, you stay
+One honest thing to know either way: connecting is what exchanges **World App
+usernames**. When two Mains accept each other, each side's app receives the
+other's username — nothing shows it on screen today, but it is shared between
+you. That happens only between accepted connections — never for pending
+requests, never for strangers — and it mirrors what connecting already means
+here: you met in person and chose each other. To everyone else, you stay
 anonymous.
 
 ## Your identity: real, and anonymous

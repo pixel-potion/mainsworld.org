@@ -27,11 +27,11 @@ bots and fake accounts simply can't exist here, even though everyone's private.
 
 ### Can I message people?
 
-Yes — if you've connected with them. Connected Mains can open a conversation in
-**World Chat**, World App's end-to-end encrypted messenger, straight from
-Main's World. Messaging stays between people who chose each other in person;
-there are no cold messages from strangers. See
-[the worlds & privacy](/how-it-works/the-worlds).
+Not right now. A button that opened a conversation in **World Chat** — World
+App's end-to-end encrypted messenger — was removed in August 2026, because the
+way it reached World Chat needed rebuilding rather than patching. What hasn't
+changed is the rule it was built on: nobody here can be cold-messaged by a
+stranger. See [the worlds & privacy](/how-it-works/the-worlds).
 
 ### Is my data being sold or used for ads?
 
