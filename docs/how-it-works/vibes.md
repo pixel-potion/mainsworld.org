@@ -24,13 +24,6 @@ before:
 - **Bigger gatherings look bigger.** A vibe's footprint on the map grows with the
   number of people there.
 
-## Bring your Mains
-
-If you're on a vibe you can invite any of your connections to it, and the
-invitation reaches them even through a world they can't normally see into —
-that's the whole point of an invitation. Inviting someone who isn't on Main's
-World yet is still ahead; see the [Roadmap](/roadmap).
-
 ## Moments feed the vibe
 
 When you're at a vibe, the moments you record become part of its story, and they
@@ -90,6 +83,33 @@ world and your private one — you can set one up like an event:
 Vibes in the public SKY always start right now — a public broadcast is a live
 thing.
 
+## Browse what's happening
+
+The VIBES list works like a small agenda. It keeps nearby gatherings together
+before the global list. Inside each group, it separates gatherings that are live
+now from ones happening today and ones coming later. Planned vibes stay in start
+time order, so an RSVP does not make the list jump around.
+
+A planned vibe shows its start time and world before you open it, plus its
+distance from you when location is available.
+
+## RSVP with your Mains
+
+If one of your Mains invited you, the planned vibe shows that you're invited.
+Tap **Count me in** to RSVP; once you do, it shows that you're in.
+
+Any person already on a vibe can invite one of their Mains. When your Mains are
+going too, the agenda may show up to two of their names and pictures. If their
+names are not available, it uses a generic count instead. It does not name
+strangers in the compact agenda. Inside the vibe, you and your Mains appear
+first in the attendance list.
+
+Once you're in — whether you started the vibe or RSVP'd — **Add to calendar**
+prepares a private calendar entry for your phone or browser. It includes the
+vibe's name, start time, optional end time, and place. Main's World does not
+connect to or read your calendar. The entry can bring you back to the map, but
+it is not an invitation link and does not give anyone access to a private vibe.
+
 ## Find your way there
 
 Every vibe shows the address of its spot. Tap the address and it opens in your
@@ -110,10 +130,11 @@ working. There's more on how special links respect the worlds in
 
 ## What's here today, and what's coming
 
-Live vibes and planned-ahead vibes work today, along with inviting your
-connections, the close-out decisions, and the recap reel. Bigger ideas — holding
-a spot for someone who isn't on Main's World yet, and turning gatherings into
-lasting groups — are on the **[Roadmap](/roadmap)**. We label what's live and
-what's still ahead so this page stays honest.
+Live vibes, planned-ahead vibes, RSVPs, calendar entries, and invitations to your
+existing Mains work today — so do the close-out decisions when a vibe ends and
+the recap reel it leaves behind. Bigger ideas — inviting people who haven't
+joined Main's World yet, and turning gatherings into lasting groups — are on the
+**[Roadmap](/roadmap)**. We label what's live and what's still ahead so this
+page stays honest.
 
 Next: **[Crews](/how-it-works/crews)** — when a group becomes a lasting thing.

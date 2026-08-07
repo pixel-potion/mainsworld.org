@@ -13,12 +13,16 @@ about what's live versus what's still ahead.
 ## Vibes, in full
 
 Live vibes work today, and so does planning one ahead — with a start, an end,
-and a place, and RSVPs before it begins. So does inviting your connections to
-one, deciding what leaves when it ends, and the recap reel it leaves behind (see
-[Vibes](/how-it-works/vibes)). What's still ahead:
+and a place, and RSVPs before it begins (see [Vibes](/how-it-works/vibes)). The
+agenda groups nearby and global gatherings by when they happen, shows when your
+Mains are going, and lets people who are in a planned vibe prepare a private
+calendar entry. When a vibe ends, the people who were there decide which of
+their moments leave, and it leaves a 30-day recap reel behind.
 
-- **Invite anyone.** Hold a spot for someone who hasn't joined Main's World yet,
-  so a gathering isn't limited to people already here.
+What's still ahead:
+
+- **Invite beyond your Mains.** Hold a spot for someone who hasn't joined Main's
+  World yet.
 
 ## Connections to other apps
 
