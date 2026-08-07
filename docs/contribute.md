@@ -47,7 +47,7 @@ keep contributions:
 ## Style notes
 
 - Say **moments** (not posts), **Mains** (the people), **vibes**, **crews**, and the
-  three worlds **SKY / LAND / DEEP**. **X-RAY** is the view that shows all three
+  three worlds **SKY / LAND / DEEP**. **OMNI** is the view that shows all three
   at once — it's not a fourth world, and moments never live in it. The
   [Glossary](/glossary) is the reference.
 - Prefer short sentences and concrete words.
