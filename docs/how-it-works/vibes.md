@@ -110,6 +110,16 @@ vibe's name, start time, optional end time, and place. Main's World does not
 connect to or read your calendar. The entry can bring you back to the map, but
 it is not an invitation link and does not give anyone access to a private vibe.
 
+## When the doors open
+
+While a planned vibe you joined is live, it appears in your Main's World
+notifications as **Doors open**. If the app is open — or you return while the
+vibe is still live — it also shows a one-time **Enter vibe** prompt on that
+device. Either one takes you straight to the gathering, even when it is in a
+different world.
+
+These are in-app notices, not phone push notifications while the app is closed.
+
 ## Find your way there
 
 Every vibe shows the address of its spot. Tap the address and it opens in your
@@ -130,11 +140,11 @@ working. There's more on how special links respect the worlds in
 
 ## What's here today, and what's coming
 
-Live vibes, planned-ahead vibes, RSVPs, calendar entries, and invitations to your
-existing Mains work today — so do the close-out decisions when a vibe ends and
-the recap reel it leaves behind. Bigger ideas — inviting people who haven't
-joined Main's World yet, and turning gatherings into lasting groups — are on the
-**[Roadmap](/roadmap)**. We label what's live and what's still ahead so this
-page stays honest.
+Live vibes, planned-ahead vibes, RSVPs, calendar entries, doors-open notices,
+and invitations to your existing Mains work today — so do the close-out
+decisions when a vibe ends and the recap reel it leaves behind. Bigger ideas —
+inviting people who haven't joined Main's World yet, and turning gatherings
+into lasting groups — are on the **[Roadmap](/roadmap)**. We label what's live
+and what's still ahead so this page stays honest.
 
 Next: **[Crews](/how-it-works/crews)** — when a group becomes a lasting thing.
