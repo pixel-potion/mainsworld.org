@@ -1,14 +1,14 @@
 ---
 sidebar_position: 5
 title: The economy
-description: How Main's World runs on genuine appreciation between real people — you can't take, you can only give.
+description: How Main's World runs on appreciation between Mains — you can't take, you can only give.
 ---
 
 # The economy
 
 Most apps are built to take your attention. Main's World is built around the
-opposite idea: **the only thing of value is genuine appreciation between real
-people, and you can only give it — never take it for yourself.**
+opposite idea: **the only thing of value is genuine appreciation between Mains,
+and you can only give it — never take it for yourself.**
 
 Here's how that works, in plain terms.
 
@@ -19,19 +19,20 @@ Every Main has two separate balances that never mix:
 - **Energy credits** — your day-to-day fuel. You get a fresh **10 every day**.
   You spend them to do things: record a moment, appreciate someone, leave a
   comment. Credits are for *doing*, not for keeping.
-- **$MAIN** — the earned currency. The **only** way to get $MAIN is to have other
-  real people appreciate what you made. You can't buy it, and you can't give it
-  to yourself.
+- **$MAIN** — the earned currency. The **only** way to get $MAIN is through an
+  eligible thumbs up on a moment you authored or were tagged in, or on a comment
+  you wrote. You can't buy it, and you can't give it to yourself.
 
 Think of the daily 10 as your voice for the day, and $MAIN as the appreciation
 you've genuinely earned from others.
 
 ## "Be kind, rewind"
 
-When you appreciate someone's moment with a **thumbs up**, you're spending a
-little of your own energy to **give** them a unit of $MAIN. That's the
-heartbeat of the whole economy: value only comes into being when one real
-human decides another's moment was worth something.
+An eligible first **thumbs up** on a moment spends a little of the voter's own
+energy and mints a total of 1 $MAIN. The moment's author and tagged Mains share
+it, excluding the voter. Another Main's first thumbs up on a comment gives its
+author 1 $MAIN. That's the heartbeat of the whole economy: value travels from
+one Main's action to other Mains.
 
 There is no downvote — appreciation is the only reaction, so no one can be
 piled on or drained. You can change your mind at any time: take a thumbs up
@@ -74,9 +75,11 @@ address or fingerprint is attached to them.
 
 One rule holds the whole thing together: **no one can ever route value to
 themselves.** You can give your own moment a thumbs up — it shows in the count
-like anyone else's — but it never pays you anything. Even when a moment is
-shared among a group, your share never comes from your own spending. Kindness
-has to travel between people, or it doesn't count.
+like anyone else's — but it never pays **you** $MAIN. If other Mains are tagged,
+they may still receive the split. Tagging a crew on a moment uses this ordinary
+tagged-Main split; a crew-owned wallet and configurable crew earnings rules are
+not live. No share ever comes back to the voter. Kindness has to travel between
+Mains, or it doesn't count.
 
 ## Buying credits buys voice, not the asset
 
@@ -90,11 +93,11 @@ busy day). To be crystal clear about what that is and isn't:
 
 ## What's live, and what's not
 
-Main's World runs this as a points-style economy today — the giving, the daily
-credits, the appreciation. Anything involving **cashing out or trading $MAIN as a
-real asset is not live**, and won't be until it's proven safe, reviewed, and
-limited to fully verified people. We'll say so plainly here whenever that
+Main's World runs the giving, daily credits, appreciation, and Vault claims
+today. An Orb-verified wallet can claim $MAIN on-chain through the Vault.
+**Open-market trading and liquidity are not live**, so exchanging $MAIN for
+money is not currently available; we will say so plainly here whenever that
 changes.
 
-> One line worth remembering: **every unit of $MAIN that exists is a moment
-> someone loved.**
+> One line worth remembering: **every unit of $MAIN starts with one Main
+> appreciating another's work.**

@@ -14,11 +14,11 @@ This page is the whole path, in order.
 
 ## Why there is a second app
 
-World App confirms that you are a real, unique person. That confirmation is the
-promise Main's World is built on: everyone here is a human, and nobody has to
-hand over a name or an email to prove it. Main's World never learns who you
-are — only that World App vouched for you. See
-[the worlds & privacy](/how-it-works/the-worlds) for what that means in practice.
+World App provides the wallet used to sign in. Signing in proves that you control
+that wallet; it does not by itself mean Main's World has recorded a
+human-verification check. Main's World does not ask for a name or email. See
+[the economy](/the-economy) for how the stats page distinguishes recorded
+verification from wallet sign-in.
 
 Main's World is a **mini app**: it runs *inside* World App rather than being
 installed on its own. There is nothing in an app store called "Main's World",

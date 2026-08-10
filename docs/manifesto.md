@@ -38,14 +38,16 @@ should only ever be given, never taken, and never faked.
 
 ## The world we're building
 
-Main's World is our answer. It's a map of real people and real moments, where
-everyone is a verified human and everyone stays anonymous. A place you visit to
-find your people — across time, across distance — not a place designed to hold on
-to you.
+Main's World is our answer: a map for moments made by people, with privacy built
+in. We are working toward stronger, privacy-preserving human verification; today
+wallet sign-in proves wallet control, and verification is recorded separately. A
+place you visit to find your people — across time, across distance — not a place
+designed to hold on to you.
 
 We call this kind of place a **SHIP: a Secure Human Interaction Protocol.** It's a
-small idea with a large consequence. When you can trust that everyone is human,
-everything built on top of that can be warmer, calmer, and more honest.
+small idea with a large consequence. If people can be recognized as human without
+giving up privacy, everything built on top of that can be warmer, calmer, and more
+honest.
 
 None of this is nostalgia for an internet that never existed. It's a wager that
 the next one can be better — quieter where it should be quiet, generous where it

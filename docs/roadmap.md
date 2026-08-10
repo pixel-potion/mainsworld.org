@@ -26,13 +26,12 @@ What's still ahead:
 
 ## Connections to other apps
 
-**Not live yet.** Apps you already use will be able to send moments into your
-world, so something you did somewhere else can land on your map without you
-retelling it. Two rules hold the idea together: nothing arrives unless you
-connect that app yourself, and you decide which world its moments land in —
-public SKY, your connections on LAND, or private DEEP. LAND is the starting
-point, so an imported moment is shared with the people you've connected with
-rather than with everyone.
+**RunPal is live.** Connect it to send finished runs into your world, so
+something you did somewhere else can land on your map without you retelling it.
+Nothing arrives unless you connect RunPal yourself, and you decide which world
+its moments land in — public SKY, your connections on LAND, or private DEEP.
+LAND is the starting point, so an imported moment is shared with the people
+you've connected with rather than with everyone.
 
 The first one is **RunPal**, a running app. Once connected, a finished run can
 arrive as a moment with its route drawn on the map. As with anything you post,
@@ -41,14 +40,14 @@ explained in **[The economy](/the-economy)** — and later updates to that same 
 are free. Disconnecting stops anything new arriving, and the
 moments already on your map stay yours.
 
-More apps will follow, and the list is worth arguing about — if there's one you
-want, say so via [Contribute](/contribute).
+More apps are planned. The list is worth arguing about — if there's one you want,
+say so via [Contribute](/contribute).
 
 ## Crews
 
-Turning the groups that form around vibes into lasting **[crews](/how-it-works/crews)**
-that can create together and share what they earn — with fair, member-approved
-rules.
+Basic **[crews](/how-it-works/crews)** are live: create one, invite people, join,
+and bail. Shared ownership, crew wallets, and member-approved earnings splits are
+still ahead.
 
 ## Light mode
 

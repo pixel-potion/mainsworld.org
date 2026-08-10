@@ -15,8 +15,8 @@ lots of people are living at once.
 This is the important part, and it's a little different from anything you've used
 before:
 
-- **A vibe isn't alive until people join.** Anyone can *start* one, but it only
-  comes to life when others show up.
+- **A vibe isn't normally alive until people join.** Anyone can *start* one, but
+  another Main normally has to join before it comes to life.
 - **A vibe ends on its own.** There's no owner keeping it running and no page
   that lingers empty forever. A vibe wraps up when the last person leaves, when
   it reaches the end time it was given, or after about two hours of quiet —

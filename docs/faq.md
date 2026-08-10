@@ -14,16 +14,16 @@ take part.
 
 ### Do I have to give my name or email?
 
-No — and you can't, because Main's World never asks. Your identity is confirmed
-as "a real, unique human" without revealing who you are. See
+No — and you can't, because Main's World never asks. Signing in proves control
+of your World App wallet without sharing a name or email. See
 [the worlds & privacy](/how-it-works/the-worlds).
 
-### If it's anonymous, how are there no bots?
+### Does signing in verify that every Main is human?
 
-That's the core idea. When you join, World App confirms you're a real, unique
-person using a zero-knowledge proof — cryptography that proves you're human
-without exposing your identity. Each real person can hold only one account, so
-bots and fake accounts simply can't exist here, even though everyone's private.
+No. Signing in with World App proves control of a wallet; it does not by itself
+prove personhood or uniqueness. Main's World records verification separately,
+and the stats page distinguishes Orb verification, other recorded verification,
+and wallet sign-in only. Orb verification is required only for Vault claims.
 
 ### Can I message people?
 
@@ -58,15 +58,18 @@ version is that the public map is meaningfully cleaner, not certain. See
 
 ### What is $MAIN? Can I cash it out?
 
-$MAIN is the currency you earn when other real people appreciate what you made.
-Today it lives inside the app as a way of recognizing genuine appreciation.
-Trading or cashing it out as a real asset **is not live** and won't be until it's
-proven safe and reviewed. See [the economy](/the-economy).
+$MAIN is the currency an eligible thumbs up can earn you on a moment you authored
+or were tagged in, or on a comment you wrote. Orb-verified wallets can claim it
+on-chain through the Vault today. Open-market trading and liquidity are not live,
+so exchanging it for money is not currently available. See
+[the economy](/the-economy).
 
 ### Can I buy my way to the top?
 
-No. You can buy energy credits (voice), but you can't buy $MAIN, and you can't
-appreciate yourself. The only way up is other real people valuing what you make.
+No. You can buy energy credits (voice), but you can't buy $MAIN. You can
+appreciate your own moment, but it never pays **you** $MAIN. If other Mains are
+tagged, they can receive its split; only another Main's appreciation can pay the
+moment's author.
 
 ### Can I use Main's World on my computer?
 
@@ -106,8 +109,8 @@ The community. Every page is openly editable on GitHub — see
 
 Yes, one thing: World App. Main's World is a *mini app*, which means it runs
 inside World App rather than being installed on its own — there is nothing in an
-app store called "Main's World". World App is free, and it's what confirms
-you're a real person without Main's World ever learning who you are.
+app store called "Main's World". World App is free, and it provides the wallet
+used to sign in without Main's World asking for your name or email.
 [Getting started](/how-it-works/getting-started) walks through the whole path.
 
 ### Do I need to find an Orb?

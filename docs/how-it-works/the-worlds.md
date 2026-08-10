@@ -1,7 +1,7 @@
 ---
 sidebar_position: 1
 title: The worlds & privacy
-description: SKY, LAND, and DEEP — the three worlds that decide who can see what, the OMNI view that shows them together, and the privacy model underneath.
+description: SKY, LAND, and DEEP — the three worlds that decide who can see what, the map filters that show them, and the privacy model underneath.
 ---
 
 # The worlds & privacy
@@ -17,37 +17,17 @@ to be simple enough to hold in your head.
 - **DEEP** — private. It's yours alone… unless you tag someone in.
 
 That's it. No confusing settings, no per-post checkboxes buried in a menu. You
-pick a world, and the world tells you who's there.
+pick a world for each moment, and the world tells you who can see it.
 
-## OMNI: all three at once
+## Filtering the map
 
-The map normally shows you one world at a time. You ride between them with the
-world switch in the top right corner. It's a small round badge split into three
-layers, one for each world, and the lit layer is the world you're standing in —
-so you always know where you are. Tap one of the other two and you move there
-straight away. Tap the lit one and a panel opens, listing the three worlds along
-with the settings that narrow what's on the map — see
-[Moments](/how-it-works/moments).
+The map has independent **SKY**, **LAND**, and **DEEP** filters. Turn each one
+on or off to decide which worlds appear together on the map and in the moments
+list. These are viewing choices only: turning on a filter never gives access to a
+moment you were not already allowed to open.
 
-**OMNI** works differently, and it isn't in that panel: press and hold the world
-switch, and the three layers merge into one. Instead of showing a single world
-it shows all of them together. Every moment you're already allowed to see, from
-SKY, LAND and DEEP, appears on one map at the same time — and each one keeps its
-own world's color, so you can still tell at a glance where anything lives.
-
-It's useful when you want the whole picture of a place rather than one slice of
-it: everything you and your connections have left in a neighborhood, across
-every world, in one view.
-
-Two things are worth being clear about:
-
-- **OMNI shows you nothing new.** It's exactly the moments the three worlds
-  would each have shown you, gathered into one view. It can't reveal a moment
-  you weren't already allowed to open, and it changes nothing about who can see
-  what.
-- **OMNI isn't somewhere moments live.** You can't post to it. Every moment
-  still belongs to exactly one of the three worlds — OMNI is a way of looking,
-  not a place.
+Every visible moment keeps its world's color, so a mixed view still makes clear
+where it lives. Your filter choices are remembered on your device.
 
 ## Tagging opens a door
 
@@ -60,15 +40,13 @@ specific people in.
 
 The map never shows you a moment you're not allowed to open. But it can show
 you that something exists. Small, faint dots — each wearing the color of its
-world — mark moments that are out of reach from where you're standing:
+world — can mark moments that are not in your current map view:
 
-- Moments in a world other than the one you're viewing, including your own —
-  handy for spotting where your moments live across the worlds. (In OMNI these
-  become ordinary moments you can open, because every world is on screen at
-  once.)
+- Moments in a world you have currently filtered out, including your own —
+  handy for spotting where your moments live across the worlds.
 - Connections-only (LAND) moments from people you haven't connected with yet.
-  These stay dots everywhere, OMNI included — they're moments you aren't
-  allowed to open, and no view changes that.
+  These stay dots even when LAND is turned on — they're moments you aren't
+  allowed to open, and no filter changes that.
 
 A ghost dot is deliberately empty. It can't be opened, and it carries no
 photo, no label, and no name — nothing about who posted or what. For moments
@@ -105,7 +83,7 @@ A few things keep this honest:
 
 There's no messaging inside Main's World at the moment. A button that opened a
 draft conversation in **World Chat** — World App's own end-to-end encrypted chat
-between verified humans — was removed in August 2026, because the way it reached
+service — was removed in August 2026, because the way it reached
 World Chat needed rebuilding rather than patching. For now your connections are
 people you find on the map, not an inbox.
 
@@ -117,20 +95,19 @@ requests, never for strangers — and it mirrors what connecting already means
 here: you met in person and chose each other. To everyone else, you stay
 anonymous.
 
-## Your identity: real, and anonymous
+## Your identity and privacy
 
-Main's World is built on a promise that sounds like a contradiction until you see
-how it works: **everyone is a verified human, and everyone stays private.**
+Main's World keeps personal identity out of the app. A World App sign-in proves
+control of a wallet, not personhood or uniqueness. Recorded verification is a
+separate status shown on the stats page.
 
 - We never ask for your **name** or your **email**. Ever.
-- To join, you confirm you're a real, unique person through **World App**, using
-  a **zero-knowledge proof** — cryptography that proves something is true (you're
-  a verified human) without revealing the details behind it (who you are).
-- Because each real person can only hold one account, there are no bots and no
-  fake accounts — while you remain anonymous.
+- You can join by approving a sign-in through **World App**. This establishes
+  wallet control without revealing your name or email.
+- Orb verification is not required for posting, connections, vibes, or crews; it
+  gates Vault claims. The [stats page](/the-economy#reading-the-community-numbers)
+  reports the verification status Main's World has recorded.
 
-So the feed is full of real people, and none of them had to give up their
-privacy to be there. That combination is the foundation the rest of Main's World
-is built on.
+That privacy boundary is the foundation the rest of Main's World is built on.
 
 Next: **[Moments](/how-it-works/moments)** — how you share one.

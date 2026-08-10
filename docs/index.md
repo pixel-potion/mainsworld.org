@@ -7,15 +7,15 @@ description: The trusted, community-editable knowledge base for Main's World and
 
 # Main's World
 
-**The first place online where everyone is a verified human — travel the map through time and space to find your people.**
+**Travel the map through time and space to find your people.**
 
 Welcome to the Main's World knowledge base: the open, community-editable source
 of truth for what Main's World is, how it works, and the idea it's built on —
 **SHIP, a Secure Human Interaction Protocol.**
 
 Main's World is a new kind of app. Not a social network, not a maps app, not an
-events app — the first of a new class, built around one simple promise: everyone
-here is a real, verified human, and you stay anonymous while you're at it.
+events app — the first of a new class, built around sharing places, time, and
+appreciation while keeping your personal details out of the app.
 
 ## Start here
 
@@ -26,7 +26,7 @@ here is a real, verified human, and you stay anonymous while you're at it.
 - **[Manifesto](/manifesto)** — what we believe and the world we're building.
 - **[How Main's World works](/how-it-works/the-worlds)** — the worlds, moments,
   vibes, and crews.
-- **[The economy](/the-economy)** — how appreciation between real people is the
+- **[The economy](/the-economy)** — how appreciation between Mains is the
   only thing of value.
 
 ## Find us

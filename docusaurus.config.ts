@@ -12,7 +12,7 @@ import type * as Preset from '@docusaurus/preset-classic';
 const config: Config = {
   title: "Main's World",
   tagline:
-    'The first place online where everyone is a verified human — a SHIP, a Secure Human Interaction Protocol.',
+    'A map for sharing moments, gatherings, and appreciation — a SHIP, a Secure Human Interaction Protocol.',
   favicon: 'img/favicon.svg',
 
   // Brand assets are the real ones from the app (public/ in the MW repo), so

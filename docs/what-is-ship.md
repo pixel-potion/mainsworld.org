@@ -15,37 +15,35 @@ Here's what each word means.
 
 ## Secure
 
-Underneath everything you see and do on Main's World, there's a real,
-one-of-a-kind human. Not "secure" as in a padlock icon — secure as in you can
-finally trust that the person you're talking to is a person. No bots, no fake
-accounts, no farms of automated profiles pretending to be people.
+Secure means protecting the things people share and keeping personal identity out
+of the app. It does not mean every account has been verified as one unique human:
+a World App sign-in proves control of a wallet, while verification is recorded
+separately.
 
 ## Human
 
-This is the word the whole thing rests on. In an internet increasingly full of
-machine-generated content and fake engagement, "everyone here is a verified
-human" isn't just a feature — it's the product. It's what makes a healthy,
-generous community possible in the first place.
+This is the direction the whole thing rests on. In an internet increasingly full
+of machine-generated content and fake engagement, a privacy-preserving way to
+recognize unique humans could make a healthier, more generous community possible.
+That is a goal, not a claim about every account today.
 
-And you get that guarantee **without giving up your privacy.** Main's World never
-asks for your name or your email. It confirms you're a real, unique person using
-something called a **zero-knowledge proof** — a piece of cryptography that can
-prove something is true (that you're a verified human) without revealing any of
-the details behind it (who you actually are). Real, and anonymous, at the same
-time.
+Main's World never asks for your name or your email. Today, World App sign-in
+proves control of a wallet. Any recorded verification is separate, and Orb
+verification gates Vault claims. Zero-knowledge proofs are a privacy-preserving
+way to prove statements without exposing the underlying information.
 
 ## Interaction
 
-Main's World is about presence, not broadcasting. You meet people where they
-actually were, when they actually were there. Real people, doing real things, in
-real places, shared with real friends. It's connection you can feel — the
-opposite of shouting into a feed and hoping strangers notice.
+Main's World is about presence, not broadcasting. You meet other Mains through
+moments attached to place and time, then share them with the people you choose.
+It's connection you can feel — the opposite of shouting into a feed and hoping
+strangers notice.
 
 ## Protocol
 
 This is where we're headed. Today, Main's World is the SHIP. Over time, the goal
-is that the underlying idea — verified humans, honest privacy, a healthier way
-to connect — becomes something others can build on too.
+is that the underlying idea — privacy-preserving human verification, honest
+privacy, a healthier way to connect — becomes something others can build on too.
 
 We use the word "protocol" to name the category, not to oversell something we
 haven't finished building. It's an honest word for a real ambition.
@@ -63,10 +61,10 @@ A SHIP is built the other way around:
 | Attention media | A SHIP |
 | --- | --- |
 | Wins when you can't put it down | Wins when you connect, then go live your life |
-| Bots and fakes are a cost of business | One human, one account — fakery is impossible |
+| Bots and fakes are a cost of business | A future goal: privacy-preserving proof that supports one person, one account |
 | You are the product; advertisers are the customer | People are the customers; there are no advertisers |
 | Broadcast at strangers for reach | Presence with people who are actually near, actually now |
-| Grows by taking more of your attention | Grows a community built on appreciation between real people |
+| Grows by taking more of your attention | Grows a community built on appreciation between Mains |
 
 The shift is quietly underway, and it points toward people.
 

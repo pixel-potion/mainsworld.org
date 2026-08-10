@@ -1,23 +1,23 @@
 ---
 sidebar_position: 6
 title: Whitepaper
-description: The full argument for Main's World and SHIP — why the attention economy breaks trust, and what changes when everyone is provably human.
+description: The full argument for Main's World and SHIP — why the attention economy breaks trust, and the direction Main's World is working toward.
 ---
 
 # Whitepaper
 
 ## What is Main's World?
 
-Main's World is a social app built on a map of the real world. Every account
-belongs to a real, verified human being — and no account says who that human
-is. You post photos and videos (**moments**) from the places you're actually at,
-you choose who can see each one, and when other people appreciate what you
-made, you earn something real.
+Main's World is a social app built on a map of the real world. You post captions,
+photos, and videos (**moments**) from the places you're actually at,
+choose who can see each one, and earn $MAIN when eligible appreciation rewards
+your part in a moment or a comment you wrote. A World App sign-in proves control
+of a wallet; it does not by itself establish personhood or uniqueness.
 
 That's the whole product in one breath. The rest of this page is the argument
-underneath it: why the internet feels the way it does, what actually changes
-when every account is provably a real person, and why that's hard for anyone
-else to copy. The [Manifesto](/manifesto) says what we believe, and
+underneath it: why the internet feels the way it does and the future direction
+of privacy-preserving human verification. The [Manifesto](/manifesto) says what
+we believe, and
 [What is SHIP](/what-is-ship) names the category.
 
 It's written to be read by anyone. Nothing here needs a technical background, and
@@ -98,20 +98,18 @@ The everyday version: imagine proving you're over 18 without showing your
 birthday, your name, or your face. Not by being trusted. By producing something
 that can be checked, that is true, and that carries nothing else with it.
 
-That's what [World ID](https://world.org) does for personhood. It establishes that
-you're a real human with exactly one account, while what you present carries no
-name, no email, and no way back to you. Main's World never learns who you are,
-because there's nothing to learn. We only ever see the proof.
-
-So both halves hold at once. **Everyone is real. Everyone is anonymous.** Every
-other network makes you pick one.
+Privacy-preserving personhood systems aim to make that possible without exposing
+names, email addresses, or other identity details. Main's World records
+verification separately from World App wallet sign-in; do not infer a Main's
+verification status from a sign-in alone.
 
 ### Why this is a foundation, not a feature
 
-Proof of personhood sounds like a spam filter. It isn't. It's what makes a
+Proof of personhood sounds like a spam filter. It isn't. It could make a
 different set of rules *possible*.
 
-Consider what you can build once fake accounts don't exist:
+Consider what could be built if a privacy-preserving system reliably prevented
+multiple accounts per person:
 
 - **You can give people something free, every day** — because "everyone" is a
   countable number of humans, not an unbounded number of registrations.
@@ -122,14 +120,15 @@ Consider what you can build once fake accounts don't exist:
 - **You don't need to police speech at scale** — because the volume problem was
   always a fake-account problem.
 
-Every one of those is impossible on an ordinary network. Not hard — *impossible*,
-because each is trivially defeated by making more accounts. Proof of human isn't a
-lock on the door. It's the ground the house stands on.
+Those ideas are difficult on an ordinary network because new accounts can be
+created cheaply. Proof of human is a future foundation Main's World is exploring,
+not a guarantee that every current account has passed a personhood check.
 
 ## 3. The model
 
-Main's World is what we built on that ground: a map of the real world where every
-person is verified, anonymous, and somewhere.
+Main's World is a map of the real world where people can share moments with
+privacy. Its longer-term direction is stronger, privacy-preserving human
+verification; current wallet sign-in alone is not that verification.
 
 ### The worlds
 
@@ -148,23 +147,21 @@ Even the one way a moment travels beyond its world — a view-only **special lin
 its creator can mint for a single moment or vibe, and kill at any time — exists
 only by that creator's hand.
 
-The map shows one world at a time, with a combined lens on the world switch,
-**OMNI**, that shows all three together — every moment you were already allowed
-to see, each still wearing its own world's color. It is a way of looking rather
-than a place: nothing can be posted to it, and it reveals nothing that the three
-worlds would not each have shown you on their own.
+The map has independent SKY, LAND, and DEEP filters, so you can show any
+combination of worlds you are allowed to see. Each moment keeps its world's
+color, and the filters never change who can open a moment.
 
 ### Moments
 
-A moment is a post, but the word is doing work. It's a photo or video, at a real
-place, at a real time — you were *there*, *then*. Not content to be optimised. A
-memory with coordinates.
+A moment is a post, but the word is doing work. It's a caption and/or photo or
+video, at a real place, at a real time — you were *there*, *then*. Not content to
+be optimised. A memory with coordinates.
 
 And you can travel back through the map's timeline to find them again, which is
 the part that surprises people: the map isn't only *now*. It's every *then* you
 were part of.
 
-Proving the person doesn't prove the picture, though. A verified human can still
+Personhood verification would not prove the picture, though. A person can still
 post an image a generator made, and that would hollow out the claim the word
 *moment* is making. So moments bound for SKY are checked, and the ones that
 announce themselves as generated — many generators write that into the file — or
@@ -182,17 +179,15 @@ meaningfully more real, not certifiably so.
 A vibe is a live gathering on the map that moments feed into. It has one rule that
 tells you what we're for:
 
-**No one owns a vibe.** You can start one, but it doesn't come alive until someone
-else shows up, and it ends when everyone leaves. You cannot throw a party by
-yourself. The mechanic *is* the thesis — the thing only exists if other people
-choose to be there.
+**No one owns a vibe.** A Main can start one, but another Main normally has to
+join before it becomes a live gathering. It ends when everyone leaves. The
+mechanic is designed to make it easy for other people to choose to be there.
 
 ### Crews
 
-A crew is a named group with a shared wallet and agreed splits. When a crew makes
-something good together, what it earns flows to the people who made it, along
-rules they set themselves. Groups are how people actually do things; most networks
-model only individuals and their audiences.
+A crew is a named group of Mains. Creating a crew, inviting people, joining, and
+leaving are live today. Shared ownership, crew wallets, and member-approved
+earnings splits are future work.
 
 ### The appreciation economy
 
@@ -201,12 +196,13 @@ Two balances, and they never mix.
 |                    | Where it comes from                           | What it's for                            |
 | ------------------ | --------------------------------------------- | ---------------------------------------- |
 | **Energy credits** | 10 free every day; buy 10 more for $1 anytime | Spending inside the app. Never cashable. |
-| **$MAIN**          | _Only_ from receiving appreciation            | Yours. Spendable, or withdrawable.       |
+| **$MAIN**          | _Only_ from other-Main appreciation           | Claimable on-chain through the Vault by Orb-verified wallets. |
 
 Three rules hold the whole thing up.
 
-**Appreciation is the only mint.** Receiving a thumbs up is the only way $MAIN
-comes into existence. This is the rule everything else defends.
+**Appreciation is the only mint.** Receiving a thumbs up from another Main is
+the only way $MAIN comes into existence. This is the rule everything else
+defends.
 
 **You can't buy your way in.** Money buys credits — the ability to speak — and
 credits are never $MAIN. You cannot purchase the thing that measures whether
@@ -252,25 +248,25 @@ in a quarter. They're **structural**: each one requires giving up the thing that
 pays for the company. That's a harder wall than any patent, and it holds precisely
 as long as their model does.
 
-The one real dependency is proof of personhood — which is why Main's World is
-built on World. It's the network where a real human is already the unit of
-account. That isn't a shortcut. It's the point.
+The longer-term dependency is privacy-preserving proof of personhood. Today,
+Main's World uses World App for wallet sign-in, while verification is recorded
+separately and Orb verification gates Vault claims.
 
 ## 5. Roadmap
 
 What's here now, and what's coming. We try to be honest about the difference — see
 the [Roadmap](/roadmap) for detail.
 
-**Live today:** the three worlds on a real map — plus OMNI, which shows all
-three at once — moments with photos and video, time travel through the map's
-timeline, appreciation and comments, friending and following, the two-balance
-economy, and the first version of vibes — including vibes planned ahead, with a
+**Live today:** independent SKY, LAND, and DEEP filters on a real map; moments
+with photos and video; time travel through the map's timeline; appreciation and
+comments; friending and following; RunPal connection; basic crews; Vault claims
+for Orb-verified wallets; and vibes — including vibes planned ahead, with a
 start, an end, and a place.
 
-**Coming:** vibes you drop *into* like a room, with the camera as the main action
-and everything you shoot staying private until it ends. Crews as first-class
-groups with shared wallets. And **SPACE** — a fourth world for gatherings with no
-place at all, where distance becomes social rather than physical.
+**Coming:** invites for people who have not joined Main's World yet; richer Vibe
+themes; crew shared ownership, wallets, and member-approved
+splits; more app connections; and **SPACE** — a fourth world for gatherings with
+no place at all, where distance becomes social rather than physical.
 
 ## 6. Open questions
 

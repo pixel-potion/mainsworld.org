@@ -11,12 +11,12 @@ Your phone is your key.
 
 ## On your phone
 
-Open [mains.world](https://mains.world) inside World App. World App confirms
-you're a real, unique person, and you're in — without ever telling Main's World
-who you are. That's the whole sign-in.
+Open [mains.world](https://mains.world) inside World App and approve the sign-in.
+That proves you control the World App wallet you are using; it does not by itself
+record a human-verification check for your Main. That's the whole sign-in.
 
-If you're new, see [the worlds & privacy](/how-it-works/the-worlds) for what
-being "verified and anonymous" actually means.
+If you're new, see [the worlds & privacy](/how-it-works/the-worlds) for how
+privacy works, and [the economy](/the-economy) for how verification is shown.
 
 ## On a computer
 
@@ -64,7 +64,7 @@ connections, crews and vibes.
 Two things stay on your phone, because they need your World App wallet:
 
 - **Topping up energy credits.** Buying credits happens through World App.
-- **The Vault.** Claiming $MAIN needs a check that only World App can make.
+- **The Vault.** Claiming $MAIN requires Orb verification in World App.
 
 You'll simply not see those options in a browser, rather than find them and hit
 a wall. Your daily free credits still arrive as normal, and you can spend them
