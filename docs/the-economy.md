@@ -60,15 +60,14 @@ them — it never creates $MAIN, for you or for anyone.
 
 ## Reading the community numbers
 
-The stats page separates Mains by the verification Main's World has actually
-recorded: Orb verification, another recorded verification method, or wallet
-sign-in only. Signing in proves control of a wallet; it does not by itself mean
-that Main's World recorded a human-verification check for that account.
+On the stats page, **Mains** is the total number of member accounts. **Verified**
+is the percentage of those accounts for which Main's World has recorded an Orb
+verification. It is a recorded status, not a fresh check each time the page is
+opened.
 
-The same page shows how often it was opened by signed-in Mains and by guests
-over the last seven days. Those are page opens, not unique people. Main's World
-stores only the two daily totals — no visitor identifier, wallet, cookie, IP
-address or fingerprint is attached to them.
+The country, city, moment and vibe figures describe what the community has
+recorded on the map. A Main does not need to have posted a mapped moment to be
+included in the member total.
 
 ## You can't pay yourself
 
