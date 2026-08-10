@@ -58,6 +58,18 @@ everybody else.
 Burning is not the same as paying. Buying credits and then spending them burns
 them — it never creates $MAIN, for you or for anyone.
 
+## Reading the community numbers
+
+The stats page separates Mains by the verification Main's World has actually
+recorded: Orb verification, another recorded verification method, or wallet
+sign-in only. Signing in proves control of a wallet; it does not by itself mean
+that Main's World recorded a human-verification check for that account.
+
+The same page shows how often it was opened by signed-in Mains and by guests
+over the last seven days. Those are page opens, not unique people. Main's World
+stores only the two daily totals — no visitor identifier, wallet, cookie, IP
+address or fingerprint is attached to them.
+
 ## You can't pay yourself
 
 One rule holds the whole thing together: **no one can ever route value to
