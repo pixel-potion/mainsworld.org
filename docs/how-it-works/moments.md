@@ -1,13 +1,13 @@
 ---
 sidebar_position: 2
 title: Moments
-description: A moment is a photo or video recorded where and when you are — the basic unit of Main's World.
+description: A moment is a caption, photo, or video recorded where and when you are — the basic unit of Main's World.
 ---
 
 # Moments
 
-On Main's World, a post is called a **moment**: a photo or a video with a short
-label, recorded **where you are** and **when you are**. (The whole app has a 90s
+On Main's World, a post is called a **moment**: a short caption and/or a photo or
+video, recorded **where you are** and **when you are**. (The whole app has a 90s
 home-video feel, so expect cassettes and rewind buttons everywhere you look.)
 
 ## Every moment has a place and a time
@@ -82,15 +82,14 @@ to be in one group or the other, there are no headings at all.
 
 ## Narrowing what you see
 
-The **world panel** opens from the world switch in the top right corner — tap
-the lit layer, the one for the world you're already standing in. It holds the
-worlds you can move between, and underneath them the settings that narrow what's
-on screen:
+The **world filters** in the top right corner let you independently show or hide
+SKY, LAND, and DEEP moments. Under them are more settings that narrow what is on
+screen:
 
 - **Whose moments you see** — everyone, the Mains you've connected with, the
   Mains you [follow](/glossary), or only your own.
-- **Whether moments that arrived from another app count.** This one waits on
-  [connections to other apps](/roadmap), which aren't live yet.
+- **Whether moments that arrived from another app count.** **RunPal** is live;
+  more [app connections](/roadmap) are planned.
 
 These narrow the **map as well as the list**, so the pins thin out to match
 what you asked for. A moment that a setting filters out doesn't disappear from
@@ -98,9 +97,9 @@ the map — it becomes an anonymous dot, so you can always see that something is
 there rather than wondering whether the map is broken.
 
 Your choices are remembered on your device, so things open the way you left
-them. When something is narrowed the switch carries a mark saying so, so a short
-list always explains itself — and setting "whose moments" back to everyone
-widens it again.
+them. When something is narrowed the filter control carries a mark saying so, so
+a short list always explains itself — and setting "whose moments" back to
+everyone widens it again.
 
 ## How long a moment stays on the map
 
@@ -187,16 +186,18 @@ the moment is still yours — post it to your connections, or keep it private.
 
 ## Appreciation, not likes
 
-Instead of "likes," Main's World has **appreciation**. Giving a moment a
-**thumbs up** is a genuine gift to the person who made it — it's the one and
-only way anyone earns the community's currency. There is no downvote: if a
-moment isn't for you, you simply move on. You can take a thumbs up back at any
-time and give it again later, and you can even give one to your own moment —
-though appreciating your own work never pays you anything.
+Instead of "likes," Main's World has **appreciation**. An eligible first
+**thumbs up** on a moment mints 1 $MAIN shared by its author and tagged Mains,
+excluding the voter. There is no downvote: if a moment isn't for you, you simply
+move on. You can take a thumbs up back at any time and give it again later, and
+you can even give one to your own moment — though appreciating your own work
+never pays you anything. If other Mains are tagged, they may still receive the
+split.
 
 You can also **comment** on a moment, and comments can collect a thumbs up of
-their own. Comments follow the moment's world, so a comment on a private moment
-stays as private as the moment itself.
+their own. The first thumbs up from another Main mints 1 $MAIN to the commenter.
+Comments follow the moment's world, so a comment on a private moment stays as
+private as the moment itself.
 
 To learn what a thumbs up actually gives someone, read
 **[The economy](/the-economy)**.

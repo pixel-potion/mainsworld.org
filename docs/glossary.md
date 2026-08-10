@@ -8,8 +8,7 @@ description: The words we use in Main's World, in plain language.
 
 Main's World has its own vocabulary. Here's what everything means.
 
-- **Main** — a person on Main's World. Everyone is a verified, real human. (You're
-  a Main.)
+- **Main** — an account on Main's World. (You're a Main.)
 - **Stage name** — the name a Main chooses to go by. Every stage name is unique:
   capitalization and spacing don't make a name different, so once someone is
   "DJ Neon", nobody else can be "dj neon". You can change or clear yours whenever
@@ -23,7 +22,8 @@ Main's World has its own vocabulary. Here's what everything means.
 - **Orb** — a device that confirms in person, once, that you are a unique human.
   In Main's World it unlocks the Vault, where $MAIN is claimed; everything else
   works without it. See [Getting started](/how-it-works/getting-started).
-- **Moment** — a post: a photo or video, recorded where and when you are.
+- **Moment** — a post: a caption and/or photo or video, recorded where and when
+  you are.
   See [Moments](/how-it-works/moments).
 - **Content Credentials** — a small record some cameras and many image generators
   tuck inside an image file, describing how the picture was made. Main's World
@@ -34,29 +34,27 @@ Main's World has its own vocabulary. Here's what everything means.
   - **SKY** — public: anyone can see it.
   - **LAND** — your connections: only people you've connected with.
   - **DEEP** — private: yours alone, unless you tag someone in.
-- **OMNI** — a way of viewing the map that shows all three worlds at once
-  instead of one at a time, each moment keeping its own world's color. It shows
-  only what you could already see, and you can't post to it — it's a view, not a
-  world moments live in. Reached by pressing and holding the world switch. See
+- **World filters** — independent SKY, LAND, and DEEP toggles that decide which
+  worlds appear on the map and in the moments list. They change only your view,
+  never who can open a moment. See
   [the worlds & privacy](/how-it-works/the-worlds).
-- **World switch** — the round, three-layered badge in the top right corner of
-  the map. Tap an unlit layer to move to that world, tap the lit one to open the
-  world panel, or press and hold to merge them into OMNI.
 - **Vibe** — a live, shared gathering on the map that no one owns. See
   [Vibes](/how-it-works/vibes).
 - **Future Vibe** — a vibe planned ahead of time, with a start, an optional end,
   and a place. Joining one before it starts is an RSVP. See
   [Vibes](/how-it-works/vibes).
-- **Crew** — a lasting group that can create together and share what it earns
-  (planned). See [Crews](/how-it-works/crews).
+- **Crew** — a lasting group of Mains. You can create one, invite people, join,
+  or bail today. Shared ownership, wallets, and member-approved splits are still
+  planned. See [Crews](/how-it-works/crews).
 - **Follow** — a lighter, one-way tie: you keep up with a Main without either of
   you having to connect. Their public (SKY) moments carry a small marker in your
   lists, and you can narrow the moments list to just the Mains you follow.
   Following never opens anything private — it grants no access to LAND or DEEP.
-- **Appreciation (thumbs up)** — the way you tell someone their moment
-  mattered. Giving one gifts the maker a unit of $MAIN; it's the only way
-  $MAIN is created. There are no downvotes, and appreciating your own moment
-  never pays you.
+- **Appreciation (thumbs up)** — the way you tell someone their moment or
+  comment mattered. An eligible first thumbs up on a moment mints 1 $MAIN shared
+  by its author and tagged Mains other than the voter; on a comment, another
+  Main's first thumbs up gives the commenter 1 $MAIN. There are no downvotes,
+  and appreciating your own work never pays you.
 - **Energy credits** — your daily fuel for doing things (posting, appreciating,
   commenting). You get 10 a day.
 - **Energy burned** — the running total of energy credits the whole community has
@@ -64,10 +62,12 @@ Main's World has its own vocabulary. Here's what everything means.
   than moved: nothing anyone burns becomes anyone else's balance. See
   [The economy](/the-economy).
 - **App connection** — a link you choose to make between Main's World and another
-  app you use, letting that app send moments into your world. You pick which
-  world they land in. Planned, not live yet — see [Roadmap](/roadmap).
-- **$MAIN** — the earned currency, created only when other real people appreciate
-  what you made. You can't buy it or give it to yourself. See
+  app you use, letting that app send moments into your world. **RunPal** is live;
+  you choose which world its moments land in, and more apps are planned. See
+  [Roadmap](/roadmap).
+- **$MAIN** — the earned currency, created only by eligible appreciation on a
+  moment you authored or were tagged in, or a comment you wrote. You can't buy
+  it or give it to yourself. See
   [The economy](/the-economy).
 - **Special link** — a web link a creator can make for one of their moments (or a
   vibe they're part of) that lets anyone watch that one thing in any browser —
@@ -84,21 +84,22 @@ Main's World has its own vocabulary. Here's what everything means.
   ◀◀ THROWBACK marker so it isn't mistaken for a live one. See
   [Moments](/how-it-works/moments).
 - **Ghost dot** — a small, faint, world-colored dot on the map marking a moment
-  you can't open from where you are: a moment in another world, or a
-  connections-only moment from someone you haven't connected with yet. It shows
-  only that something is there — never who or what. In OMNI, the ones that were
-  simply in another world become moments you can open; the ones you were never
-  allowed to open stay dots. See
+  outside your current filters, or a connections-only moment from someone you
+  haven't connected with yet. It shows only that something is there — never who
+  or what. Turning on a filtered world can reveal moments you are allowed to
+  open; unavailable LAND moments stay dots. See
   [the worlds & privacy](/how-it-works/the-worlds).
 - **Sign-in code** — the square code, and the four characters beside it, that a
   computer shows so your phone can sign it in. It lasts a few minutes, works
   once, and should only ever be approved from a screen you are sitting in front
   of. See [Signing in](/how-it-works/signing-in).
-- **Zero-knowledge proof** — the cryptography that lets Main's World confirm
-  you're a real, unique human without ever learning who you are.
-- **World App** — the app that verifies you're a real human when you join Main's
-  World.
-- **World Chat** — World App's own end-to-end encrypted messenger between
-  verified humans. Main's World had a button that opened a draft conversation
+- **Zero-knowledge proof** — cryptography that can prove a statement without
+  revealing the underlying private information. Main's World records any
+  verification status separately from wallet sign-in.
+- **World App** — the app that provides the wallet used to sign in to Main's
+  World. A sign-in proves wallet control; it is not by itself a recorded
+  personhood or uniqueness check.
+- **World Chat** — World App's own end-to-end encrypted messenger. Main's World
+  had a button that opened a draft conversation
   there; it was removed in August 2026, so there is no messaging in Main's World
   today. See [the worlds & privacy](/how-it-works/the-worlds).
