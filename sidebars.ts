@@ -17,6 +17,7 @@ const sidebars: SidebarsConfig = {
         'how-it-works/moments',
         'how-it-works/vibes',
         'how-it-works/crews',
+        'how-it-works/safety-alerts',
         'how-it-works/signing-in',
       ],
     },
