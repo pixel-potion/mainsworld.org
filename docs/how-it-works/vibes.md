@@ -77,8 +77,10 @@ world and your private one — you can set one up like an event:
 - **Pick an end time, if you want one.** With an end stated, the vibe runs until
   then and wraps up on time. Without one, it fades on its own once the gathering
   goes quiet.
-- **Pick a place.** A vibe normally drops right where you're standing. A planned
-  vibe can happen somewhere else: search an address or a venue and put it there.
+- **Pick a place.** A vibe normally drops right where you're standing. For a
+  planned vibe, search for a nearby venue or full address, or choose the exact
+  spot under the crosshair on the map. Search follows the part of the map you're
+  viewing, which makes it easier to find the right local result.
 
 Vibes in the public SKY always start right now — a public broadcast is a live
 thing.
@@ -122,8 +124,9 @@ These are in-app notices, not phone push notifications while the app is closed.
 
 ## Find your way there
 
-Every vibe shows the address of its spot. Tap the address and it opens in your
-phone's maps app, ready for directions.
+Every vibe keeps the full place name and address you selected instead of
+shortening it to a street name. Tap the location and it opens in your phone's
+maps app, ready for directions. Calendar entries use that same saved place.
 
 ## Let people watch from outside
 
