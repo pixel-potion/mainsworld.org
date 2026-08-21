@@ -1,10 +1,10 @@
 ---
 sidebar_position: 2
-title: What is SHIP?
+title: SHIP?
 description: SHIP — a Secure Human Interaction Protocol. The idea behind Main's World, in plain language.
 ---
 
-# What is SHIP?
+# All aboard the SHIP!
 
 The internet doesn't have to feel the way it does. Main's World isn't a social
 network, a maps app, or an events app — it's the first of a new class, and a new
