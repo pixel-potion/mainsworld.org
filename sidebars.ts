@@ -22,6 +22,7 @@ const sidebars: SidebarsConfig = {
       ],
     },
     'the-economy',
+    'country-availability',
     'roadmap',
     'whitepaper',
     {
