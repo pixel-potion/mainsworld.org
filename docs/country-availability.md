@@ -12,35 +12,35 @@ table shows what is confirmed today.
 
 | Country | Use Main's World | Orb verification | Receive MAIN | Swap MAIN | Withdraw local currency | Notes |
 | --- | :---: | :---: | :---: | :---: | :---: | --- |
-| Argentina | ✓ | Check locator | ✓ | Not live | ✓ | World offers ARS virtual accounts and local withdrawal through Ripio. |
-| Australia | ✓ | Check locator | ✓ | Not live | Provider | Use an AUSTRAC-registered provider; World Chain support is not confirmed. |
-| Brazil | ✓ | Check locator | ✓ | Not live | Provider | Use a provider regulated by Brazil's Central Bank; World Chain support is not confirmed. |
-| Canada | ✓ | Check locator | ✓ | Not live | Provider | Use a registered crypto trading platform; availability differs by province. |
-| Chile | ✓ | Check locator | ✓ | Not live | Provider | Use a provider registered and authorized under Chile's Fintech Law. |
-| Colombia | ✓ | Check locator | ✓ | Not live | ✓ | World offers COP virtual accounts and local withdrawal through Ripio. Crypto is not legal tender. |
-| France | ✓ | Check locator | ✓ | Not live | Provider | Use a provider authorized under the EU's MiCA framework. |
-| Germany | ✓ | ✓ | ✓ | Not live | Provider | Orb locations are listed. Use a MiCA-authorized provider for cash-out. |
-| Ghana | ✓ | Check locator | ✓ | Not live | Provider | Ghana has a regulated VASP sandbox; World Chain cash-out is not confirmed. |
-| India | ✓ | Check locator | ✓ | Not live | Provider | Use an FIU-India-registered provider; taxes and reporting may apply. |
-| Indonesia | ✓ | Check locator | ✓ | Not live | Provider | Use an OJK-licensed provider; World Chain support is not confirmed. |
-| Italy | ✓ | Check locator | ✓ | Not live | Provider | Use a provider authorized under the EU's MiCA framework. |
-| Japan | ✓ | ✓ | ✓ | Not live | Provider | Orb locations are listed. Use an FSA-registered exchange for cash-out. |
-| Kenya | ✓ | Check locator | ✓ | Not live | Provider | Kenya regulates VASPs; World Chain cash-out is not confirmed. |
-| Malaysia | ✓ | Check locator | ✓ | Not live | Provider | Use a Securities Commission-registered digital asset exchange. |
-| Mexico | ✓ | Check locator | ✓ | Not live | ✓ | World offers MXN virtual accounts and local withdrawal through Ripio. |
-| Nigeria | ✓ | Check locator | ✓ | Not live | Provider | Use a Nigerian SEC-approved VASP; World Chain cash-out is not confirmed. |
-| Peru | ✓ | Check locator | ✓ | Not live | Unconfirmed | Peru's market regulator warns that crypto offers lack specific supervision. |
-| Philippines | ✓ | Check locator | ✓ | Not live | Provider | Use a BSP-listed VASP; World Chain support is not confirmed. |
-| Poland | ✓ | Check locator | ✓ | Not live | Provider | Use a provider authorized under the EU's MiCA framework. |
-| Portugal | ✓ | Check locator | ✓ | Not live | Provider | Use a provider authorized under the EU's MiCA framework. |
-| Singapore | ✓ | ✓ | ✓ | Not live | Provider | Orb locations are listed. Use a MAS-licensed digital payment token provider. |
-| South Africa | ✓ | Check locator | ✓ | Not live | Provider | Use an FSCA-authorized crypto asset service provider. |
-| South Korea | ✓ | ✓ | ✓ | Not live | Provider | Orb locations are listed. Use a registered Korean VASP for cash-out. |
-| Spain | ✓ | Check locator | ✓ | Not live | Provider | Use a provider authorized under the EU's MiCA framework. |
-| Uganda | ✓ | Check locator | ✓ | Not live | Provider | VASPs are registered with the FIA; World Chain-to-UGX cash-out is not confirmed. |
-| United Arab Emirates | ✓ | Check locator | ✓ | Not live | Provider | In Dubai, use a fully licensed provider in VARA's public register. |
-| United Kingdom | ✓ | ✓ | ✓ | Not live | Provider | Orb locations are listed. Use an FCA-registered cryptoasset provider. |
-| United States | ✓ | ✓ | ✓ | Not live | Provider | Orb locations are listed. Fiat services and eligibility vary by provider and state. |
+| 🇦🇷 Argentina | ✓ | Check locator | ✓ | Not live | ✓ | World offers ARS virtual accounts and local withdrawal through Ripio. |
+| 🇦🇺 Australia | ✓ | Check locator | ✓ | Not live | Provider | Use an AUSTRAC-registered provider; World Chain support is not confirmed. |
+| 🇧🇷 Brazil | ✓ | Check locator | ✓ | Not live | Provider | Use a provider regulated by Brazil's Central Bank; World Chain support is not confirmed. |
+| 🇨🇦 Canada | ✓ | Check locator | ✓ | Not live | Provider | Use a registered crypto trading platform; availability differs by province. |
+| 🇨🇱 Chile | ✓ | Check locator | ✓ | Not live | Provider | Use a provider registered and authorized under Chile's Fintech Law. |
+| 🇨🇴 Colombia | ✓ | Check locator | ✓ | Not live | ✓ | World offers COP virtual accounts and local withdrawal through Ripio. Crypto is not legal tender. |
+| 🇫🇷 France | ✓ | Check locator | ✓ | Not live | Provider | Use a provider authorized under the EU's MiCA framework. |
+| 🇩🇪 Germany | ✓ | ✓ | ✓ | Not live | Provider | Orb locations are listed. Use a MiCA-authorized provider for cash-out. |
+| 🇬🇭 Ghana | ✓ | Check locator | ✓ | Not live | Provider | Ghana has a regulated VASP sandbox; World Chain cash-out is not confirmed. |
+| 🇮🇳 India | ✓ | Check locator | ✓ | Not live | Provider | Use an FIU-India-registered provider; taxes and reporting may apply. |
+| 🇮🇩 Indonesia | ✓ | Check locator | ✓ | Not live | Provider | Use an OJK-licensed provider; World Chain support is not confirmed. |
+| 🇮🇹 Italy | ✓ | Check locator | ✓ | Not live | Provider | Use a provider authorized under the EU's MiCA framework. |
+| 🇯🇵 Japan | ✓ | ✓ | ✓ | Not live | Provider | Orb locations are listed. Use an FSA-registered exchange for cash-out. |
+| 🇰🇪 Kenya | ✓ | Check locator | ✓ | Not live | Provider | Kenya regulates VASPs; World Chain cash-out is not confirmed. |
+| 🇲🇾 Malaysia | ✓ | Check locator | ✓ | Not live | Provider | Use a Securities Commission-registered digital asset exchange. |
+| 🇲🇽 Mexico | ✓ | Check locator | ✓ | Not live | ✓ | World offers MXN virtual accounts and local withdrawal through Ripio. |
+| 🇳🇬 Nigeria | ✓ | Check locator | ✓ | Not live | Provider | Use a Nigerian SEC-approved VASP; World Chain cash-out is not confirmed. |
+| 🇵🇪 Peru | ✓ | Check locator | ✓ | Not live | Unconfirmed | Peru's market regulator warns that crypto offers lack specific supervision. |
+| 🇵🇭 Philippines | ✓ | Check locator | ✓ | Not live | Provider | Use a BSP-listed VASP; World Chain support is not confirmed. |
+| 🇵🇱 Poland | ✓ | Check locator | ✓ | Not live | Provider | Use a provider authorized under the EU's MiCA framework. |
+| 🇵🇹 Portugal | ✓ | Check locator | ✓ | Not live | Provider | Use a provider authorized under the EU's MiCA framework. |
+| 🇸🇬 Singapore | ✓ | ✓ | ✓ | Not live | Provider | Orb locations are listed. Use a MAS-licensed digital payment token provider. |
+| 🇿🇦 South Africa | ✓ | Check locator | ✓ | Not live | Provider | Use an FSCA-authorized crypto asset service provider. |
+| 🇰🇷 South Korea | ✓ | ✓ | ✓ | Not live | Provider | Orb locations are listed. Use a registered Korean VASP for cash-out. |
+| 🇪🇸 Spain | ✓ | Check locator | ✓ | Not live | Provider | Use a provider authorized under the EU's MiCA framework. |
+| 🇺🇬 Uganda | ✓ | Check locator | ✓ | Not live | Provider | VASPs are registered with the FIA; World Chain-to-UGX cash-out is not confirmed. |
+| 🇦🇪 United Arab Emirates | ✓ | Check locator | ✓ | Not live | Provider | In Dubai, use a fully licensed provider in VARA's public register. |
+| 🇬🇧 United Kingdom | ✓ | ✓ | ✓ | Not live | Provider | Orb locations are listed. Use an FCA-registered cryptoasset provider. |
+| 🇺🇸 United States | ✓ | ✓ | ✓ | Not live | Provider | Orb locations are listed. Fiat services and eligibility vary by provider and state. |
 
 ## What the labels mean
 

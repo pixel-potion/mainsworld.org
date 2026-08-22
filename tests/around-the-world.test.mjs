@@ -21,16 +21,38 @@ test('publishes one concise country availability table', () => {
   assert.match(page, /Receive MAIN/);
   assert.match(page, /Swap MAIN/);
   assert.match(page, /Withdraw local currency/);
-  for (const country of [
-    'United States',
-    'Argentina',
-    'Germany',
-    'Japan',
-    'Nigeria',
-    'Singapore',
-    'Uganda',
+  for (const [flag, country] of [
+    ['🇦🇷', 'Argentina'],
+    ['🇦🇺', 'Australia'],
+    ['🇧🇷', 'Brazil'],
+    ['🇨🇦', 'Canada'],
+    ['🇨🇱', 'Chile'],
+    ['🇨🇴', 'Colombia'],
+    ['🇫🇷', 'France'],
+    ['🇩🇪', 'Germany'],
+    ['🇬🇭', 'Ghana'],
+    ['🇮🇳', 'India'],
+    ['🇮🇩', 'Indonesia'],
+    ['🇮🇹', 'Italy'],
+    ['🇯🇵', 'Japan'],
+    ['🇰🇪', 'Kenya'],
+    ['🇲🇾', 'Malaysia'],
+    ['🇲🇽', 'Mexico'],
+    ['🇳🇬', 'Nigeria'],
+    ['🇵🇪', 'Peru'],
+    ['🇵🇭', 'Philippines'],
+    ['🇵🇱', 'Poland'],
+    ['🇵🇹', 'Portugal'],
+    ['🇸🇬', 'Singapore'],
+    ['🇿🇦', 'South Africa'],
+    ['🇰🇷', 'South Korea'],
+    ['🇪🇸', 'Spain'],
+    ['🇺🇬', 'Uganda'],
+    ['🇦🇪', 'United Arab Emirates'],
+    ['🇬🇧', 'United Kingdom'],
+    ['🇺🇸', 'United States'],
   ]) {
-    assert.match(page, new RegExp(country));
+    assert.match(page, new RegExp(`${flag} ${country}`));
   }
   assert.doesNotMatch(page, /WhatsApp/);
   assert.equal(existsSync('build/around-the-world/uganda/index.html'), false);
