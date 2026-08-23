@@ -23,6 +23,7 @@ const sidebars: SidebarsConfig = {
     },
     'the-economy',
     'roadmap',
+    'connect-your-app',
     'whitepaper',
     {
       type: 'category',
