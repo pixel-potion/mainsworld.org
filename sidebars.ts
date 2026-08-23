@@ -24,6 +24,7 @@ const sidebars: SidebarsConfig = {
     'the-economy',
     'country-availability',
     'roadmap',
+    'connect-your-app',
     'whitepaper',
     {
       type: 'category',
