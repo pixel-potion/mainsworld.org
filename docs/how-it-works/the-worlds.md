@@ -68,12 +68,21 @@ special link — an ordinary web link that opens that one thing, view-only, in a
 web browser. The person you send it to doesn't need World App, doesn't need an
 account, and doesn't see anything else of yours.
 
+A Vibe special link can also work as a **Vibe invite**. It begins as the same
+read-only window for a guest, including the Vibe's live or sealed moments,
+media, map and time context, comments, and aggregate reactions. Writing still
+requires World App sign-in. A signed-in visitor with a valid Vibe invite joins
+automatically; a guest who signs in returns to the same Vibe and joins then.
+Only Vibe invite links can do that — Moment links and other special links always
+stay read-only.
+
 A few things keep this honest:
 
 - **Only the creator can make one.** Nobody else can open a window into your
   private worlds — not even the people already allowed inside them.
-- **Watching only.** A special link never lets anyone appreciate, comment, or
-  join. It's a window, not a door.
+- **Watching only, with one Vibe exception.** A special link never lets anyone
+  post, appreciate, or comment. A valid Vibe invite may join a visitor after
+  World App authentication, but it never grants write access.
 - **You can kill it.** Revoke a special link at any time and every copy of it,
   everywhere, stops working immediately.
 - **One thing, not your world.** The link opens the single moment or vibe it was

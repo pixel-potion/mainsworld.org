@@ -130,12 +130,21 @@ maps app, ready for directions. Calendar entries use that same saved place.
 
 ## Let people watch from outside
 
-If you're on a vibe, you can share it as a **special link** — a web link that
-lets anyone see the vibe in any browser: the gathering, who's there, and the
-moments its people have chosen to publish. The person opening it doesn't need
-World App or an account, and they can only watch — a special link never puts
-anyone on the vibe. Joining still works the way it always has: in person,
-through the vibe's pass.
+If you're on a vibe, you can share it as a **Vibe invite link** — a web link
+that lets anyone open the vibe in any browser. A valid invite starts visitors
+as read-only guests, so they can see the same vibe context an authorized viewer
+can see: live or sealed moments, media, map and time details, comments, and
+the overall reaction totals.
+
+Guests can watch, but every write — including posting, commenting, or reacting
+— needs a World App sign-in. The sign-in handoff keeps the same vibe and moment
+context, but it never posts the action someone had started. If the visitor was
+already signed in, opening a valid Vibe invite joins them automatically. If they
+sign in from the guest view, they return to that same place and join then.
+
+This automatic joining applies only to Vibe invite links. Moment links and
+other special links remain read-only windows, even for someone who is signed
+in.
 
 Any member can revoke the special link at any time, and every copy of it stops
 working. There's more on how special links respect the worlds in
