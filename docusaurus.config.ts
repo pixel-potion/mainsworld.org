@@ -89,6 +89,15 @@ const config: Config = {
         {type: 'docSidebar', sidebarId: 'knowledge', position: 'left', label: 'Learn'},
         {to: '/manifesto', label: 'Manifesto', position: 'left'},
         {to: '/what-is-ship', label: 'What is SHIP', position: 'left'},
+        {
+          type: 'dropdown',
+          label: 'Legal',
+          position: 'right',
+          items: [
+            {label: 'Terms of Service', to: '/terms'},
+            {label: 'Privacy Policy', to: '/privacy'},
+          ],
+        },
         {to: '/contribute', label: 'Contribute', position: 'right'},
         {
           href: 'https://mains.world',
@@ -131,6 +140,13 @@ const config: Config = {
             {label: '@itsamainsworld on X', href: 'https://x.com/itsamainsworld'},
             {label: 'Contribute', to: '/contribute'},
             {label: 'GitHub', href: 'https://github.com/pixel-potion/mainsworld.org'},
+          ],
+        },
+        {
+          title: 'Legal',
+          items: [
+            {label: 'Terms of Service', to: '/terms'},
+            {label: 'Privacy Policy', to: '/privacy'},
           ],
         },
       ],
