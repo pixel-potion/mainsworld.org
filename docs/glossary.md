@@ -50,24 +50,24 @@ Main's World has its own vocabulary. Here's what everything means.
   you having to connect. Their public (SKY) moments carry a small marker in your
   lists, and you can narrow the moments list to just the Mains you follow.
   Following never opens anything private — it grants no access to LAND or DEEP.
-- **Appreciation (thumbs up)** — the way you tell someone their moment or
-  comment mattered. An eligible first thumbs up on a moment mints 1 $MAIN shared
-  by its author and tagged Mains other than the voter; on a comment, another
-  Main's first thumbs up gives the commenter 1 $MAIN. There are no downvotes,
-  and appreciating your own work never pays you.
-- **Energy credits** — your daily fuel for doing things (posting, appreciating,
+- **Reaction** — one emoji you choose to show that a moment or comment mattered.
+  You can change or remove it at any time. Your first reaction on an item costs
+  one energy credit and can mint 1 $MAIN; later changes are free and never mint
+  again. Counts are public, but the people behind them are not. Reacting to your
+  own work never pays you. See [The economy](/the-economy).
+- **Energy credits** — your daily fuel for doing things (posting, reacting,
   commenting). You get 10 a day.
 - **Energy burned** — the running total of energy credits the whole community has
-  spent on posting, appreciating and commenting. Spent credits are gone rather
+  spent on posting, reacting and commenting. Spent credits are gone rather
   than moved: nothing anyone burns becomes anyone else's balance. See
   [The economy](/the-economy).
 - **App connection** — a link you choose to make between Main's World and another
   app you use, letting that app send moments into your world. **RunPal** is live;
   you choose which world its moments land in, and more apps are planned. See
   [Roadmap](/roadmap).
-- **$MAIN** — the earned currency, created only by eligible appreciation on a
-  moment you authored or were tagged in, or a comment you wrote. You can't buy
-  it or give it to yourself. See
+- **$MAIN** — the earned currency, created only by an eligible first reaction
+  on a moment you authored or were tagged in, or a comment you wrote. You can't
+  buy it or give it to yourself. See
   [The economy](/the-economy).
 - **Special link** — a web link a creator can make for one of their moments (or a
   vibe they're part of) that lets anyone watch that one thing in any browser —
