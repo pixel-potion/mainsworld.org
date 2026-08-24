@@ -146,16 +146,16 @@ This automatic joining applies only to Vibe invite links. Moment links and
 other special links remain read-only windows, even for someone who is signed
 in.
 
-Any member can revoke the special link at any time, and every copy of it stops
-working. There's more on how special links respect the worlds in
-**[the worlds & privacy](/how-it-works/the-worlds)**.
+Any current member can revoke all of that vibe's special links at any time, and
+every copy stops working. There's more on how special links respect the worlds
+in **[the worlds & privacy](/how-it-works/the-worlds)**.
 
 ## What's here today, and what's coming
 
 Live vibes, planned-ahead vibes, RSVPs, calendar entries, doors-open notices,
 and invitations to your existing Mains work today — so do the close-out
 decisions when a vibe ends and the recap reel it leaves behind. Bigger ideas —
-inviting people who haven't joined Main's World yet, and turning gatherings
+letting someone participate without World App sign-in, and turning gatherings
 into lasting groups — are on the **[Roadmap](/roadmap)**. We label what's live
 and what's still ahead so this page stays honest.
 
