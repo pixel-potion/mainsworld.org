@@ -63,17 +63,28 @@ Sometimes the person you want to show a moment to isn't on Main's World at all �
 a parent, a friend abroad, anyone without the app. For that there's the
 **special link**.
 
-As the creator, you can share one of your moments (or a vibe you're part of) as a
-special link — an ordinary web link that opens that one thing, view-only, in any
-web browser. The person you send it to doesn't need World App, doesn't need an
-account, and doesn't see anything else of yours.
+If you created a moment — or you're a current member of a vibe — you can share
+it with a special link. The ordinary web link opens only that one thing in any
+browser. Guests get a read-only window without needing World App or an account,
+and they don't see anything else of yours.
+
+A Vibe special link can also work as a **Vibe invite**. It begins as the same
+read-only window for a guest, including the Vibe's live or sealed moments,
+media, map and time context, comments, and aggregate reactions. Writing still
+requires World App sign-in. A signed-in visitor with a valid Vibe invite joins
+automatically; a guest who signs in returns to the same Vibe and joins then.
+Only Vibe invite links can do that — Moment links and other special links always
+stay read-only.
 
 A few things keep this honest:
 
-- **Only the creator can make one.** Nobody else can open a window into your
-  private worlds — not even the people already allowed inside them.
-- **Watching only.** A special link never lets anyone appreciate, comment, or
-  join. It's a window, not a door.
+- **The access boundary follows the thing.** Only a moment's creator can make
+  its special link. Any current vibe member can make a Vibe invite, which opens
+  only that vibe.
+- **The link itself is read-only.** It never authorizes a post, appreciation, or
+  comment. After a valid Vibe invite holder signs in and joins, normal vibe
+  member permissions apply; Main's World never replays an action they started
+  as a guest.
 - **You can kill it.** Revoke a special link at any time and every copy of it,
   everywhere, stops working immediately.
 - **One thing, not your world.** The link opens the single moment or vibe it was
