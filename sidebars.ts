@@ -22,6 +22,7 @@ const sidebars: SidebarsConfig = {
       ],
     },
     'the-economy',
+    'your-main-on-chain',
     'country-availability',
     'roadmap',
     'connect-your-app',
