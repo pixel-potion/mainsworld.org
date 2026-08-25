@@ -17,31 +17,32 @@ Here's how that works, in plain terms.
 Every Main has two separate balances that never mix:
 
 - **Energy credits** — your day-to-day fuel. You get a fresh **10 every day**.
-  You spend them to do things: record a moment, react to someone, leave a
+  You spend them to do things: record a moment, appreciate someone, leave a
   comment. Credits are for *doing*, not for keeping.
 - **$MAIN** — the earned currency. The **only** way to get $MAIN is through an
-  eligible first reaction on a moment you authored or were tagged in, or on a
-  comment you wrote. You can't buy it, and you can't give it to yourself.
+  eligible thumbs up on a moment you authored or were tagged in, or on a comment
+  you wrote. You can't buy it, and you can't give it to yourself.
 
 Think of the daily 10 as your voice for the day, and $MAIN as the appreciation
 you've genuinely earned from others.
 
 ## "Be kind, rewind"
 
-Your first emoji reaction on a moment spends one energy credit and, when
-eligible, mints a total of 1 $MAIN. The moment's author and tagged Mains share
-it, excluding you. Another Main's eligible first reaction on a comment gives its
+An eligible first **thumbs up** on a moment spends a little of the voter's own
+energy and mints a total of 1 $MAIN. The moment's author and tagged Mains share
+it, excluding the voter. Another Main's first thumbs up on a comment gives its
 author 1 $MAIN. That's the heartbeat of the whole economy: value travels from
 one Main's action to other Mains.
 
-You can have one current reaction on each moment or comment. Change its emoji,
-remove it, or put it back whenever you like; those later choices are free and
-never mint again. The original gift, once given, stays given.
+There is no downvote — appreciation is the only reaction, so no one can be
+piled on or drained. You can change your mind at any time: take a thumbs up
+back, give it again — only your first one on a moment ever spends energy, and a
+gift, once given, stays given.
 
 ## Energy burned
 
 Energy credits are **spent, not transferred**. When you record a moment,
-react to someone or leave a comment, the credit it costs is simply gone — it
+appreciate someone or leave a comment, the credit it costs is simply gone — it
 does not move into anyone else's balance. The running total of everything the
 community has spent that way is called **energy burned**.
 
@@ -72,7 +73,7 @@ included in the member total.
 ## You can't pay yourself
 
 One rule holds the whole thing together: **no one can ever route value to
-themselves.** You can react to your own moment — it shows in the count
+themselves.** You can give your own moment a thumbs up — it shows in the count
 like anyone else's — but it never pays **you** $MAIN. If other Mains are tagged,
 they may still receive the split. Tagging a crew on a moment uses this ordinary
 tagged-Main split; a crew-owned wallet and configurable crew earnings rules are
@@ -84,18 +85,18 @@ Mains, or it doesn't count.
 You can top up your **energy credits** (a small top-up for a bit more voice on a
 busy day). To be crystal clear about what that is and isn't:
 
-- Buying credits gives you more **voice** — more moments, more reactions to
-  give, more comments.
+- Buying credits gives you more **voice** — more moments, more appreciation to give,
+  more comments.
 - Buying credits **never** gives you $MAIN. The earned currency can only come
   from other people appreciating you. That line is deliberate and permanent.
 
 ## What's live, and what's not
 
-Main's World runs the giving, daily credits, reactions, and Vault claims
+Main's World runs the giving, daily credits, appreciation, and Vault claims
 today. An Orb-verified wallet can claim $MAIN on-chain through the Vault.
 **Open-market trading and liquidity are not live**, so exchanging $MAIN for
 money is not currently available; we will say so plainly here whenever that
 changes.
 
 > One line worth remembering: **every unit of $MAIN starts with one Main
-> reacting to another's work.**
+> appreciating another's work.**

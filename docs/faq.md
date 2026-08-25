@@ -58,18 +58,18 @@ version is that the public map is meaningfully cleaner, not certain. See
 
 ### What is $MAIN? Can I cash it out?
 
-$MAIN is the currency an eligible first reaction can earn you on a moment you
-authored or were tagged in, or on a comment you wrote. Orb-verified wallets can
-claim it on-chain through the Vault today. Open-market trading and liquidity are
-not live, so exchanging it for money is not currently available. See
+$MAIN is the currency an eligible thumbs up can earn you on a moment you authored
+or were tagged in, or on a comment you wrote. Orb-verified wallets can claim it
+on-chain through the Vault today. Open-market trading and liquidity are not live,
+so exchanging it for money is not currently available. See
 [the economy](/the-economy).
 
 ### Can I buy my way to the top?
 
-No. You can buy energy credits (voice), but you can't buy $MAIN. You can react
-to your own moment, but it never pays **you** $MAIN. If other Mains are tagged,
-they can receive its split; only another Main's reaction can pay the moment's
-author.
+No. You can buy energy credits (voice), but you can't buy $MAIN. You can
+appreciate your own moment, but it never pays **you** $MAIN. If other Mains are
+tagged, they can receive its split; only another Main's appreciation can pay the
+moment's author.
 
 ### Can I use Main's World on my computer?
 
