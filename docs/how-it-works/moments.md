@@ -104,8 +104,8 @@ everyone widens it again.
 ## How long a moment stays on the map
 
 The map shows what's current, not everything that ever happened. A moment stays
-on the map for **30 days**, and appreciation keeps it around longer: each thumbs
-up a moment collects adds about half a day to its stay, up to a maximum of 60
+on the map for **60 days**, and appreciation keeps it around longer: each thumbs
+up a moment collects adds about half a day to its stay, up to a maximum of 120
 days for the most loved ones.
 
 A moment never dims early. It looks just as bold on its last day as on its
@@ -123,9 +123,10 @@ the timestamp is when the photo was actually taken, not when you posted it, and
 the moment wears a small **◀◀ THROWBACK** marker so no one mistakes it for a
 live one. Time travel to the day it happened and it's there, in its place.
 
-Its stay on the map is measured from when you **posted** it, though, not from
-when the photo was taken — so a throwback of a photo from years ago still gets
-its full 30 days on the map, the same as anything else you post today.
+Its stay on today's map is measured from when the photo was **taken**, the same
+clock as its timestamp — so a throwback of a photo from years ago is not on
+today's map at all. It lives where it belongs: rewind to the day it happened
+and it's there.
 
 ## What can go on the public world
 
