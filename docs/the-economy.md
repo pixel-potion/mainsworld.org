@@ -30,7 +30,12 @@ you've genuinely earned from others.
 
 An eligible first **thumbs up** on a moment spends a little of the voter's own
 energy and mints a total of 1 $MAIN. The moment's author and tagged Mains share
-it, excluding the voter. Another Main's first thumbs up on a comment gives its
+it, excluding the voter. If the moment was recorded at a vibe, the gathering's
+hosts share too: half of that 1 $MAIN goes to the moment's people — the author
+and anyone tagged — and half is split evenly among the vibe's hosts, counting
+every member of a hosting crew. Everything settles the instant the thumbs up
+lands, among whoever holds those roles at that moment. Crediting the people who
+threw the gathering is the point of naming hosts. Another Main's first thumbs up on a comment gives its
 author 1 $MAIN. That's the heartbeat of the whole economy: value travels from
 one Main's action to other Mains.
 
@@ -75,7 +80,10 @@ included in the member total.
 One rule holds the whole thing together: **no one can ever route value to
 themselves.** You can give your own moment a thumbs up — it shows in the count
 like anyone else's — but it never pays **you** $MAIN. If other Mains are tagged,
-they may still receive the split. Tagging a crew on a moment uses this ordinary
+they may still receive the split. The same rule covers hosts: a host who gives
+the thumbs up is left out of the hosts' share, which goes to the other hosts
+instead — and if there's no one else on a side to receive it, that share goes
+to the other side rather than back to the voter. Tagging a crew on a moment uses this ordinary
 tagged-Main split; a crew-owned wallet and configurable crew earnings rules are
 not live. No share ever comes back to the voter. Kindness has to travel between
 Mains, or it doesn't count.

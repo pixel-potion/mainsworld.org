@@ -15,9 +15,20 @@ lots of people are living at once.
 This is the important part, and it's a little different from anything you've used
 before. A vibe can have **hosts**: the Main who starts one is always a host, and
 can name others — any of their accepted connections, or a crew they belong to.
-Hosting is credit, not control. Hosts are named on the gathering so the people
-behind it are visible, but a host has no special power over who can see or join
-it, and naming hosts changes none of the rules below:
+Hosting is credit, not control over people. Hosts are named on the gathering so
+the ones behind it are visible, and a host never decides who can see or join
+it. What hosts do get is the housekeeping and the credit:
+
+- **The cover.** A host can set the gathering's cover image — the picture at
+  the top of its page. Until someone does, the cover shows the vibe's spot on
+  the map, and once moments start arriving, the latest published one.
+- **The invite links.** A host can switch off the vibe's invite links for
+  everyone at once (more under "Let people watch from outside" below).
+- **A share of the appreciation.** When a moment recorded at the vibe earns
+  appreciation, the hosts share in it — see
+  **[The economy](/the-economy)** for exactly how.
+
+None of that changes the rules of a gathering itself:
 
 - **A vibe isn't normally alive until people join.** Anyone can *start* one, but
   another Main normally has to join before it comes to life.
@@ -150,8 +161,9 @@ This automatic joining applies only to Vibe invite links. Moment links and
 other special links remain read-only windows, even for someone who is signed
 in.
 
-Any current member can revoke all of that vibe's special links at any time, and
-every copy stops working. There's more on how special links respect the worlds
+Anyone on the vibe can create an invite link, and the vibe shows everyone on it
+whether a link is currently live. Turning them off is a host's call: a host can
+revoke all of that vibe's links at once, and every copy stops working. There's more on how special links respect the worlds
 in **[the worlds & privacy](/how-it-works/the-worlds)**.
 
 ## What's here today, and what's coming

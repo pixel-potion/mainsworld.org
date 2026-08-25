@@ -182,8 +182,10 @@ tells you what we're for:
 **A vibe is hosted, never owned.** A Main can start one — that makes them a
 host, and they can name others — but hosting is credit, not control: another
 Main normally has to join before it becomes a live gathering, and it ends when
-everyone leaves. The mechanic is designed to make it easy for other people to
-choose to be there.
+everyone leaves. The credit is real, though: when a moment recorded at a vibe
+earns appreciation, half of it is shared by the gathering's hosts. Throwing a
+good vibe is rewarded by the same rule that rewards making a good moment. The
+mechanic is designed to make it easy for other people to choose to be there.
 
 ### Crews
 
