@@ -93,7 +93,10 @@ busy day). To be crystal clear about what that is and isn't:
 ## What's live, and what's not
 
 Main's World runs the giving, daily credits, appreciation, and Vault claims
-today. An Orb-verified wallet can claim $MAIN on-chain through the Vault.
+today. An Orb-verified wallet can claim $MAIN on-chain through the Vault. What
+you can do with it after that — see your balance, swap it, send it, or move it
+to another wallet — has its own page:
+[Your $MAIN on-chain](/your-main-on-chain).
 **Open-market trading and liquidity are not live**, so exchanging $MAIN for
 money is not currently available; we will say so plainly here whenever that
 changes.
