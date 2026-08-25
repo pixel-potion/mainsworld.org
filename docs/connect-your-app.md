@@ -37,8 +37,9 @@ A **moment** is one thing that happened: a run, a set, a meal, a trip. It is
 pinned to the exact place and time it took place, and the app that sent it is
 named on it.
 
-This is the part that works today, and the first connection — with a running app
-called RunPal — is being finished now.
+This is the part that works today. The first connection — with a running app
+called RunPal — is live: a finished run arrives as a moment with its route
+drawn on the map.
 
 ### Vibes — not built yet
 
@@ -103,8 +104,8 @@ We would rather you hear this from us than find out later.
   self-service keys. Every connection today is built by hand, with us, against
   your stack. That is slower for us and better for you — you get a person, not a
   support queue.
-- **RunPal is the first one**, and it is being finished now. The flow above is
-  built and running against it, for moments.
+- **RunPal is the first one**, and it is live. The flow above is built and
+  running against it, for moments.
 - **We are small.** The live numbers are on the Stats screen inside the app, and
   they are not big ones. Connecting now means shaping how this works, not
   renting an audience.

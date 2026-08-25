@@ -1,7 +1,7 @@
 ---
 sidebar_position: 3
 title: Vibes
-description: A vibe is a live, shared gathering on the map that no one owns.
+description: A vibe is a live, shared gathering on the map — hosted, never owned.
 ---
 
 # Vibes
@@ -10,10 +10,14 @@ A **vibe** is a live gathering on the map — a get-together that people show up
 and add to, in real time. If a moment is a single beat, a vibe is a beat that
 lots of people are living at once.
 
-## No one owns a vibe
+## Hosted, never owned
 
 This is the important part, and it's a little different from anything you've used
-before:
+before. A vibe can have **hosts**: the Main who starts one is always a host, and
+can name others — any of their accepted connections, or a crew they belong to.
+Hosting is credit, not control. Hosts are named on the gathering so the people
+behind it are visible, but a host has no special power over who can see or join
+it, and naming hosts changes none of the rules below:
 
 - **A vibe isn't normally alive until people join.** Anyone can *start* one, but
   another Main normally has to join before it comes to life.
@@ -152,8 +156,8 @@ in **[the worlds & privacy](/how-it-works/the-worlds)**.
 
 ## What's here today, and what's coming
 
-Live vibes, planned-ahead vibes, RSVPs, calendar entries, doors-open notices,
-and invitations to your existing Mains work today — so do the close-out
+Live vibes, planned-ahead vibes, named hosts, RSVPs, calendar entries,
+doors-open notices, and invitations to your existing Mains work today — so do the close-out
 decisions when a vibe ends and the recap reel it leaves behind. Bigger ideas —
 letting someone participate without World App sign-in, and turning gatherings
 into lasting groups — are on the **[Roadmap](/roadmap)**. We label what's live
