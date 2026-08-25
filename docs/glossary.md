@@ -42,8 +42,10 @@ Main's World has its own vocabulary. Here's what everything means.
   [Vibes](/how-it-works/vibes).
 - **Host** — a Main or crew named on a vibe as the ones behind the gathering.
   The Main who starts a vibe is always a host and can name others. Hosting is
-  credit, not control: it gives no special power over who can see or join. See
-  [Vibes](/how-it-works/vibes).
+  credit, not control: it gives no special power over who can see or join, but
+  hosts keep the gathering's cover image and invite links, and they share in
+  the appreciation its moments earn. See [Vibes](/how-it-works/vibes) and
+  [The economy](/the-economy).
 - **Future Vibe** — a vibe planned ahead of time, with a start, an optional end,
   and a place. Joining one before it starts is an RSVP. See
   [Vibes](/how-it-works/vibes).
