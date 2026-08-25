@@ -97,9 +97,12 @@ today. An Orb-verified wallet can claim $MAIN on-chain through the Vault. What
 you can do with it after that — see your balance, swap it, send it, or move it
 to another wallet — has its own page:
 [Your $MAIN on-chain](/your-main-on-chain).
-**Open-market trading and liquidity are not live**, so exchanging $MAIN for
-money is not currently available; we will say so plainly here whenever that
-changes.
+**As of August 25, 2026, that has changed: a first public trading pool for
+$MAIN exists on World Chain**, so claimed $MAIN can be swapped for other
+tokens. The pool is young and small, which makes its price easy to move —
+[Your $MAIN on-chain](/your-main-on-chain) explains how swapping works and
+what to check before trying it. Main's World itself never sells $MAIN and
+never promises a price.
 
 > One line worth remembering: **every unit of $MAIN starts with one Main
 > appreciating another's work.**

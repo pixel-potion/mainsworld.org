@@ -60,9 +60,10 @@ version is that the public map is meaningfully cleaner, not certain. See
 
 $MAIN is the currency an eligible thumbs up can earn you on a moment you authored
 or were tagged in, or on a comment you wrote. Orb-verified wallets can claim it
-on-chain through the Vault today. Open-market trading and liquidity are not live,
-so exchanging it for money is not currently available. See
-[the economy](/the-economy).
+on-chain through the Vault today. Since August 25, 2026 a first public trading
+pool for $MAIN exists on World Chain, so claimed $MAIN can be swapped — the
+pool is young and small, and [Your $MAIN on-chain](/your-main-on-chain)
+explains what to know before trying it. See [the economy](/the-economy).
 
 ### Can I buy my way to the top?
 

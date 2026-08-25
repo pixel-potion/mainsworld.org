@@ -179,9 +179,11 @@ meaningfully more real, not certifiably so.
 A vibe is a live gathering on the map that moments feed into. It has one rule that
 tells you what we're for:
 
-**No one owns a vibe.** A Main can start one, but another Main normally has to
-join before it becomes a live gathering. It ends when everyone leaves. The
-mechanic is designed to make it easy for other people to choose to be there.
+**A vibe is hosted, never owned.** A Main can start one — that makes them a
+host, and they can name others — but hosting is credit, not control: another
+Main normally has to join before it becomes a live gathering, and it ends when
+everyone leaves. The mechanic is designed to make it easy for other people to
+choose to be there.
 
 ### Crews
 
