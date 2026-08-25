@@ -12,7 +12,16 @@ gathering with become a thing with a name.
 
 ## What works today
 
-- **Create a crew** and give it a name.
+- **Create a crew** and give it a name. Any member can rename it later — a crew
+  belongs to everyone on it.
+- **Crew titles.** Every member gets a playful film-credit style title when they
+  join (something like "Boom Operator"), suggested automatically. Any member can
+  edit any title afterwards; titles stay short and never replace your real
+  profile name.
+- **Crew-only profile pictures.** You can put a different picture on your own
+  seat in a crew. Only that crew ever sees it; everywhere else you keep your
+  normal profile picture, and members who don't set one simply show their normal
+  picture inside the crew too.
 - **Invite accepted connections**, and let them join when they choose.
 - **Tag the crew's eligible members** on a moment in one step. They then
   participate through the moment's ordinary tagged-Main visibility and $MAIN
