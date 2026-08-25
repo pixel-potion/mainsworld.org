@@ -114,7 +114,7 @@ multiple accounts per person:
 - **You can give people something free, every day** — because "everyone" is a
   countable number of humans, not an unbounded number of registrations.
 - **Appreciation can be worth something** — because it can't be manufactured. A
-  thousand reactions from a thousand humans is a fact about the world.
+  thousand thumbs up from a thousand humans is a fact about the world.
 - **Actions can cost something** — because there's no supply of fresh accounts to
   reset the cost.
 - **You don't need to police speech at scale** — because the volume problem was
@@ -200,9 +200,9 @@ Two balances, and they never mix.
 
 Three rules hold the whole thing up.
 
-**Appreciation is the only mint.** An eligible first emoji reaction from another
-Main is the only way $MAIN comes into existence. Changing or removing that
-reaction does not mint again. This is the rule everything else defends.
+**Appreciation is the only mint.** Receiving a thumbs up from another Main is
+the only way $MAIN comes into existence. This is the rule everything else
+defends.
 
 **You can't buy your way in.** Money buys credits — the ability to speak — and
 credits are never $MAIN. You cannot purchase the thing that measures whether
@@ -258,7 +258,7 @@ What's here now, and what's coming. We try to be honest about the difference —
 the [Roadmap](/roadmap) for detail.
 
 **Live today:** independent SKY, LAND, and DEEP filters on a real map; moments
-with photos and video; time travel through the map's timeline; reactions and
+with photos and video; time travel through the map's timeline; appreciation and
 comments; friending and following; RunPal connection; basic crews; Vault claims
 for Orb-verified wallets; and vibes — including vibes planned ahead, with a
 start, an end, and a place.

@@ -104,8 +104,8 @@ everyone widens it again.
 ## How long a moment stays on the map
 
 The map shows what's current, not everything that ever happened. A moment stays
-on the map for **30 days**, and appreciation keeps it around longer: each
-reaction a moment collects adds about half a day to its stay, up to a maximum of 60
+on the map for **60 days**, and appreciation keeps it around longer: each thumbs
+up a moment collects adds about half a day to its stay, up to a maximum of 120
 days for the most loved ones.
 
 A moment never dims early. It looks just as bold on its last day as on its
@@ -123,9 +123,10 @@ the timestamp is when the photo was actually taken, not when you posted it, and
 the moment wears a small **◀◀ THROWBACK** marker so no one mistakes it for a
 live one. Time travel to the day it happened and it's there, in its place.
 
-Its stay on the map is measured from when you **posted** it, though, not from
-when the photo was taken — so a throwback of a photo from years ago still gets
-its full 30 days on the map, the same as anything else you post today.
+Its stay on today's map is measured from when the photo was **taken**, the same
+clock as its timestamp — so a throwback of a photo from years ago is not on
+today's map at all. It lives where it belongs: rewind to the day it happened
+and it's there.
 
 ## What can go on the public world
 
@@ -184,24 +185,22 @@ A check like this can also be wrong in the other direction, and a real photograp
 of yours could occasionally be turned away from the public world. If that happens,
 the moment is still yours — post it to your connections, or keep it private.
 
-## Reactions are appreciation
+## Appreciation, not likes
 
-React with any emoji that fits. You can have one current reaction on a moment,
-change it whenever you like, or remove it. The counts show how many of each
-reaction a moment has collected, not who chose them.
+Instead of "likes," Main's World has **appreciation**. An eligible first
+**thumbs up** on a moment mints 1 $MAIN shared by its author and tagged Mains,
+excluding the voter. There is no downvote: if a moment isn't for you, you simply
+move on. You can take a thumbs up back at any time and give it again later, and
+you can even give one to your own moment — though appreciating your own work
+never pays you anything. If other Mains are tagged, they may still receive the
+split.
 
-Your first reaction on a moment costs one energy credit. If it is eligible, that
-first reaction also mints 1 $MAIN shared by the moment's author and tagged
-Mains, excluding you. Changing the emoji, removing it, or reacting again later
-is free and never mints again. You can react to your own moment, but it never
-pays you anything; eligible tagged Mains may still receive the split.
-
-You can also **comment** on a moment, and comments use the same one-reaction
-system. Another Main's eligible first reaction mints 1 $MAIN to the commenter.
+You can also **comment** on a moment, and comments can collect a thumbs up of
+their own. The first thumbs up from another Main mints 1 $MAIN to the commenter.
 Comments follow the moment's world, so a comment on a private moment stays as
 private as the moment itself.
 
-To learn what a reaction actually gives someone, read
+To learn what a thumbs up actually gives someone, read
 **[The economy](/the-economy)**.
 
 ## Sharing a moment outside
