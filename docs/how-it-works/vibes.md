@@ -75,7 +75,17 @@ so it stays a highlight reel rather than an archive.
 The reel only ever plays published moments. Anything still waiting on someone's
 decision isn't in it, and never will be unless that person puts it on the map.
 So the reel fills out as people work through what they shot — which is why it's
-worth doing your own decisions before you watch it.
+worth doing your own decisions before you watch it. Photos show as they were
+posted, and video moments play right in the reel, silently, on a loop.
+
+You don't have to catch the reel the moment the lights go out. Backstage — your
+settings and profile area — has a **Past vibes** shelf listing every vibe you
+were on whose reel is still within its 30 days, newest first, and tapping one
+plays it. The reel also has a share button: it hands out the vibe's own link,
+the same one that invited people while the gathering was live. After the vibe
+ends, that link plays the reel instead — for anyone who could have seen the
+vibe in the first place. A public-world reel opens for anyone with the link;
+reels from the more private worlds stay behind the same doors the vibe had.
 
 After 30 days the vibe and its reel are gone for good. The moments people
 published live on as ordinary moments on the map; the gathering itself doesn't
