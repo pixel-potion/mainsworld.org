@@ -8,46 +8,51 @@ description: See where people can use Main's World, verify with an Orb, receive 
 Can you use Main's World and turn MAIN into local money where you live? This
 table shows what is confirmed today.
 
-**Last reviewed:** August 21, 2026
+**Last reviewed:** August 26, 2026
 
 | Country | Use Main's World | Orb verification | Receive MAIN | Swap MAIN | Withdraw local currency | Notes |
 | --- | :---: | :---: | :---: | :---: | :---: | --- |
-| 🇦🇷 Argentina | ✓ | Check locator | ✓ | Not live | ✓ | World offers ARS virtual accounts and local withdrawal through Ripio. |
-| 🇦🇺 Australia | ✓ | Check locator | ✓ | Not live | Provider | Use an AUSTRAC-registered provider; World Chain support is not confirmed. |
-| 🇧🇷 Brazil | ✓ | Check locator | ✓ | Not live | Provider | Use a provider regulated by Brazil's Central Bank; World Chain support is not confirmed. |
-| 🇨🇦 Canada | ✓ | Check locator | ✓ | Not live | Provider | Use a registered crypto trading platform; availability differs by province. |
-| 🇨🇱 Chile | ✓ | Check locator | ✓ | Not live | Provider | Use a provider registered and authorized under Chile's Fintech Law. |
-| 🇨🇴 Colombia | ✓ | Check locator | ✓ | Not live | ✓ | World offers COP virtual accounts and local withdrawal through Ripio. Crypto is not legal tender. |
-| 🇫🇷 France | ✓ | Check locator | ✓ | Not live | Provider | Use a provider authorized under the EU's MiCA framework. |
-| 🇩🇪 Germany | ✓ | ✓ | ✓ | Not live | Provider | Orb locations are listed. Use a MiCA-authorized provider for cash-out. |
-| 🇬🇭 Ghana | ✓ | Check locator | ✓ | Not live | Provider | Ghana has a regulated VASP sandbox; World Chain cash-out is not confirmed. |
-| 🇮🇳 India | ✓ | Check locator | ✓ | Not live | Provider | Use an FIU-India-registered provider; taxes and reporting may apply. |
-| 🇮🇩 Indonesia | ✓ | Check locator | ✓ | Not live | Provider | Use an OJK-licensed provider; World Chain support is not confirmed. |
-| 🇮🇹 Italy | ✓ | Check locator | ✓ | Not live | Provider | Use a provider authorized under the EU's MiCA framework. |
-| 🇯🇵 Japan | ✓ | ✓ | ✓ | Not live | Provider | Orb locations are listed. Use an FSA-registered exchange for cash-out. |
-| 🇰🇪 Kenya | ✓ | Check locator | ✓ | Not live | Provider | Kenya regulates VASPs; World Chain cash-out is not confirmed. |
-| 🇲🇾 Malaysia | ✓ | Check locator | ✓ | Not live | Provider | Use a Securities Commission-registered digital asset exchange. |
-| 🇲🇽 Mexico | ✓ | Check locator | ✓ | Not live | ✓ | World offers MXN virtual accounts and local withdrawal through Ripio. |
-| 🇳🇬 Nigeria | ✓ | Check locator | ✓ | Not live | Provider | Use a Nigerian SEC-approved VASP; World Chain cash-out is not confirmed. |
-| 🇵🇪 Peru | ✓ | Check locator | ✓ | Not live | Unconfirmed | Peru's market regulator warns that crypto offers lack specific supervision. |
-| 🇵🇭 Philippines | ✓ | Check locator | ✓ | Not live | Provider | Use a BSP-listed VASP; World Chain support is not confirmed. |
-| 🇵🇱 Poland | ✓ | Check locator | ✓ | Not live | Provider | Use a provider authorized under the EU's MiCA framework. |
-| 🇵🇹 Portugal | ✓ | Check locator | ✓ | Not live | Provider | Use a provider authorized under the EU's MiCA framework. |
-| 🇸🇬 Singapore | ✓ | ✓ | ✓ | Not live | Provider | Orb locations are listed. Use a MAS-licensed digital payment token provider. |
-| 🇿🇦 South Africa | ✓ | Check locator | ✓ | Not live | Provider | Use an FSCA-authorized crypto asset service provider. |
-| 🇰🇷 South Korea | ✓ | ✓ | ✓ | Not live | Provider | Orb locations are listed. Use a registered Korean VASP for cash-out. |
-| 🇪🇸 Spain | ✓ | Check locator | ✓ | Not live | Provider | Use a provider authorized under the EU's MiCA framework. |
-| 🇺🇬 Uganda | ✓ | Check locator | ✓ | Not live | Provider | VASPs are registered with the FIA; World Chain-to-UGX cash-out is not confirmed. |
-| 🇦🇪 United Arab Emirates | ✓ | Check locator | ✓ | Not live | Provider | In Dubai, use a fully licensed provider in VARA's public register. |
-| 🇬🇧 United Kingdom | ✓ | ✓ | ✓ | Not live | Provider | Orb locations are listed. Use an FCA-registered cryptoasset provider. |
-| 🇺🇸 United States | ✓ | ✓ | ✓ | Not live | Provider | Orb locations are listed. Fiat services and eligibility vary by provider and state. |
+| 🇦🇷 Argentina | ✓ | Check locator | ✓ | Uniswap | ✓ | World offers ARS virtual accounts and local withdrawal through Ripio. |
+| 🇦🇺 Australia | ✓ | Check locator | ✓ | Uniswap | Provider | Use an AUSTRAC-registered provider; World Chain support is not confirmed. |
+| 🇧🇷 Brazil | ✓ | Check locator | ✓ | Uniswap | Provider | Use a provider regulated by Brazil's Central Bank; World Chain support is not confirmed. |
+| 🇨🇦 Canada | ✓ | Check locator | ✓ | Uniswap | Provider | Use a registered crypto trading platform; availability differs by province. |
+| 🇨🇱 Chile | ✓ | Check locator | ✓ | Uniswap | Provider | Use a provider registered and authorized under Chile's Fintech Law. |
+| 🇨🇴 Colombia | ✓ | Check locator | ✓ | Uniswap | ✓ | World offers COP virtual accounts and local withdrawal through Ripio. Crypto is not legal tender. |
+| 🇫🇷 France | ✓ | Check locator | ✓ | Uniswap | Provider | Use a provider authorized under the EU's MiCA framework. |
+| 🇩🇪 Germany | ✓ | ✓ | ✓ | Uniswap | Provider | Orb locations are listed. Use a MiCA-authorized provider for cash-out. |
+| 🇬🇭 Ghana | ✓ | Check locator | ✓ | Uniswap | Provider | Ghana has a regulated VASP sandbox; World Chain cash-out is not confirmed. |
+| 🇮🇳 India | ✓ | Check locator | ✓ | Uniswap | Provider | Use an FIU-India-registered provider; taxes and reporting may apply. |
+| 🇮🇩 Indonesia | ✓ | Check locator | ✓ | Uniswap | Provider | Use an OJK-licensed provider; World Chain support is not confirmed. |
+| 🇮🇹 Italy | ✓ | Check locator | ✓ | Uniswap | Provider | Use a provider authorized under the EU's MiCA framework. |
+| 🇯🇵 Japan | ✓ | ✓ | ✓ | Uniswap | Provider | Orb locations are listed. Use an FSA-registered exchange for cash-out. |
+| 🇰🇪 Kenya | ✓ | Check locator | ✓ | Uniswap | Provider | Kenya regulates VASPs; World Chain cash-out is not confirmed. |
+| 🇲🇾 Malaysia | ✓ | Check locator | ✓ | Uniswap | Provider | Use a Securities Commission-registered digital asset exchange. |
+| 🇲🇽 Mexico | ✓ | Check locator | ✓ | Uniswap | ✓ | World offers MXN virtual accounts and local withdrawal through Ripio. |
+| 🇳🇬 Nigeria | ✓ | Check locator | ✓ | Uniswap | Provider | Use a Nigerian SEC-approved VASP; World Chain cash-out is not confirmed. |
+| 🇵🇪 Peru | ✓ | Check locator | ✓ | Uniswap | Unconfirmed | Peru's market regulator warns that crypto offers lack specific supervision. |
+| 🇵🇭 Philippines | ✓ | Check locator | ✓ | Uniswap | Provider | Use a BSP-listed VASP; World Chain support is not confirmed. |
+| 🇵🇱 Poland | ✓ | Check locator | ✓ | Uniswap | Provider | Use a provider authorized under the EU's MiCA framework. |
+| 🇵🇹 Portugal | ✓ | Check locator | ✓ | Uniswap | Provider | Use a provider authorized under the EU's MiCA framework. |
+| 🇸🇬 Singapore | ✓ | ✓ | ✓ | Uniswap | Provider | Orb locations are listed. Use a MAS-licensed digital payment token provider. |
+| 🇿🇦 South Africa | ✓ | Check locator | ✓ | Uniswap | Provider | Use an FSCA-authorized crypto asset service provider. |
+| 🇰🇷 South Korea | ✓ | ✓ | ✓ | Uniswap | Provider | Orb locations are listed. Use a registered Korean VASP for cash-out. |
+| 🇪🇸 Spain | ✓ | Check locator | ✓ | Uniswap | Provider | Use a provider authorized under the EU's MiCA framework. |
+| 🇺🇬 Uganda | ✓ | Check locator | ✓ | Uniswap | Provider | VASPs are registered with the FIA; World Chain-to-UGX cash-out is not confirmed. |
+| 🇦🇪 United Arab Emirates | ✓ | Check locator | ✓ | Uniswap | Provider | In Dubai, use a fully licensed provider in VARA's public register. |
+| 🇬🇧 United Kingdom | ✓ | ✓ | ✓ | Uniswap | Provider | Orb locations are listed. Use an FCA-registered cryptoasset provider. |
+| 🇺🇸 United States | ✓ | ✓ | ✓ | Uniswap | Provider | Orb locations are listed. World App's built-in swap is not available in the US (confirmed August 26, 2026); swapping works through the Uniswap website with an external wallet. Fiat services and eligibility vary by provider and state. |
 
 ## What the labels mean
 
 - **✓** — confirmed available.
 - **Check locator** — no current location is confirmed here; check the live
   [Orb locator](https://world.org/find-orb) before traveling.
-- **Not live** — a public, usable MAIN swap market has not been confirmed yet.
+- **Uniswap** — a public MAIN/USDC market is live on Uniswap on World Chain,
+  usable from any wallet that supports World Chain; see
+  [Your $MAIN on-chain](/your-main-on-chain) for how. Whether World App's own
+  built-in swap can trade MAIN additionally varies by country — it is
+  confirmed unavailable in the United States — and is not yet confirmed
+  anywhere else.
 - **Provider** — regulated local providers exist, but direct support for USDC on
   World Chain has not been confirmed. Ask the provider which network it accepts.
 - **Unconfirmed** — we do not have a verified local withdrawal route.
