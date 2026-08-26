@@ -104,9 +104,13 @@ settings and profile area — has a **Past vibes** shelf listing every vibe you
 were on whose reel is still within its 30 days, newest first, and tapping one
 plays it. The reel also has a share button: it hands out the vibe's own link,
 the same one that invited people while the gathering was live. After the vibe
-ends, that link plays the reel instead — for anyone who could have seen the
-vibe in the first place. A public-world reel opens for anyone with the link;
-reels from the more private worlds stay behind the same doors the vibe had.
+ends, that link plays the reel instead — and it works for anyone holding it,
+no account or sign-in needed. For a vibe in one of the more private worlds,
+the shared link quietly carries a special link — the same revocable guest
+pass members could hand out while the vibe was live — so the person you send
+it to can watch the reel too. Special links for a vibe stay available to its
+members for the reel's whole 30 days, and a host can still kill them, which
+cuts off every copy at once.
 
 After 30 days the vibe and its reel are gone for good. The moments people
 published live on as ordinary moments on the map; the gathering itself doesn't
