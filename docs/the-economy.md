@@ -40,10 +40,12 @@ author 1 $MAIN.
 
 Gatherings carry the same rule themselves. Every vibe has a heart, and a talk —
 a comment thread for the gathering as a whole. The first time you ever heart a
-vibe, it spends one energy credit and gives 1 $MAIN to the Main who started it;
-your first heart on a comment in the talk does the same for the Main who wrote
-it. That's the heartbeat of the whole economy: value travels from
-one Main's action to other Mains.
+vibe, it spends one energy credit and mints 1 $MAIN shared the same way a
+moment's appreciation is: half among the vibe's hosts and half among its
+attendees, each group splitting evenly, everything settling the instant the
+heart lands, and the voter always excluded. Your first heart on a comment in
+the talk gives 1 $MAIN to the Main who wrote it. That's the heartbeat of the
+whole economy: value travels from one Main's action to other Mains.
 
 There is no downvote — appreciation is the only reaction, so no one can be
 piled on or drained. You can change your mind at any time: take a thumbs up or

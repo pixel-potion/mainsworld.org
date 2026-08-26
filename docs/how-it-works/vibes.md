@@ -56,9 +56,11 @@ Besides its moments, every vibe has two small social touches of its own:
 
 - **The heart.** One tap that says the gathering itself was worth having. The
   first time you ever heart a particular vibe, it costs one energy credit and
-  gives 1 $MAIN to the Main who started it. After that first one, you can take
-  your heart back and give it again freely — the credit is only ever spent
-  once, and what the starter earned stays earned.
+  gives 1 $MAIN shared by the people who make the gathering what it is: half
+  goes to the vibe's hosts and half to its attendees, split evenly within each
+  group, with you — the one giving the heart — always left out of the sharing.
+  After that first one, you can take your heart back and give it again freely —
+  the credit is only ever spent once, and what the room earned stays earned.
 - **The vibe talk.** A comment thread that belongs to the gathering as a whole,
   not to any one moment. Leaving a comment costs one energy credit, like any
   comment. Comments in the talk can be hearted too, under the same rule as the
