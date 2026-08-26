@@ -61,6 +61,13 @@ Main's World has its own vocabulary. Here's what everything means.
   by its author and tagged Mains other than the voter; on a comment, another
   Main's first thumbs up gives the commenter 1 $MAIN. There are no downvotes,
   and appreciating your own work never pays you.
+- **Heart** — appreciation for a vibe itself, or for a comment in its talk. The
+  first heart you ever give a particular vibe or talk comment costs one energy
+  credit and gives 1 $MAIN — to the vibe's starter, or to the comment's author.
+  Like a thumbs up, it can be taken back and given again freely after that, and
+  hearting your own work never pays you. See [The economy](/the-economy).
+- **Vibe talk** — the comment thread that belongs to a vibe as a whole, rather
+  than to any one moment. See [Vibes](/how-it-works/vibes).
 - **Energy credits** — your daily fuel for doing things (posting, appreciating,
   commenting). You get 10 a day.
 - **Energy burned** — the running total of energy credits the whole community has

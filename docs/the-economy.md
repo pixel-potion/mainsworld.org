@@ -36,13 +36,21 @@ and anyone tagged — and half is split evenly among the vibe's hosts, counting
 every member of a hosting crew. Everything settles the instant the thumbs up
 lands, among whoever holds those roles at that moment. Crediting the people who
 threw the gathering is the point of naming hosts. Another Main's first thumbs up on a comment gives its
-author 1 $MAIN. That's the heartbeat of the whole economy: value travels from
+author 1 $MAIN.
+
+Gatherings carry the same rule themselves. Every vibe has a heart, and a talk —
+a comment thread for the gathering as a whole. The first time you ever heart a
+vibe, it spends one energy credit and gives 1 $MAIN to the Main who started it;
+your first heart on a comment in the talk does the same for the Main who wrote
+it. That's the heartbeat of the whole economy: value travels from
 one Main's action to other Mains.
 
 There is no downvote — appreciation is the only reaction, so no one can be
-piled on or drained. You can change your mind at any time: take a thumbs up
-back, give it again — only your first one on a moment ever spends energy, and a
-gift, once given, stays given.
+piled on or drained. You can change your mind at any time: take a thumbs up or
+a heart back, give it again — only your first one on any particular moment,
+comment, or vibe ever spends energy, and a gift, once given, stays given.
+And as always, appreciation never pays the person giving it: appreciating your
+own work spends the credit but mints nothing.
 
 ## Energy burned
 

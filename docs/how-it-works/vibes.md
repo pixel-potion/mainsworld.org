@@ -50,6 +50,25 @@ sees them in its live story, but they don't go out onto the map, and people
 looking in from outside don't see them at all. What happens at the vibe stays
 there until you say otherwise.
 
+## The heart and the vibe talk
+
+Besides its moments, every vibe has two small social touches of its own:
+
+- **The heart.** One tap that says the gathering itself was worth having. The
+  first time you ever heart a particular vibe, it costs one energy credit and
+  gives 1 $MAIN to the Main who started it. After that first one, you can take
+  your heart back and give it again freely — the credit is only ever spent
+  once, and what the starter earned stays earned.
+- **The vibe talk.** A comment thread that belongs to the gathering as a whole,
+  not to any one moment. Leaving a comment costs one energy credit, like any
+  comment. Comments in the talk can be hearted too, under the same rule as the
+  vibe's own heart: your first heart on a particular comment costs one credit
+  and gives 1 $MAIN to the Main who wrote it.
+
+As everywhere in Main's World, appreciation never pays the person giving it:
+hearting your own vibe or your own comment spends the credit but mints nothing.
+The details live in **[The economy](/the-economy)**.
+
 ## When it's over, you decide what leaves
 
 A vibe ending doesn't publish anything. Once the lights go out, the moments you
