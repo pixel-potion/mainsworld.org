@@ -74,16 +74,23 @@ swap whose received amount surprises you.
 
 Two ways to swap:
 
-- **Inside World App.** World App's swap feature routes through Uniswap pools
-  on World Chain. If $MAIN does not yet appear in its token search, that is the
-  display curation mentioned above — the pool itself is live. We have submitted
-  $MAIN for inclusion in the standard token lists; until that lands, the
-  contract address in the table is your key: any interface that accepts a
-  pasted token address can find $MAIN with it.
+- **Inside World App, using a swap mini app.** This works today, and Mains have
+  already done it. World App's own built-in Swap will not find $MAIN — that
+  feature carries a fixed list of four tokens (WBTC, WLD, WETH and USDC), has no
+  place to type a contract address, and cannot reach the kind of pool $MAIN
+  trades in. Several independent swap mini apps inside World App can, because
+  they accept a contract address and route to the pool directly. Open one from
+  the World App store, paste the $MAIN contract address from the table above,
+  and swap as you would any other token.
 - **On Uniswap directly.** [app.uniswap.org](https://app.uniswap.org) supports
   World Chain. Connect a wallet, choose World Chain as the network, and paste
   the $MAIN contract address into the token selector the first time — Uniswap
   will remember it afterwards.
+
+A mini app that swaps for you is a third party, not Main's World. Check that the
+token you are about to receive is the contract address on this page before you
+confirm anything, and start with an amount you would not mind losing while you
+learn a new tool.
 
 Turning $MAIN into money you can spend generally takes two steps: swap $MAIN
 for USDC (a stablecoin pegged to the US dollar), then move the USDC wherever
