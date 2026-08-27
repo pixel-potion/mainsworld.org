@@ -8,7 +8,7 @@ description: See where people can use Main's World, verify with an Orb, receive 
 Can you use Main's World and turn MAIN into local money where you live? This
 table shows what is confirmed today.
 
-**Last reviewed:** August 26, 2026
+**Last reviewed:** August 27, 2026
 
 | Country | Use Main's World | Orb verification | Receive MAIN | Swap MAIN | Withdraw local currency | Notes |
 | --- | :---: | :---: | :---: | :---: | :---: | --- |
@@ -40,19 +40,19 @@ table shows what is confirmed today.
 | 🇺🇬 Uganda | ✓ | Check locator | ✓ | Uniswap | Provider | VASPs are registered with the FIA; World Chain-to-UGX cash-out is not confirmed. |
 | 🇦🇪 United Arab Emirates | ✓ | Check locator | ✓ | Uniswap | Provider | In Dubai, use a fully licensed provider in VARA's public register. |
 | 🇬🇧 United Kingdom | ✓ | ✓ | ✓ | Uniswap | Provider | Orb locations are listed. Use an FCA-registered cryptoasset provider. |
-| 🇺🇸 United States | ✓ | ✓ | ✓ | Uniswap | Provider | Orb locations are listed. World App's built-in swap is not available in the US (confirmed August 26, 2026); swapping works through the Uniswap website with an external wallet. Fiat services and eligibility vary by provider and state. |
+| 🇺🇸 United States | ✓ | ✓ | ✓ | Uniswap | Provider | Orb locations are listed. Fiat services and eligibility vary by provider and state. |
 
 ## What the labels mean
 
 - **✓** — confirmed available.
 - **Check locator** — no current location is confirmed here; check the live
   [Orb locator](https://world.org/find-orb) before traveling.
-- **Uniswap** — a public MAIN/USDC market is live on Uniswap on World Chain,
-  usable from any wallet that supports World Chain; see
-  [Your $MAIN on-chain](/your-main-on-chain) for how. Whether World App's own
-  built-in swap can trade MAIN additionally varies by country — it is
-  confirmed unavailable in the United States — and is not yet confirmed
-  anywhere else.
+- **Uniswap** — a public MAIN/USDC market is live on Uniswap on World Chain.
+  You can trade it from inside World App using a swap mini app, or from any
+  wallet that supports World Chain; see [Your $MAIN on-chain](/your-main-on-chain)
+  for how. World App's **own built-in Swap** carries a fixed four-token list
+  that does not include MAIN, so that particular screen will not find it — this
+  is not a country restriction.
 - **Provider** — regulated local providers exist, but direct support for USDC on
   World Chain has not been confirmed. Ask the provider which network it accepts.
 - **Unconfirmed** — we do not have a verified local withdrawal route.
