@@ -75,13 +75,21 @@ swap whose received amount surprises you.
 Two ways to swap:
 
 - **Inside World App, using a swap mini app.** This works today, and Mains have
-  already done it. World App's own built-in Swap will not find $MAIN — that
-  feature carries a fixed list of four tokens (WBTC, WLD, WETH and USDC), has no
-  place to type a contract address, and cannot reach the kind of pool $MAIN
-  trades in. Several independent swap mini apps inside World App can, because
-  they accept a contract address and route to the pool directly. Open one from
-  the World App store, paste the $MAIN contract address from the table above,
-  and swap as you would any other token.
+  already done it. World App's own built-in **Swap** will not find $MAIN — that
+  feature carries a fixed list of four tokens (WBTC, WLD, WETH and USDC), gives
+  you nowhere to type a contract address, and cannot reach the kind of pool
+  $MAIN trades in. No amount of waiting changes that screen.
+
+  Other swap mini apps inside World App can reach it, because they accept a
+  contract address and route to the pool directly. **DNA** is the one we have
+  confirmed working — real swaps of $MAIN have gone through it from World App
+  wallets. **Holdstation** also supports the kind of pool $MAIN uses. Open
+  either from the World App store, paste the $MAIN contract address from the
+  table above, and trade as you would any other token.
+
+  If you use a different app, the test is simple: it must let you enter a
+  contract address, and it must show you a price once you do. An app that
+  cannot find $MAIN by address cannot trade it.
 - **On Uniswap directly.** [app.uniswap.org](https://app.uniswap.org) supports
   World Chain. Connect a wallet, choose World Chain as the network, and paste
   the $MAIN contract address into the token selector the first time — Uniswap
