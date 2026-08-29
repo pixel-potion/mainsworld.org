@@ -638,19 +638,26 @@ export async function checkBaseDiff(base, { root = repositoryRoot, allowMaintena
 function parseCliArguments(args) {
   const [mode, ...flags] = args;
   if (!['generate', 'check'].includes(mode)) {
-    throw new Error('Usage: node scripts/app-registry.mjs <generate|check> [--base <commit>] [--allow-maintenance]');
+    throw new Error('Usage: node scripts/app-registry.mjs <generate|check> [--root <path>] [--base <commit>] [--allow-maintenance]');
   }
-  const options = { mode, base: null, allowMaintenance: false };
+  const options = { mode, root: null, base: null, allowMaintenance: false };
   for (let index = 0; index < flags.length; index += 1) {
     const flag = flags[index];
-    if (flag === '--base' && flags[index + 1]) {
+    if (flag === '--root') {
+      if (!flags[index + 1]) throw new Error('--root requires a path.');
+      if (options.root) throw new Error('The root may be supplied only once.');
+      options.root = path.resolve(flags[++index]);
+    } else if (flag === '--base' && flags[index + 1]) {
       if (options.base) throw new Error('The base commit may be supplied only once.');
       options.base = flags[++index];
     } else if (flag === '--allow-maintenance' && mode === 'check') {
       options.allowMaintenance = true;
     } else {
-      throw new Error('Usage: node scripts/app-registry.mjs <generate|check> [--base <commit>] [--allow-maintenance]');
+      throw new Error('Usage: node scripts/app-registry.mjs <generate|check> [--root <path>] [--base <commit>] [--allow-maintenance]');
     }
+  }
+  if (mode === 'generate' && options.root) {
+    throw new Error('Generate does not accept --root.');
   }
   if (mode === 'generate' && (options.base || options.allowMaintenance)) {
     throw new Error('Generate does not accept registry diff options.');
@@ -662,11 +669,12 @@ function parseCliArguments(args) {
 }
 
 async function runCli() {
-  const { mode, base, allowMaintenance } = parseCliArguments(process.argv.slice(2));
-  const rendered = await renderAll(repositoryRoot);
+  const { mode, root: requestedRoot, base, allowMaintenance } = parseCliArguments(process.argv.slice(2));
+  const root = requestedRoot ?? repositoryRoot;
+  const rendered = await renderAll(root);
   if (mode === 'generate') {
     await Promise.all(Object.entries(rendered).map(async ([relativePath, content]) => {
-      const outputPath = path.join(repositoryRoot, relativePath);
+      const outputPath = path.join(root, relativePath);
       await mkdir(path.dirname(outputPath), { recursive: true });
       await writeFile(outputPath, content);
     }));
@@ -675,13 +683,13 @@ async function runCli() {
   const stale = [];
   for (const [relativePath, content] of Object.entries(rendered)) {
     try {
-      if ((await readFile(path.join(repositoryRoot, relativePath), 'utf8')) !== content) stale.push(relativePath);
+      if ((await readFile(path.join(root, relativePath), 'utf8')) !== content) stale.push(relativePath);
     } catch {
       stale.push(relativePath);
     }
   }
   if (stale.length) throw new Error(`Generated catalog outputs are stale: ${stale.join(', ')}`);
-  if (base) await checkBaseDiff(base, { root: repositoryRoot, allowMaintenance });
+  if (base) await checkBaseDiff(base, { root, allowMaintenance });
 }
 
 if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {

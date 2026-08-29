@@ -29,6 +29,11 @@ Before editing an existing listing or the reviewed preview snapshot, ask a
 maintainer to apply the `catalog-maintenance` label. That label only enables
 maintenance review; it never bypasses validation or makes anything callable.
 
+Pull-request policy validation runs from the trusted base branch, against the
+proposed checkout as data only. It does not run a contributor's scripts. A
+change to the policy or schema format may therefore need a policy-first
+maintainer PR before a later data migration can use that format.
+
 ## Never include private material
 
 Do not paste secrets, tokens, credentials, client IDs, private callback URLs,

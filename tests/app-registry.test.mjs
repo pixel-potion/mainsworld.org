@@ -21,6 +21,7 @@ import {
 
 const repositoryRoot = path.resolve(import.meta.dirname, '..');
 const execFile = promisify(execFileCallback);
+const policyWorkflowPath = path.join(repositoryRoot, '.github', 'workflows', 'catalog-policy.yml');
 const expectedApps = [
   ['runpal', 'connected', 'none', ['moments']],
   ['alerts', 'first_party', 'not_applicable', ['mains']],
@@ -139,6 +140,56 @@ async function addManifest(root, overrides = {}) {
   );
 }
 
+async function writeGeneratedCatalogOutputs(root) {
+  const [catalog, apps, platform] = await Promise.all([
+    readFile(path.join(root, 'registry', 'catalog.json'), 'utf8').then(JSON.parse),
+    loadRegistry(root),
+    loadPlatform(root),
+  ]);
+  await Promise.all([
+    writeFile(path.join(root, 'docs', 'developers', 'apps.md'), renderAppsMarkdown(apps)),
+    writeFile(path.join(root, 'static', 'apps.json'), renderAppsJson(catalog, apps)),
+    writeFile(path.join(root, 'static', 'llms-full.txt'), renderLlmsFull(catalog, apps, platform)),
+  ]);
+}
+
+async function withProposedCheckout(mutate, run) {
+  const root = await mkdtemp(path.join(tmpdir(), 'mainsworld-proposed-checkout-'));
+  try {
+    await Promise.all([
+      cp(path.join(repositoryRoot, 'registry'), path.join(root, 'registry'), { recursive: true }),
+      cp(path.join(repositoryRoot, 'static', 'api'), path.join(root, 'static', 'api'), { recursive: true }),
+      mkdir(path.join(root, 'docs', 'developers'), { recursive: true }),
+      mkdir(path.join(root, 'scripts'), { recursive: true }),
+    ]);
+    await Promise.all([
+      cp(path.join(repositoryRoot, 'docs', 'developers', 'apps.md'), path.join(root, 'docs', 'developers', 'apps.md')),
+      cp(path.join(repositoryRoot, 'static', 'apps.json'), path.join(root, 'static', 'apps.json')),
+      cp(path.join(repositoryRoot, 'static', 'llms-full.txt'), path.join(root, 'static', 'llms-full.txt')),
+      writeFile(path.join(root, 'scripts', 'app-registry.mjs'), 'process.exit(0);\n'),
+      writeFile(path.join(root, 'package.json'), JSON.stringify({ scripts: { 'apps:check': 'exit 0' } }, null, 2)),
+    ]);
+    await runGit(root, ['init', '--quiet']);
+    await runGit(root, ['config', 'user.name', 'Registry Test']);
+    await runGit(root, ['config', 'user.email', 'registry-test@example.invalid']);
+    await runGit(root, ['add', '-A']);
+    await runGit(root, ['commit', '--quiet', '-m', 'base checkout']);
+    const { stdout } = await execFile('git', ['rev-parse', 'HEAD'], { cwd: root });
+    const base = stdout.trim();
+
+    await mutate(root);
+    await runGit(root, ['add', '-A']);
+    await runGit(root, ['commit', '--quiet', '-m', 'proposed change']);
+    await run(root, base);
+  } finally {
+    await rm(root, { recursive: true, force: true });
+  }
+}
+
+async function runTrustedPolicy(args, options = {}) {
+  return execFile(process.execPath, [path.join(repositoryRoot, 'scripts', 'app-registry.mjs'), ...args], options);
+}
+
 test('permits a newly added proposed manifest with no API access', async () => {
   await withGitRepository(
     async (root) => addManifest(root),
@@ -250,6 +301,77 @@ test('keeps the untrusted pull-request workflow read-only', async () => {
   assert.deepEqual(workflow.permissions, { contents: 'read' });
   assert.equal(checkout.with['fetch-depth'], 0);
   assert.equal(checkout.with['persist-credentials'], false);
+});
+
+test('runs catalog policy only from a trusted base checkout against pull-request data', async () => {
+  const workflow = yaml.load(await readFile(policyWorkflowPath, 'utf8'));
+  const steps = workflow.jobs.policy.steps;
+  const policyCheckout = steps.find((step) => step.name === 'Checkout trusted policy');
+  const proposedCheckout = steps.find((step) => step.name === 'Checkout proposed data');
+  const setupNode = steps.find((step) => step.uses === 'actions/setup-node@v4');
+  const install = steps.find((step) => step.run === 'npm ci --ignore-scripts');
+  const validate = steps.find((step) => typeof step.run === 'string' && step.run.includes('app-registry.mjs check'));
+  const maintenanceValidate = steps.find((step) => typeof step.run === 'string' && step.run.includes('--allow-maintenance'));
+
+  assert.equal(workflow.on.pull_request_target.branches[0], 'main');
+  assert.deepEqual(workflow.permissions, { contents: 'read' });
+  assert.equal(workflow.concurrency['cancel-in-progress'], true);
+  assert.equal(policyCheckout.with.ref, '${{ github.event.pull_request.base.sha }}');
+  assert.equal(policyCheckout.with.path, 'policy');
+  assert.equal(proposedCheckout.with.ref, 'refs/pull/${{ github.event.pull_request.number }}/merge');
+  assert.equal(proposedCheckout.with.path, 'proposed');
+  for (const checkout of [policyCheckout, proposedCheckout]) {
+    assert.equal(checkout.with['fetch-depth'], 0);
+    assert.equal(checkout.with['persist-credentials'], false);
+    assert.equal(checkout.with.submodules, false);
+    assert.equal(checkout.with.lfs, false);
+  }
+  assert.equal(setupNode.with['node-version-file'], 'policy/.node-version');
+  assert.equal(install['working-directory'], 'policy');
+  assert.equal(validate['working-directory'], 'policy');
+  assert.match(validate.run, /^node scripts\/app-registry\.mjs check --root "\.\.\/proposed" --base /);
+  assert.match(maintenanceValidate.if, /catalog-maintenance/);
+  assert.equal(maintenanceValidate['working-directory'], 'policy');
+  assert.ok(steps.every((step) => step['working-directory'] !== 'proposed'));
+  assert.ok(steps.filter((step) => typeof step.run === 'string').every((step) => {
+    return !/proposed\/(?:package\.json|scripts\/app-registry\.mjs)/.test(step.run) && !/^npm\b.*proposed/i.test(step.run);
+  }));
+});
+
+test('trusted policy rejects a non-proposed manifest even when the proposed checkout disables its own scripts', async () => {
+  await withProposedCheckout(
+    async (root) => {
+      await addManifest(root, {
+        listing_status: 'coming_soon',
+        reviewed_at: '2026-08-29',
+      });
+      const manifest = path.join(root, 'registry', 'apps', 'city-notes.json');
+      const app = JSON.parse(await readFile(manifest, 'utf8'));
+      delete app.submitted_at;
+      delete app.support_url;
+      delete app.privacy_url;
+      await writeFile(manifest, `${JSON.stringify(app, null, 2)}\n`);
+      await writeGeneratedCatalogOutputs(root);
+    },
+    async (root, base) => {
+      await assert.rejects(
+        runTrustedPolicy(['check', '--root', root, '--base', base], { cwd: repositoryRoot }),
+        /must be proposed with API availability none/i,
+      );
+    },
+  );
+});
+
+test('accepts a proposed registry root for check but rejects root misuse', async () => {
+  await assert.doesNotReject(runTrustedPolicy(['check', '--root', repositoryRoot], { cwd: repositoryRoot }));
+
+  for (const [args, message] of [
+    [['check', '--root'], /--root requires a path/i],
+    [['check', '--root', repositoryRoot, '--root', repositoryRoot], /root may be supplied only once/i],
+    [['generate', '--root', repositoryRoot], /Generate does not accept --root/i],
+  ]) {
+    await assert.rejects(runTrustedPolicy(args, { cwd: repositoryRoot }), message);
+  }
 });
 
 test('requires maintenance permission for platform and snapshot changes while preserving release validation', async () => {

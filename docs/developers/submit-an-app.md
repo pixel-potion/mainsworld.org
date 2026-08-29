@@ -8,6 +8,11 @@ You can propose a public SPACE listing. A merge lists the app only: it never
 issues credentials, creates a callback, grants provider access, registers a
 runtime integration, or activates production access.
 
+The submission policy runs from the trusted base branch and reads your pull
+request as data; contributor scripts are never part of that validation. If a
+new schema or policy format is needed, maintainers may land it first, then
+review the catalog migration in a follow-up PR.
+
 ## In GitHub
 
 Open the [proposed app example](https://github.com/pixel-potion/mainsworld.org/blob/main/registry/examples/proposed-app.json),
