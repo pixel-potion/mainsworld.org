@@ -191,6 +191,8 @@ test('rejects malformed public DNS labels', async () => {
 
   for (const [name, hostname] of [
     ['empty label', 'foo..bar'],
+    ['double root dot', 'foo.bar..'],
+    ['triple root dot', 'foo.bar...'],
     ['leading hyphen', '-foo.bar'],
     ['trailing hyphen', 'foo-.bar'],
     ['64-character label', tooLongLabel],
@@ -271,6 +273,8 @@ test('rejects prohibited public-data key families before schema validation', asy
     'secret_token',
     'accessToken',
     'client_id',
+    'clientIdentifier',
+    'client_identifier',
     'callback_url',
     'main_identifier',
     'identity',

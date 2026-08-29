@@ -33,6 +33,7 @@ const prohibitedTokens = new Set([
 ]);
 const prohibitedCompoundKeys = new Set([
   'clientid',
+  'clientidentifier',
   'userid',
   'useridentifier',
   'mainid',
@@ -87,6 +88,7 @@ function isProhibitedKey(key) {
     tokens.some((token) => prohibitedTokens.has(token)) ||
     prohibitedCompoundKeys.has(compactKey) ||
     hasTokenSequence(tokens, ['client', 'id']) ||
+    hasTokenSequence(tokens, ['client', 'identifier']) ||
     hasTokenSequence(tokens, ['user', 'id']) ||
     hasTokenSequence(tokens, ['user', 'identifier']) ||
     hasTokenSequence(tokens, ['main', 'user', 'id']) ||
@@ -139,10 +141,8 @@ function isValidDnsHostname(hostname) {
 function isPublicHttpsUrl(value) {
   try {
     const url = new URL(value);
-    const hostname = url.hostname
-      .toLowerCase()
-      .replace(/^\[|\]$/g, '')
-      .replace(/\.+$/, '');
+    const parsedHostname = url.hostname.toLowerCase().replace(/^\[|\]$/g, '');
+    const hostname = parsedHostname.endsWith('.') ? parsedHostname.slice(0, -1) : parsedHostname;
 
     if (url.protocol !== 'https:' || url.username || url.password || !hostname) {
       return false;
