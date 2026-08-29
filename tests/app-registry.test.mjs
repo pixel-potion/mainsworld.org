@@ -17,13 +17,13 @@ const validApp = {
   id: 'trail-notes',
   name: 'Trail Notes',
   summary: 'A public listing for sharing trail moments.',
-  website: 'https://example.com/',
+  website: 'https://www.iana.org/',
   listing_status: 'proposed',
   api_availability: 'none',
   capabilities: ['moments'],
   submitted_at: '2026-08-29',
-  support_url: 'https://example.com/support',
-  privacy_url: 'https://example.com/privacy',
+  support_url: 'https://www.iana.org/support',
+  privacy_url: 'https://www.iana.org/privacy',
 };
 
 function clone(value) {
@@ -65,7 +65,7 @@ test('returns freshly loaded manifests in status and English-name order', async 
     name: 'Beta',
     listing_status: 'connected',
     reviewed_at: '2026-08-29',
-    status_evidence_url: 'https://example.com/evidence',
+    status_evidence_url: 'https://www.iana.org/evidence',
   };
   delete connected.submitted_at;
   delete connected.support_url;
@@ -119,7 +119,7 @@ test('rejects unknown fields and duplicate capabilities', async () => {
 
 test('rejects HTTP and malformed public URLs', async () => {
   for (const [field, value] of [
-    ['website', 'http://example.com/'],
+    ['website', 'http://www.iana.org/'],
     ['support_url', 'not-a-url'],
     ['privacy_url', 'https://'],
   ]) {
@@ -128,17 +128,44 @@ test('rejects HTTP and malformed public URLs', async () => {
   }
 });
 
-test('rejects public URLs with credentials or non-public hosts', async () => {
-  for (const [field, value] of [
-    ['website', 'https://user:secret@example.com/'],
-    ['support_url', 'https://localhost/private'],
-    ['privacy_url', 'https://10.0.0.1/private'],
-    ['api_contract_url', 'https://[::1]/openapi.json'],
+test('rejects credentialed and special-use public URLs', async () => {
+  for (const [name, field, value] of [
+    ['credentials', 'website', 'https://user:secret@www.iana.org/'],
+    ['localhost trailing dot', 'support_url', 'https://localhost./private'],
+    ['local suffix trailing dot', 'privacy_url', 'https://service.local./private'],
+    ['test suffix', 'website', 'https://service.test/private'],
+    ['invalid suffix', 'website', 'https://service.invalid/private'],
+    ['example.com', 'website', 'https://example.com/'],
+    ['example.com subdomain', 'website', 'https://docs.example.com/'],
+    ['example.net', 'website', 'https://example.net/'],
+    ['example.org', 'website', 'https://example.org/'],
+    ['IPv4 unspecified', 'website', 'https://0.0.0.0/private'],
+    ['IPv4 private', 'website', 'https://10.0.0.1/private'],
+    ['IPv4 CGNAT', 'website', 'https://100.64.0.1/private'],
+    ['IPv4 loopback', 'website', 'https://127.0.0.1/private'],
+    ['IPv4 link-local', 'website', 'https://169.254.0.1/private'],
+    ['IPv4 private 172', 'website', 'https://172.16.0.1/private'],
+    ['IPv4 private 192', 'website', 'https://192.168.0.1/private'],
+    ['IPv4 documentation 192', 'website', 'https://192.0.2.1/private'],
+    ['IPv4 benchmark', 'website', 'https://198.18.0.1/private'],
+    ['IPv4 documentation 198', 'website', 'https://198.51.100.1/private'],
+    ['IPv4 documentation 203', 'website', 'https://203.0.113.1/private'],
+    ['IPv4 multicast', 'website', 'https://224.0.0.1/private'],
+    ['IPv4 reserved', 'website', 'https://240.0.0.1/private'],
+    ['IPv6 unspecified', 'website', 'https://[::]/private'],
+    ['IPv6 loopback', 'api_contract_url', 'https://[::1]/openapi.json'],
+    ['IPv4-mapped IPv6 loopback', 'website', 'https://[::ffff:127.0.0.1]/private'],
+    ['IPv6 unique local', 'website', 'https://[fc00::1]/private'],
+    ['IPv6 link-local', 'website', 'https://[fe80::1]/private'],
+    ['IPv6 documentation', 'website', 'https://[2001:db8::1]/private'],
+    ['IPv6 benchmark', 'website', 'https://[2001:2::1]/private'],
+    ['IPv6 multicast', 'website', 'https://[ff02::1]/private'],
+    ['IPv6 reserved', 'website', 'https://[100::1]/private'],
   ]) {
     const app = { ...clone(validApp), [field]: value };
     if (field === 'api_contract_url') app.api_availability = 'preview';
 
-    await assert.rejects(validateRegistry([app]), /public HTTPS URL/i, field);
+    await assert.rejects(validateRegistry([app]), /public HTTPS URL/i, name);
   }
 });
 
@@ -173,12 +200,12 @@ test('requires connected evidence and forbids it for every other status', async 
 
   await assert.rejects(validateRegistry([connected]), /schema validation/i);
 
-  connected.status_evidence_url = 'https://example.com/evidence';
+  connected.status_evidence_url = 'https://www.iana.org/evidence';
   await assert.doesNotReject(validateRegistry([connected]));
 
   const nonConnected = {
     ...clone(validApp),
-    status_evidence_url: 'https://example.com/evidence',
+    status_evidence_url: 'https://www.iana.org/evidence',
   };
   await assert.rejects(validateRegistry([nonConnected]), /schema validation/i);
 });
@@ -188,7 +215,7 @@ test('requires API contract URLs only for public API tiers', async () => {
     const app = { ...clone(validApp), api_availability: availability };
     await assert.rejects(validateRegistry([app]), /schema validation/i, availability);
 
-    app.api_contract_url = 'https://example.com/openapi.json';
+    app.api_contract_url = 'https://www.iana.org/openapi.json';
     await assert.doesNotReject(validateRegistry([app]), availability);
   }
 
@@ -196,7 +223,7 @@ test('requires API contract URLs only for public API tiers', async () => {
     const app = {
       ...clone(validApp),
       api_availability: availability,
-      api_contract_url: 'https://example.com/openapi.json',
+      api_contract_url: 'https://www.iana.org/openapi.json',
     };
     await assert.rejects(validateRegistry([app]), /schema validation/i, availability);
   }
@@ -212,6 +239,7 @@ test('rejects prohibited public-data key families before schema validation', asy
     'identity',
     'main_user_id',
     'mainUserId',
+    'main_uuid',
     'user_id',
     'userIdentifier',
     'walletAddress',
