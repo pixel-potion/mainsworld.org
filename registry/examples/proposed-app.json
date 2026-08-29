@@ -1,0 +1,13 @@
+{
+  "schema_version": "v1",
+  "id": "trail-notes",
+  "name": "Trail Notes",
+  "summary": "A public listing for sharing trail moments.",
+  "website": "https://www.iana.org/",
+  "listing_status": "proposed",
+  "api_availability": "none",
+  "capabilities": ["moments"],
+  "submitted_at": "2026-08-29",
+  "support_url": "https://www.iana.org/support",
+  "privacy_url": "https://www.iana.org/privacy"
+}

@@ -2,8 +2,10 @@ import assert from 'node:assert/strict';
 import { createHash } from 'node:crypto';
 import { cp, mkdtemp, mkdir, readFile, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
+import { execFile as execFileCallback } from 'node:child_process';
 import path from 'node:path';
 import test from 'node:test';
+import { promisify } from 'node:util';
 
 import {
   loadRegistry,
@@ -11,11 +13,13 @@ import {
   renderAppsJson,
   renderAppsMarkdown,
   renderLlmsFull,
+  checkBaseDiff,
   validatePlatform,
   validateRegistry,
 } from '../scripts/app-registry.mjs';
 
 const repositoryRoot = path.resolve(import.meta.dirname, '..');
+const execFile = promisify(execFileCallback);
 const expectedApps = [
   ['runpal', 'connected', 'none', ['moments']],
   ['alerts', 'first_party', 'not_applicable', ['mains']],
@@ -98,6 +102,152 @@ async function withMutatedOpenApi(mutate, run) {
     await rm(root, { recursive: true, force: true });
   }
 }
+
+async function runGit(root, args) {
+  await execFile('git', args, { cwd: root });
+}
+
+async function withGitRepository(mutate, run) {
+  const root = await mkdtemp(path.join(tmpdir(), 'mainsworld-registry-diff-'));
+  try {
+    await cp(path.join(repositoryRoot, 'registry'), path.join(root, 'registry'), { recursive: true });
+    await cp(path.join(repositoryRoot, 'static', 'api'), path.join(root, 'static', 'api'), { recursive: true });
+    await runGit(root, ['init', '--quiet']);
+    await runGit(root, ['config', 'user.name', 'Registry Test']);
+    await runGit(root, ['config', 'user.email', 'registry-test@example.invalid']);
+    await runGit(root, ['add', 'registry', 'static']);
+    await runGit(root, ['commit', '--quiet', '-m', 'base registry']);
+    const { stdout } = await execFile('git', ['rev-parse', 'HEAD'], { cwd: root });
+    const base = stdout.trim();
+
+    await mutate(root);
+    await runGit(root, ['add', '-A']);
+    await runGit(root, ['commit', '--quiet', '-m', 'registry change']);
+    await run(root, base);
+  } finally {
+    await rm(root, { recursive: true, force: true });
+  }
+}
+
+async function addManifest(root, overrides = {}) {
+  const app = { ...clone(validApp), id: 'city-notes', name: 'City Notes', ...overrides };
+  await writeFile(
+    path.join(root, 'registry', 'apps', `${app.id}.json`),
+    `${JSON.stringify(app, null, 2)}\n`,
+  );
+}
+
+test('permits a newly added proposed manifest with no API access', async () => {
+  await withGitRepository(
+    async (root) => addManifest(root),
+    async (root, base) => assert.doesNotReject(checkBaseDiff(base, { root })),
+  );
+});
+
+test('rejects newly added listings that self-declare a non-proposed or public API status', async () => {
+  for (const [listingStatus, apiAvailability] of [
+    ['connected', 'none'],
+    ['coming_soon', 'none'],
+    ['wishlist', 'none'],
+    ['first_party', 'none'],
+    ['proposed', 'preview'],
+    ['proposed', 'sandbox'],
+    ['proposed', 'production'],
+  ]) {
+    await withGitRepository(
+      async (root) => {
+        const app = {
+          listing_status: listingStatus,
+          api_availability: apiAvailability,
+        };
+        if (listingStatus !== 'proposed') {
+          app.reviewed_at = '2026-08-29';
+          delete app.submitted_at;
+          delete app.support_url;
+          delete app.privacy_url;
+        }
+        if (listingStatus === 'connected') app.status_evidence_url = 'https://www.iana.org/evidence';
+        if (apiAvailability !== 'none') app.api_contract_url = 'https://www.iana.org/openapi.json';
+        await addManifest(root, app);
+      },
+      async (root, base) => assert.rejects(checkBaseDiff(base, { root }), /new app manifest|proposed|API/i),
+    );
+  }
+});
+
+test('rejects modified, renamed, copied, and deleted existing manifests in ordinary mode', async () => {
+  const changes = {
+    modified: async (root) => {
+      const filename = path.join(root, 'registry', 'apps', 'runpal.json');
+      const app = JSON.parse(await readFile(filename, 'utf8'));
+      app.summary = 'A changed public listing summary.';
+      await writeFile(filename, `${JSON.stringify(app, null, 2)}\n`);
+    },
+    renamed: async (root) => {
+      await runGit(root, ['mv', 'registry/apps/runpal.json', 'registry/apps/runpal-renamed.json']);
+      const filename = path.join(root, 'registry', 'apps', 'runpal-renamed.json');
+      const app = JSON.parse(await readFile(filename, 'utf8'));
+      app.id = 'runpal-renamed';
+      await writeFile(filename, `${JSON.stringify(app, null, 2)}\n`);
+    },
+    copied: async (root) => {
+      const source = await readFile(path.join(root, 'registry', 'apps', 'runpal.json'), 'utf8');
+      const app = JSON.parse(source);
+      app.id = 'runpal-copy';
+      app.name = 'RunPal Copy';
+      await writeFile(path.join(root, 'registry', 'apps', 'runpal-copy.json'), `${JSON.stringify(app, null, 2)}\n`);
+    },
+    deleted: async (root) => {
+      await runGit(root, ['rm', '--quiet', 'registry/apps/runpal.json']);
+    },
+  };
+
+  for (const [kind, mutate] of Object.entries(changes)) {
+    await withGitRepository(
+      mutate,
+      async (root, base) => assert.rejects(checkBaseDiff(base, { root }), /existing manifest|catalog maintenance|rename|copy|delete|modify/i, kind),
+    );
+  }
+});
+
+test('requires maintenance permission for platform and snapshot changes while preserving release validation', async () => {
+  for (const mutate of [
+    async (root) => {
+      const filename = path.join(root, 'registry', 'platform.json');
+      await writeFile(filename, `${await readFile(filename, 'utf8')}\n`);
+    },
+    async (root) => {
+      const filename = path.join(root, 'static', 'api', 'connectives', 'v1', 'openapi.json');
+      const bytes = await readFile(filename);
+      await writeFile(filename, Buffer.concat([bytes, Buffer.from(' ')]));
+      const platformPath = path.join(root, 'registry', 'platform.json');
+      const platform = JSON.parse(await readFile(platformPath, 'utf8'));
+      platform.artifacts.openapi.sha256 = createHash('sha256').update(await readFile(filename)).digest('hex');
+      await writeFile(platformPath, `${JSON.stringify(platform, null, 2)}\n`);
+    },
+  ]) {
+    await withGitRepository(mutate, async (root, base) => {
+      await assert.rejects(checkBaseDiff(base, { root }), /platform|snapshot|catalog maintenance/i);
+      await assert.doesNotReject(checkBaseDiff(base, { root, allowMaintenance: true }));
+    });
+  }
+});
+
+test('does not allow maintenance mode to bypass release validation', async () => {
+  await withGitRepository(async (root) => {
+    const filename = path.join(root, 'static', 'api', 'connectives', 'v1', 'openapi.json');
+    await writeFile(filename, `${await readFile(filename, 'utf8')} `);
+  }, async (root, base) => {
+    await assert.rejects(
+      checkBaseDiff(base, { root, allowMaintenance: true }),
+      /hash/i,
+    );
+  });
+});
+
+test('rejects an invalid base commit explicitly', async () => {
+  await assert.rejects(checkBaseDiff('not-a-commit', { root: repositoryRoot }), /base/i);
+});
 
 test('accepts a valid proposed manifest', async () => {
   await assert.doesNotReject(validateRegistry([clone(validApp)]));

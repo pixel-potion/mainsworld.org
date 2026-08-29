@@ -1,13 +1,16 @@
 import Ajv2020 from 'ajv/dist/2020.js';
 import addFormats from 'ajv-formats';
 import { createHash } from 'node:crypto';
+import { execFile as execFileCallback } from 'node:child_process';
 import { mkdir, readdir, readFile, writeFile } from 'node:fs/promises';
 import { isIP } from 'node:net';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { promisify } from 'node:util';
 
 const moduleDirectory = path.dirname(fileURLToPath(import.meta.url));
 const repositoryRoot = path.resolve(moduleDirectory, '..');
+const execFile = promisify(execFileCallback);
 const schemaPath = path.join(repositoryRoot, 'registry', 'schema', 'app-v1.schema.json');
 const generatedOutputs = {
   appsMarkdown: path.join('docs', 'developers', 'apps.md'),
@@ -528,11 +531,138 @@ async function renderAll(root) {
   };
 }
 
-async function runCli() {
-  const mode = process.argv[2];
-  if (!['generate', 'check'].includes(mode) || process.argv.length !== 3) {
-    throw new Error('Usage: node scripts/app-registry.mjs <generate|check>');
+function parseNameStatusDiff(output) {
+  const fields = output.toString('utf8').split('\0');
+  fields.pop();
+  const changes = [];
+
+  for (let index = 0; index < fields.length;) {
+    const status = fields[index++];
+    if (!status) throw new Error('Git diff returned an empty name-status record.');
+
+    if (/^[RC]\d*$/.test(status)) {
+      const from = fields[index++];
+      const to = fields[index++];
+      if (from === undefined || to === undefined) {
+        throw new Error(`Git diff returned an incomplete ${status} record.`);
+      }
+      changes.push({ status: status[0], score: status.slice(1), from, to });
+      continue;
+    }
+
+    if (!/^[ACDMRTXUB]$/.test(status)) {
+      throw new Error(`Git diff returned an unsupported name-status code: ${status}.`);
+    }
+    const file = fields[index++];
+    if (file === undefined) throw new Error(`Git diff returned an incomplete ${status} record.`);
+    changes.push({ status, from: file, to: file });
   }
+  return changes;
+}
+
+function changeSurface(change) {
+  const paths = [change.from, change.to];
+  if (paths.some((file) => file === 'registry/platform.json')) return 'platform';
+  if (paths.some((file) => file.startsWith('static/api/connectives/v1/'))) return 'snapshot';
+  if (paths.some((file) => file.startsWith('registry/apps/'))) return 'app';
+  throw new Error(`Git diff returned a path outside the registry policy: ${paths.join(', ')}.`);
+}
+
+function addedAppId(change) {
+  if (change.status !== 'A' || changeSurface(change) !== 'app') return null;
+  if (!/^registry\/apps\/[a-z0-9]+(?:-[a-z0-9]+)*\.json$/.test(change.to)) {
+    throw new Error(`Added app manifest has an invalid path: ${change.to}.`);
+  }
+  return path.basename(change.to, '.json');
+}
+
+async function resolveBaseCommit(base, root) {
+  if (typeof base !== 'string' || base.length === 0) {
+    throw new Error('A base commit is required for registry diff validation.');
+  }
+  try {
+    const { stdout } = await execFile('git', ['rev-parse', '--verify', `${base}^{commit}`], { cwd: root });
+    return stdout.trim();
+  } catch {
+    throw new Error(`Invalid or missing base commit: ${base}.`);
+  }
+}
+
+/**
+ * Validate a pull-request registry change against a committed base revision.
+ * This function intentionally validates the complete current release before
+ * applying the narrower submission policy, so maintenance mode never bypasses
+ * schema, evidence, snapshot, parity, or public-safety checks.
+ */
+export async function checkBaseDiff(base, { root = repositoryRoot, allowMaintenance = false } = {}) {
+  const baseCommit = await resolveBaseCommit(base, root);
+  const [apps, platform] = await Promise.all([loadRegistry(root), loadPlatform(root)]);
+  await validatePlatform(platform, root);
+
+  let output;
+  try {
+    ({ stdout: output } = await execFile(
+      'git',
+      [
+        'diff', '--name-status', '-z', '--find-renames', '--find-copies',
+        `${baseCommit}...HEAD`, '--', 'registry/apps', 'registry/platform.json', 'static/api/connectives/v1',
+      ],
+      { cwd: root },
+    ));
+  } catch (error) {
+    throw new Error(`Unable to read registry diff from base ${base}: ${error.message}`);
+  }
+  const changes = parseNameStatusDiff(output);
+  if (allowMaintenance) return changes;
+
+  const appsById = new Map(apps.map((app) => [app.id, app]));
+  for (const change of changes) {
+    const surface = changeSurface(change);
+    if (surface === 'platform' || surface === 'snapshot') {
+      throw new Error(`Changes to ${surface} files require catalog maintenance permission.`);
+    }
+
+    const appId = addedAppId(change);
+    if (!appId) {
+      throw new Error(`Changes to an existing app manifest require catalog maintenance permission (${change.status}).`);
+    }
+    const app = appsById.get(appId);
+    if (!app) throw new Error(`Added app manifest is missing from the final registry: ${change.to}.`);
+    if (app.listing_status !== 'proposed' || app.api_availability !== 'none') {
+      throw new Error(`New app manifest ${change.to} must be proposed with API availability none.`);
+    }
+  }
+  return changes;
+}
+
+function parseCliArguments(args) {
+  const [mode, ...flags] = args;
+  if (!['generate', 'check'].includes(mode)) {
+    throw new Error('Usage: node scripts/app-registry.mjs <generate|check> [--base <commit>] [--allow-maintenance]');
+  }
+  const options = { mode, base: null, allowMaintenance: false };
+  for (let index = 0; index < flags.length; index += 1) {
+    const flag = flags[index];
+    if (flag === '--base' && flags[index + 1]) {
+      if (options.base) throw new Error('The base commit may be supplied only once.');
+      options.base = flags[++index];
+    } else if (flag === '--allow-maintenance' && mode === 'check') {
+      options.allowMaintenance = true;
+    } else {
+      throw new Error('Usage: node scripts/app-registry.mjs <generate|check> [--base <commit>] [--allow-maintenance]');
+    }
+  }
+  if (mode === 'generate' && (options.base || options.allowMaintenance)) {
+    throw new Error('Generate does not accept registry diff options.');
+  }
+  if (options.allowMaintenance && !options.base) {
+    throw new Error('--allow-maintenance requires --base <commit>.');
+  }
+  return options;
+}
+
+async function runCli() {
+  const { mode, base, allowMaintenance } = parseCliArguments(process.argv.slice(2));
   const rendered = await renderAll(repositoryRoot);
   if (mode === 'generate') {
     await Promise.all(Object.entries(rendered).map(async ([relativePath, content]) => {
@@ -551,6 +681,7 @@ async function runCli() {
     }
   }
   if (stale.length) throw new Error(`Generated catalog outputs are stale: ${stale.join(', ')}`);
+  if (base) await checkBaseDiff(base, { root: repositoryRoot, allowMaintenance });
 }
 
 if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
