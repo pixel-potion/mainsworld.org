@@ -151,12 +151,13 @@ The map has independent SKY, LAND, and DEEP privacy-world filters, so you can
 show any combination of worlds you are allowed to see. Each moment keeps its
 world's color, and the filters never change who can open a moment.
 
-SPACE is a fourth client-facing map world, but not a fourth privacy world. It
-gathers authorized content supplied by external apps and layers that content
-onto the same Earth map. A connected-app moment still belongs to SKY, LAND, or
-THE DEEP; SPACE can change whether it appears in the current view, never who is
-allowed to open it. The SPACE/EARTH switcher opens the app universe for discovery
-and management, then returns to the map.
+SPACE is the confirmed fourth client-facing world, but not a fourth privacy
+world. It gathers authorized content supplied by external apps and layers that
+content onto the same Earth map. A connected-app moment still belongs to SKY,
+LAND, or THE DEEP; SPACE can organize whether it appears in the current view,
+never who is allowed to open it. The existing Space experience is where apps are
+discovered and managed. Its new fourth-world map navigation and visibility
+controls are being redesigned and are not live today.
 
 ### Moments
 
@@ -268,18 +269,19 @@ separately and Orb verification gates Vault claims.
 What's here now, and what's coming. We try to be honest about the difference — see
 the [Roadmap](/roadmap) for detail.
 
-**Live today:** independent SPACE, SKY, LAND, and DEEP display filters on a real
-map; SPACE as the connected-app world and RunPal as its first live connection;
+**Live today:** independent SKY, LAND, and DEEP display filters on a real map;
+the Space app-management experience and RunPal as the first live connection;
 moments with photos and video; time travel through the map's timeline;
 appreciation and comments; friending and following; basic crews; Vault claims
 for Orb-verified wallets; and vibes — including vibes planned ahead, with a
 start, an end, and a place.
 
 **Coming:** invites for people who have not joined Main's World yet; richer Vibe
-themes; crew shared ownership, wallets, and member-approved splits; more app
-connections; and a possible future expansion of SPACE for placeless virtual
-gatherings, where distance becomes social rather than physical. That gathering
-model is not live and still needs its own audience and moderation rules.
+themes; crew shared ownership, wallets, and member-approved splits; a simpler
+fourth-world presentation for SPACE; more app connections; and a possible
+future expansion of SPACE for placeless virtual gatherings, where distance
+becomes social rather than physical. That gathering model is not live and still
+needs its own audience and moderation rules.
 
 ## 6. Open questions
 

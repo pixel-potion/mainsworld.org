@@ -1,7 +1,7 @@
 ---
 sidebar_position: 1
 title: The worlds & privacy
-description: SKY, LAND, and DEEP decide who can see what; SPACE and the map filters decide what appears in your view.
+description: SKY, LAND, and DEEP decide who can see what; SPACE gathers connected-app content while its map controls are redesigned.
 ---
 
 # The worlds & privacy
@@ -21,41 +21,34 @@ pick a world for each moment, and the world tells you who can see it.
 
 ## Filtering the map
 
-The map has four top-level filters: **SPACE**, **SKY**, **LAND**, and **DEEP**.
-SKY, LAND, and DEEP decide which privacy worlds appear together on the map and
-in the moments list. SPACE controls content supplied by external apps. These
-are viewing choices only: turning on a filter never gives access to a moment you
-were not already allowed to open.
+The current map has independent **SKY**, **LAND**, and **DEEP** filters. Turn
+each one on or off to decide which privacy worlds appear together on the map and
+in the moments list. A separate viewing choice can include or exclude moments
+that arrived from another app. Turning on any filter never gives access to a
+moment you were not already allowed to open.
 
 Every visible moment keeps its world's color, so a mixed view still makes clear
 where it lives. Your filter choices are remembered on your device.
 
-Each world can open into **Mains**, **crews**, **moments**, and **vibes**. Under
-SPACE, a branch can open again into the apps that supply that kind of content.
-The switch hides or shows a branch; the arrow beside it opens the branch without
-changing its setting. Turning off a parent temporarily masks its children but
-does not erase their choices, so they return as they were when the parent comes
-back on. Search can take you directly to a nested setting.
+## SPACE is the connected-app world
 
-## SPACE is a map world, not a privacy setting
+SPACE is confirmed as Main's World's fourth client-facing world. It gathers
+content from registered external apps, including apps a person chooses to
+connect, while SKY, LAND, and DEEP remain the only worlds that decide who may
+see a moment. A RunPal moment can therefore be both SPACE content and a LAND
+moment: LAND controls who is allowed to open it; SPACE describes where that
+connected content came from and how it is managed.
 
-SPACE is the fourth world in the map navigation. It gathers content from
-registered external apps, including apps a person chooses to connect, while SKY,
-LAND, and DEEP remain the only worlds that decide who may see a moment. A RunPal
-moment can therefore be both SPACE content and a LAND moment: LAND controls who
-is allowed to open it; SPACE and the RunPal filter control whether it appears in
-that person's current view.
+Today, the SPACE experience can be opened from the map settings to discover,
+connect, and manage apps. Authorized app content appears on the Earth map under
+its SKY, LAND, or DEEP privacy world. Moving between Space and the map does not
+connect or disconnect an app, change a moment's privacy world, or delete
+anything already published.
 
-The fixed **SPACE/EARTH switcher** moves between two views of the same world:
-
-- Choose **SPACE** from Earth to enter the connected-app universe, where apps
-  can be discovered, connected, and managed.
-- Choose **EARTH** from Space to return to the map where authorized app content
-  appears alongside Main's World content.
-
-Moving between them does not connect or disconnect an app, change a moment's
-privacy world, or delete anything already published. It also does not change
-whether the SPACE filter is on.
+The first fixed four-world rail, nested visibility tree, and fixed
+**SPACE/EARTH switcher** were rolled back on August 29, 2026 after live mobile
+review. That interface is not live while a simpler mobile and desktop
+presentation is designed. The product decision above remains unchanged.
 
 ## Tagging opens a door
 

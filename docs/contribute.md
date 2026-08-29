@@ -47,9 +47,10 @@ keep contributions:
 ## Style notes
 
 - Say **moments** (not posts), **Mains** (accounts), **vibes**, **crews**, and the
-  three privacy worlds **SKY / LAND / DEEP**. **SPACE** is the fourth map world:
-  it organizes external-app content without becoming a privacy setting. The
-  [Glossary](/glossary) is the reference.
+  three privacy worlds **SKY / LAND / DEEP**. **SPACE** is the confirmed
+  connected-app world, but its new fourth-world map controls are being
+  redesigned and must not be described as live. The [Glossary](/glossary) is
+  the reference.
 - Prefer short sentences and concrete words.
 - Link generously to other pages so readers can find their way.
 

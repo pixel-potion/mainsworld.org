@@ -34,18 +34,20 @@ Main's World has its own vocabulary. Here's what everything means.
   - **SKY** — public: anyone can see it.
   - **LAND** — your connections: only people you've connected with.
   - **DEEP** — private: yours alone, unless you tag someone in.
-- **SPACE** — the fourth map world, which gathers authorized content supplied by
-  external apps. SPACE is a viewing and navigation layer, not a fourth privacy
-  setting; app content still lives in SKY, LAND, or DEEP. See
+- **SPACE** — the confirmed connected-app world, which gathers authorized
+  content supplied by external apps. SPACE is a viewing and navigation concept,
+  not a fourth privacy setting; app content still lives in SKY, LAND, or DEEP.
+  Its new fourth-world map controls are being redesigned. See
   [the worlds & privacy](/how-it-works/the-worlds).
 - **Earth** — the real-world map where Main's World moments and authorized app
   content appear together.
-- **SPACE/EARTH switcher** — the fixed control that opens SPACE to discover and
-  manage connected apps, then returns to the Earth map. It changes the current
-  view, not the SPACE filter or a moment's privacy.
-- **World filters** — nested SPACE, SKY, LAND, and DEEP controls that decide
-  which worlds, kinds of content, and connected apps appear on the map and in
-  the moments list. They change only your view, never who can open a moment. See
+- **SPACE/EARTH switcher** — a fixed control planned for moving between SPACE,
+  where apps are discovered and managed, and the Earth map. Its first version
+  was rolled back and is not live while the interaction is redesigned.
+- **World filters** — the current SKY, LAND, and DEEP controls that decide which
+  privacy worlds appear on the map and in the moments list, alongside choices
+  for audience and content from other apps. They change only your view, never
+  who can open a moment. See
   [the worlds & privacy](/how-it-works/the-worlds).
 - **Vibe** — a live, shared gathering on the map — hosted, never owned. See
   [Vibes](/how-it-works/vibes).
