@@ -23,8 +23,8 @@ the SPACE areas it fits.
 Your pull request should show that the manifest is new, remains
 `"listing_status": "proposed"` and `"api_availability": "none"`, and includes
 the generated catalog output and passing checks. Do not edit an existing catalog
-record, `registry/platform.json`, or the reviewed snapshots. Those changes are
-maintainer work, not a builder submission.
+record, `registry/catalog.json`, `registry/platform.json`, or the reviewed
+snapshots. Those changes are maintainer work, not a builder submission.
 
 ## Locally or with an agent
 

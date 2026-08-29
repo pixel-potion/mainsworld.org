@@ -10,12 +10,14 @@ import yaml from 'js-yaml';
 
 import {
   loadRegistry,
+  loadCatalog,
   loadPlatform,
   renderAppsJson,
   renderAppsMarkdown,
   renderLlmsFull,
   checkBaseDiff,
   validatePlatform,
+  validateCatalog,
   validateRegistry,
 } from '../scripts/app-registry.mjs';
 
@@ -64,6 +66,16 @@ const validApp = {
   privacy_url: 'https://www.iana.org/privacy',
 };
 
+const validCatalog = {
+  schema_version: 'v1',
+  catalog_version: '2026-08-29',
+  space_source: {
+    repository: 'https://github.com/pixel-potion/Mains.World',
+    revision: '4babf633b209855c49e1bf698d04b2a03488de8c',
+    paths: ['src/app/components/backstage/constellation/constellationApps.tsx'],
+  },
+};
+
 function clone(value) {
   return structuredClone(value);
 }
@@ -80,6 +92,17 @@ async function withRegistry(files, run) {
   );
 
   try {
+    await run(root);
+  } finally {
+    await rm(root, { recursive: true, force: true });
+  }
+}
+
+async function withCatalog(catalog, run) {
+  const root = await mkdtemp(path.join(tmpdir(), 'mainsworld-catalog-'));
+  try {
+    await mkdir(path.join(root, 'registry'), { recursive: true });
+    await writeFile(path.join(root, 'registry', 'catalog.json'), `${JSON.stringify(catalog)}\n`);
     await run(root);
   } finally {
     await rm(root, { recursive: true, force: true });
@@ -372,6 +395,93 @@ test('accepts a proposed registry root for check but rejects root misuse', async
   ]) {
     await assert.rejects(runTrustedPolicy(args, { cwd: repositoryRoot }), message);
   }
+});
+
+test('resolves a relative proposed root from the separate trusted policy working directory', async () => {
+  const root = await mkdtemp(path.join(tmpdir(), 'mainsworld-policy-cwd-'));
+  try {
+    const policy = path.join(root, 'policy');
+    const proposed = path.join(root, 'proposed');
+    await Promise.all([
+      mkdir(policy),
+      cp(path.join(repositoryRoot, 'registry'), path.join(proposed, 'registry'), { recursive: true }),
+      cp(path.join(repositoryRoot, 'static'), path.join(proposed, 'static'), { recursive: true }),
+      cp(path.join(repositoryRoot, 'docs', 'developers'), path.join(proposed, 'docs', 'developers'), { recursive: true }),
+    ]);
+    await assert.doesNotReject(runTrustedPolicy(['check', '--root', '../proposed'], { cwd: policy }));
+  } finally {
+    await rm(root, { recursive: true, force: true });
+  }
+});
+
+test('rejects missing and duplicate base or maintenance CLI options', async () => {
+  for (const [args, message] of [
+    [['check', '--base'], /--base requires a commit/i],
+    [['check', '--base', 'HEAD', '--base', 'HEAD'], /base may be supplied only once/i],
+    [['check', '--allow-maintenance'], /--allow-maintenance requires --base/i],
+    [['check', '--base', 'HEAD', '--allow-maintenance', '--allow-maintenance'], /allow-maintenance option may be supplied only once/i],
+  ]) {
+    await assert.rejects(runTrustedPolicy(args, { cwd: repositoryRoot }), message);
+  }
+});
+
+test('strictly validates catalog metadata before it becomes public output', async () => {
+  await assert.doesNotReject(validateCatalog(validCatalog));
+
+  for (const [name, mutate, message] of [
+    ['unknown field', (catalog) => { catalog.secret = 'nope'; }, /unknown|secret/i],
+    ['bad schema', (catalog) => { catalog.schema_version = 'v2'; }, /schema/i],
+    ['unsafe repository', (catalog) => { catalog.space_source.repository = 'https://github.com/other/project'; }, /repository/i],
+    ['invalid revision', (catalog) => { catalog.space_source.revision = 'ABC'; }, /revision/i],
+    ['traversal source path', (catalog) => { catalog.space_source.paths = ['../private.ts']; }, /path/i],
+    ['backslash source path', (catalog) => { catalog.space_source.paths = ['src\\private.ts']; }, /path/i],
+    ['URL source path', (catalog) => { catalog.space_source.paths = ['https://private.example/file.ts']; }, /path/i],
+    ['unsupported source extension', (catalog) => { catalog.space_source.paths = ['src/source.json']; }, /path/i],
+    ['duplicate source path', (catalog) => { catalog.space_source.paths = ['src/source.ts', 'src/source.ts']; }, /path/i],
+  ]) {
+    const catalog = structuredClone(validCatalog);
+    mutate(catalog);
+    await assert.rejects(validateCatalog(catalog), message, name);
+  }
+
+  await withCatalog(validCatalog, async (root) => {
+    const first = await loadCatalog(root);
+    const second = await loadCatalog(root);
+    assert.notEqual(first, second);
+    assert.notEqual(first.space_source, second.space_source);
+  });
+});
+
+test('treats catalog metadata as maintenance-only while still validating it', async () => {
+  await withGitRepository(
+    async (root) => {
+      const filename = path.join(root, 'registry', 'catalog.json');
+      const catalog = JSON.parse(await readFile(filename, 'utf8'));
+      catalog.catalog_version = '2026-08-30';
+      await writeFile(filename, `${JSON.stringify(catalog, null, 2)}\n`);
+    },
+    async (root, base) => {
+      await assert.rejects(checkBaseDiff(base, { root }), /catalog.*maintenance/i);
+      await assert.doesNotReject(checkBaseDiff(base, { root, allowMaintenance: true }));
+    },
+  );
+});
+
+test('trusted policy rejects malicious catalog metadata despite proposed no-op scripts', async () => {
+  await withProposedCheckout(
+    async (root) => {
+      const filename = path.join(root, 'registry', 'catalog.json');
+      const catalog = JSON.parse(await readFile(filename, 'utf8'));
+      catalog.space_source.paths = ['https://private.example/hidden.ts'];
+      await writeFile(filename, `${JSON.stringify(catalog, null, 2)}\n`);
+    },
+    async (root) => {
+      await assert.rejects(
+        runTrustedPolicy(['check', '--root', root], { cwd: repositoryRoot }),
+        /catalog|path/i,
+      );
+    },
+  );
 });
 
 test('requires maintenance permission for platform and snapshot changes while preserving release validation', async () => {

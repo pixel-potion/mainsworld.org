@@ -17,7 +17,7 @@ runtime registration, or production activation.
    website, support URL, privacy URL, and the SPACE areas it fits today.
 4. Keep every new external listing at `"listing_status": "proposed"` and
    `"api_availability": "none"`. Do not rename, edit, or delete existing
-   manifests, platform metadata, or preview snapshots in a normal submission.
+   manifests, catalog metadata, platform metadata, or preview snapshots in a normal submission.
 5. Run `npm run apps:generate`, `npm run test:registry`, and
    `npm run apps:check`. Commit the resulting generated catalog outputs with
    the manifest.
@@ -25,7 +25,7 @@ runtime registration, or production activation.
    add `reviewed_at` later. Promotion to a connected listing or an API tier is
    a separate reviewed change with its required public evidence.
 
-Before editing an existing listing or the reviewed preview snapshot, ask a
+Before editing an existing listing, catalog metadata, or the reviewed preview snapshot, ask a
 maintainer to apply the `catalog-maintenance` label. That label only enables
 maintenance review; it never bypasses validation or makes anything callable.
 

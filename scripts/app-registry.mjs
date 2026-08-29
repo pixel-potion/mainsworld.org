@@ -79,6 +79,8 @@ const platformKeys = new Set([
   'schema_version', 'status', 'callable', 'source_repository',
   'source_repository_access', 'source_revision', 'artifacts', 'scopes', 'operations',
 ]);
+const catalogKeys = new Set(['schema_version', 'catalog_version', 'space_source']);
+const catalogSourceKeys = new Set(['repository', 'revision', 'paths']);
 const artifactKeys = new Set(['source_path', 'public_snapshot_path', 'sha256']);
 const operationKeys = new Set(['method', 'path']);
 const requiredScopes = [
@@ -125,6 +127,17 @@ const expectedArtifactPaths = {
     '/api/connectives/v1/luma-vibe-candidate.json',
   ],
 };
+
+function isSafeCatalogSourcePath(value) {
+  return (
+    typeof value === 'string' &&
+    value.length > 0 &&
+    value.length <= 512 &&
+    !value.includes('\\') &&
+    !value.includes('://') &&
+    /^(?:[A-Za-z0-9][A-Za-z0-9._-]*\/)*[A-Za-z0-9][A-Za-z0-9._-]*\.(?:ts|tsx)$/.test(value)
+  );
+}
 
 function tokenizeKey(key) {
   return key
@@ -517,8 +530,39 @@ export function renderLlmsFull(catalog, apps, platform) {
   return `# Main's World public developer catalog\n\nThere are no public, self-service Main's World API endpoints to call today.\nNo base URL, credential, sandbox, public endpoint, or MCP endpoint exists.\n\nThe Connectives preview is read-only release documentation from the restricted normative source revision ${platform.source_revision}. It is not a runtime API and provides neither activation nor access.\n\n## Local preview snapshots\n\n${artifacts}\n\n## Preview scopes\n\n${platform.scopes.map((scope) => `- ${scope}`).join('\n')}\n\n## Preview operations\n\n${operations}\n\n## Listing and submission rules\n\nA merged manifest changes a public listing only. It never grants credentials, callbacks, provider access, runtime registration, or production activation. New external listings are proposed with no public API access until a separate reviewed promotion.\n\n## Status legend\n\n- Connected: bespoke partner integration exists today.\n- First party: Main's World operated capability.\n- Coming soon: represented, not connected or callable.\n- Proposed: reviewed listing, not connected or activated.\n- Wishlist: future possibility; no connector promised.\n\n## SPACE catalog (${catalog.catalog_version})\n\n${rows}\n`;
 }
 
-async function loadCatalog(root) {
-  return JSON.parse(await readFile(path.join(root, 'registry', 'catalog.json'), 'utf8'));
+export async function validateCatalog(catalog) {
+  assertExactKeys(catalog, catalogKeys, 'Catalog');
+  if (
+    catalog.schema_version !== 'v1' ||
+    typeof catalog.catalog_version !== 'string' ||
+    !/^\d{4}-\d{2}-\d{2}$/.test(catalog.catalog_version)
+  ) {
+    throw new Error('Catalog has invalid schema metadata.');
+  }
+
+  assertExactKeys(catalog.space_source, catalogSourceKeys, 'Catalog space source');
+  const { repository, revision, paths } = catalog.space_source;
+  if (repository !== 'https://github.com/pixel-potion/Mains.World') {
+    throw new Error('Catalog source repository is not the reviewed Main’s World source.');
+  }
+  if (typeof revision !== 'string' || !/^[a-f0-9]{40}$/.test(revision)) {
+    throw new Error('Catalog source revision must be a 40-character lowercase Git revision.');
+  }
+  if (
+    !Array.isArray(paths) ||
+    paths.length === 0 ||
+    paths.some((sourcePath) => !isSafeCatalogSourcePath(sourcePath)) ||
+    new Set(paths).size !== paths.length
+  ) {
+    throw new Error('Catalog source paths must be unique safe relative TypeScript paths.');
+  }
+
+  return structuredClone(catalog);
+}
+
+export async function loadCatalog(root = repositoryRoot) {
+  const catalog = JSON.parse(await readFile(path.join(root, 'registry', 'catalog.json'), 'utf8'));
+  return validateCatalog(catalog);
 }
 
 async function renderAll(root) {
@@ -562,6 +606,7 @@ function parseNameStatusDiff(output) {
 
 function changeSurface(change) {
   const paths = [change.from, change.to];
+  if (paths.some((file) => file === 'registry/catalog.json')) return 'catalog';
   if (paths.some((file) => file === 'registry/platform.json')) return 'platform';
   if (paths.some((file) => file.startsWith('static/api/connectives/v1/'))) return 'snapshot';
   if (paths.some((file) => file.startsWith('registry/apps/'))) return 'app';
@@ -597,6 +642,7 @@ async function resolveBaseCommit(base, root) {
 export async function checkBaseDiff(base, { root = repositoryRoot, allowMaintenance = false } = {}) {
   const baseCommit = await resolveBaseCommit(base, root);
   const [apps, platform] = await Promise.all([loadRegistry(root), loadPlatform(root)]);
+  await loadCatalog(root);
   await validatePlatform(platform, root);
 
   let output;
@@ -605,7 +651,7 @@ export async function checkBaseDiff(base, { root = repositoryRoot, allowMaintena
       'git',
       [
         'diff', '--name-status', '-z', '--find-renames', '--find-copies-harder',
-        `${baseCommit}...HEAD`, '--', 'registry/apps', 'registry/platform.json', 'static/api/connectives/v1',
+        `${baseCommit}...HEAD`, '--', 'registry/apps', 'registry/catalog.json', 'registry/platform.json', 'static/api/connectives/v1',
       ],
       { cwd: root },
     ));
@@ -618,7 +664,7 @@ export async function checkBaseDiff(base, { root = repositoryRoot, allowMaintena
   const appsById = new Map(apps.map((app) => [app.id, app]));
   for (const change of changes) {
     const surface = changeSurface(change);
-    if (surface === 'platform' || surface === 'snapshot') {
+    if (surface === 'catalog' || surface === 'platform' || surface === 'snapshot') {
       throw new Error(`Changes to ${surface} files require catalog maintenance permission.`);
     }
 
@@ -644,13 +690,15 @@ function parseCliArguments(args) {
   for (let index = 0; index < flags.length; index += 1) {
     const flag = flags[index];
     if (flag === '--root') {
-      if (!flags[index + 1]) throw new Error('--root requires a path.');
+      if (!flags[index + 1] || flags[index + 1].startsWith('--')) throw new Error('--root requires a path.');
       if (options.root) throw new Error('The root may be supplied only once.');
       options.root = path.resolve(flags[++index]);
-    } else if (flag === '--base' && flags[index + 1]) {
-      if (options.base) throw new Error('The base commit may be supplied only once.');
+    } else if (flag === '--base') {
+      if (!flags[index + 1] || flags[index + 1].startsWith('--')) throw new Error('--base requires a commit.');
+      if (options.base) throw new Error('The base may be supplied only once.');
       options.base = flags[++index];
     } else if (flag === '--allow-maintenance' && mode === 'check') {
+      if (options.allowMaintenance) throw new Error('The allow-maintenance option may be supplied only once.');
       options.allowMaintenance = true;
     } else {
       throw new Error('Usage: node scripts/app-registry.mjs <generate|check> [--root <path>] [--base <commit>] [--allow-maintenance]');
