@@ -128,13 +128,24 @@ test('rejects HTTP and malformed public URLs', async () => {
   }
 });
 
-test('rejects credentialed and special-use public URLs', async () => {
+test('rejects credentialed, raw-IP, and special-use public URLs', async () => {
   for (const [name, field, value] of [
     ['credentials', 'website', 'https://user:secret@www.iana.org/'],
+    ['public IPv4 literal', 'website', 'https://8.8.8.8/private'],
+    ['public IPv6 literal', 'website', 'https://[2606:4700:4700::1111]/private'],
+    ['single-label hostname', 'website', 'https://catalog/private'],
     ['localhost trailing dot', 'support_url', 'https://localhost./private'],
     ['local suffix trailing dot', 'privacy_url', 'https://service.local./private'],
     ['test suffix', 'website', 'https://service.test/private'],
     ['invalid suffix', 'website', 'https://service.invalid/private'],
+    ['arpa suffix', 'website', 'https://service.arpa/private'],
+    ['home arpa suffix', 'website', 'https://service.home.arpa/private'],
+    ['alt suffix', 'website', 'https://service.alt/private'],
+    ['onion suffix', 'website', 'https://service.onion/private'],
+    ['internal suffix', 'website', 'https://service.internal/private'],
+    ['home suffix', 'website', 'https://service.home/private'],
+    ['lan suffix', 'website', 'https://service.lan/private'],
+    ['corp suffix', 'website', 'https://service.corp/private'],
     ['example.com', 'website', 'https://example.com/'],
     ['example.com subdomain', 'website', 'https://docs.example.com/'],
     ['example.net', 'website', 'https://example.net/'],
@@ -167,6 +178,11 @@ test('rejects credentialed and special-use public URLs', async () => {
 
     await assert.rejects(validateRegistry([app]), /public HTTPS URL/i, name);
   }
+});
+
+test('accepts an ordinary public DNS hostname with a trailing dot', async () => {
+  const app = { ...clone(validApp), website: 'https://www.iana.org./' };
+  await assert.doesNotReject(validateRegistry([app]));
 });
 
 test('requires proposal submission, support, and privacy fields', async () => {
@@ -256,6 +272,15 @@ test('rejects prohibited public-data key families before schema validation', asy
       prohibitedKey,
     );
   }
+});
+
+test('does not classify unrelated UUID keys as Main identifiers', async () => {
+  const malformed = {
+    ...clone(validApp),
+    malformed: { domain_uuid: 'public-value' },
+  };
+
+  await assert.rejects(validateRegistry([malformed]), /schema validation/i);
 });
 
 test('exports placeholder renderers for the later generated-artifact task', () => {

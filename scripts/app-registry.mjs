@@ -15,8 +15,6 @@ const STATUS_RANK = {
   proposed: 3,
   wishlist: 4,
 };
-const prohibitedKeyPattern =
-  /secret|token|credential|clientid|callback|identity(?:id|identifier)?|(?:main)?user(?:id|identifier)?|main(?:id|identifier|account|address|uuid)|wallet|grant|internal(?:endpoint|url|host|service)/i;
 const publicUrlFields = [
   'website',
   'support_url',
@@ -24,11 +22,85 @@ const publicUrlFields = [
   'api_contract_url',
   'status_evidence_url',
 ];
+const prohibitedTokens = new Set([
+  'secret',
+  'token',
+  'credential',
+  'callback',
+  'identity',
+  'wallet',
+  'grant',
+]);
+const prohibitedCompoundKeys = new Set([
+  'clientid',
+  'userid',
+  'useridentifier',
+  'mainid',
+  'mainidentifier',
+  'mainaccount',
+  'mainaddress',
+  'mainuuid',
+  'internalendpoint',
+  'internalurl',
+  'internalhost',
+  'internalservice',
+]);
+const reservedDnsSuffixes = [
+  'localhost',
+  'local',
+  'test',
+  'invalid',
+  'example',
+  'example.com',
+  'example.net',
+  'example.org',
+  'arpa',
+  'alt',
+  'onion',
+  'internal',
+  'home',
+  'lan',
+  'corp',
+];
 
 let validateApp;
 
-function normalizeKey(key) {
-  return key.replace(/[^a-z0-9]/gi, '').toLowerCase();
+function tokenizeKey(key) {
+  return key
+    .replace(/([a-z0-9])([A-Z])/g, '$1 $2')
+    .split(/[^a-zA-Z0-9]+/)
+    .filter(Boolean)
+    .map((token) => token.toLowerCase());
+}
+
+function hasTokenSequence(tokens, sequence) {
+  return tokens.some((_, start) =>
+    sequence.every((token, index) => tokens[start + index] === token),
+  );
+}
+
+function isProhibitedKey(key) {
+  const tokens = tokenizeKey(key);
+  const compactKey = tokens.join('');
+
+  return (
+    tokens.some((token) => prohibitedTokens.has(token)) ||
+    prohibitedCompoundKeys.has(compactKey) ||
+    hasTokenSequence(tokens, ['client', 'id']) ||
+    hasTokenSequence(tokens, ['user', 'id']) ||
+    hasTokenSequence(tokens, ['user', 'identifier']) ||
+    hasTokenSequence(tokens, ['main', 'user', 'id']) ||
+    hasTokenSequence(tokens, ['main', 'user', 'identifier']) ||
+    hasTokenSequence(tokens, ['main', 'id']) ||
+    hasTokenSequence(tokens, ['main', 'identifier']) ||
+    hasTokenSequence(tokens, ['main', 'account']) ||
+    hasTokenSequence(tokens, ['main', 'address']) ||
+    hasTokenSequence(tokens, ['main', 'uuid']) ||
+    hasTokenSequence(tokens, ['internal', 'endpoint']) ||
+    hasTokenSequence(tokens, ['internal', 'url']) ||
+    hasTokenSequence(tokens, ['internal', 'host']) ||
+    hasTokenSequence(tokens, ['internal', 'service'])
+  );
 }
 
 function findProhibitedKey(value, location = '$') {
@@ -42,7 +114,7 @@ function findProhibitedKey(value, location = '$') {
 
   if (value && typeof value === 'object') {
     for (const [key, child] of Object.entries(value)) {
-      if (prohibitedKeyPattern.test(normalizeKey(key))) {
+      if (isProhibitedKey(key)) {
         return `${location}.${key}`;
       }
       const found = findProhibitedKey(child, `${location}.${key}`);
@@ -51,81 +123,6 @@ function findProhibitedKey(value, location = '$') {
   }
 
   return null;
-}
-
-function isNonPublicIpv4(hostname) {
-  const octets = hostname.split('.').map(Number);
-  const [first, second, third] = octets;
-
-  return (
-    first === 0 ||
-    first === 10 ||
-    first === 127 ||
-    (first === 100 && second >= 64 && second <= 127) ||
-    (first === 169 && second === 254) ||
-    (first === 172 && second >= 16 && second <= 31) ||
-    (first === 192 && second === 0) ||
-    (first === 192 && second === 168) ||
-    (first === 198 && (second === 18 || second === 19)) ||
-    (first === 198 && second === 51 && third === 100) ||
-    (first === 203 && second === 0 && third === 113) ||
-    first >= 224
-  );
-}
-
-function parseIpv6(hostname) {
-  const expandIpv4Tail = (parts) => {
-    if (!parts.at(-1)?.includes('.')) return parts;
-    const octets = parts.pop().split('.').map(Number);
-    if (octets.length !== 4 || octets.some((octet) => !Number.isInteger(octet))) {
-      return null;
-    }
-    parts.push(((octets[0] << 8) | octets[1]).toString(16));
-    parts.push(((octets[2] << 8) | octets[3]).toString(16));
-    return parts;
-  };
-  const [before, after, extra] = hostname.split('::');
-  if (extra !== undefined) return null;
-  const left = expandIpv4Tail(before ? before.split(':') : []);
-  const right = expandIpv4Tail(after ? after.split(':') : []);
-  if (!left || !right) return null;
-
-  const missing = 8 - left.length - right.length;
-  const hextets = after === undefined ? left : [...left, ...Array(missing).fill('0'), ...right];
-  if (missing < 0 || hextets.length !== 8) return null;
-
-  let address = 0n;
-  for (const hextet of hextets) {
-    if (!/^[0-9a-f]{1,4}$/i.test(hextet)) return null;
-    address = (address << 16n) | BigInt(`0x${hextet}`);
-  }
-  return address;
-}
-
-function isInIpv6Range(address, base, prefixLength) {
-  const mask = ((1n << 128n) - 1n) << BigInt(128 - prefixLength);
-  return (address & mask) === (parseIpv6(base) & mask);
-}
-
-function isNonPublicIpv6(hostname) {
-  const address = parseIpv6(hostname);
-  if (address === null) return true;
-  if (address === 0n || address === 1n) return true;
-  if (isInIpv6Range(address, '::ffff:0:0', 96)) {
-    const ipv4 = Number(address & 0xffffffffn);
-    return isNonPublicIpv4(
-      `${ipv4 >>> 24}.${(ipv4 >>> 16) & 255}.${(ipv4 >>> 8) & 255}.${ipv4 & 255}`,
-    );
-  }
-
-  return (
-    isInIpv6Range(address, 'fc00::', 7) ||
-    isInIpv6Range(address, 'fe80::', 10) ||
-    isInIpv6Range(address, '100::', 64) ||
-    isInIpv6Range(address, '2001:2::', 48) ||
-    isInIpv6Range(address, '2001:db8::', 32) ||
-    isInIpv6Range(address, 'ff00::', 8)
-  );
 }
 
 function isPublicHttpsUrl(value) {
@@ -140,26 +137,14 @@ function isPublicHttpsUrl(value) {
       return false;
     }
 
+    if (isIP(hostname) || !hostname.includes('.')) return false;
     if (
-      hostname === 'localhost' ||
-      hostname.endsWith('.localhost') ||
-      hostname === 'local' ||
-      hostname.endsWith('.local') ||
-      hostname === 'test' ||
-      hostname.endsWith('.test') ||
-      hostname === 'invalid' ||
-      hostname.endsWith('.invalid') ||
-      hostname === 'example' ||
-      hostname.endsWith('.example') ||
-      ['example.com', 'example.net', 'example.org'].some(
-        (domain) => hostname === domain || hostname.endsWith(`.${domain}`),
+      reservedDnsSuffixes.some(
+        (suffix) => hostname === suffix || hostname.endsWith(`.${suffix}`),
       )
     ) {
       return false;
     }
-
-    if (isIP(hostname) === 4) return !isNonPublicIpv4(hostname);
-    if (isIP(hostname) === 6) return !isNonPublicIpv6(hostname);
 
     return true;
   } catch {
