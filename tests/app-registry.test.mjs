@@ -6,6 +6,7 @@ import { execFile as execFileCallback } from 'node:child_process';
 import path from 'node:path';
 import test from 'node:test';
 import { promisify } from 'node:util';
+import yaml from 'js-yaml';
 
 import {
   loadRegistry,
@@ -107,11 +108,12 @@ async function runGit(root, args) {
   await execFile('git', args, { cwd: root });
 }
 
-async function withGitRepository(mutate, run) {
+async function withGitRepository(mutate, run, { prepareBase } = {}) {
   const root = await mkdtemp(path.join(tmpdir(), 'mainsworld-registry-diff-'));
   try {
     await cp(path.join(repositoryRoot, 'registry'), path.join(root, 'registry'), { recursive: true });
     await cp(path.join(repositoryRoot, 'static', 'api'), path.join(root, 'static', 'api'), { recursive: true });
+    await prepareBase?.(root);
     await runGit(root, ['init', '--quiet']);
     await runGit(root, ['config', 'user.name', 'Registry Test']);
     await runGit(root, ['config', 'user.email', 'registry-test@example.invalid']);
@@ -208,6 +210,46 @@ test('rejects modified, renamed, copied, and deleted existing manifests in ordin
       async (root, base) => assert.rejects(checkBaseDiff(base, { root }), /existing manifest|catalog maintenance|rename|copy|delete|modify/i, kind),
     );
   }
+});
+
+test('detects a scored copy from an untouched committed manifest and rejects it in ordinary mode', async () => {
+  await withGitRepository(
+    async (root) => {
+      const source = JSON.parse(await readFile(path.join(root, 'registry', 'apps', 'prior-proposal.json'), 'utf8'));
+      source.id = 'copied-proposal';
+      source.name = 'Copied Proposal';
+      await writeFile(
+        path.join(root, 'registry', 'apps', 'copied-proposal.json'),
+        `${JSON.stringify(source, null, 2)}\n`,
+      );
+    },
+    async (root, base) => {
+      const changes = await checkBaseDiff(base, { root, allowMaintenance: true });
+      assert.ok(
+        changes.some((change) =>
+          change.status === 'C' &&
+          /^\d+$/.test(change.score) &&
+          change.from === 'registry/apps/prior-proposal.json' &&
+          change.to === 'registry/apps/copied-proposal.json'),
+      );
+      await assert.rejects(checkBaseDiff(base, { root }), /existing app manifest|catalog maintenance/i);
+    },
+    {
+      prepareBase: async (root) => addManifest(root, {
+        id: 'prior-proposal',
+        name: 'Prior Proposal',
+      }),
+    },
+  );
+});
+
+test('keeps the untrusted pull-request workflow read-only', async () => {
+  const workflow = yaml.load(await readFile(path.join(repositoryRoot, '.github', 'workflows', 'build.yml'), 'utf8'));
+  const checkout = workflow.jobs.build.steps.find((step) => step.uses === 'actions/checkout@v4');
+
+  assert.deepEqual(workflow.permissions, { contents: 'read' });
+  assert.equal(checkout.with['fetch-depth'], 0);
+  assert.equal(checkout.with['persist-credentials'], false);
 });
 
 test('requires maintenance permission for platform and snapshot changes while preserving release validation', async () => {

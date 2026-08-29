@@ -604,7 +604,7 @@ export async function checkBaseDiff(base, { root = repositoryRoot, allowMaintena
     ({ stdout: output } = await execFile(
       'git',
       [
-        'diff', '--name-status', '-z', '--find-renames', '--find-copies',
+        'diff', '--name-status', '-z', '--find-renames', '--find-copies-harder',
         `${baseCommit}...HEAD`, '--', 'registry/apps', 'registry/platform.json', 'static/api/connectives/v1',
       ],
       { cwd: root },
