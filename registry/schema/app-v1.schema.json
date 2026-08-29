@@ -1,0 +1,77 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://mainsworld.org/registry/schema/app-v1.schema.json",
+  "title": "Main's World public SPACE app manifest v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "id",
+    "name",
+    "summary",
+    "website",
+    "listing_status",
+    "api_availability",
+    "capabilities"
+  ],
+  "properties": {
+    "schema_version": { "const": "v1" },
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$",
+      "minLength": 1,
+      "maxLength": 63
+    },
+    "name": { "type": "string", "minLength": 1, "maxLength": 80 },
+    "summary": { "type": "string", "minLength": 1, "maxLength": 280 },
+    "website": { "$ref": "#/$defs/publicHttpsUrl" },
+    "listing_status": {
+      "enum": ["connected", "first_party", "coming_soon", "wishlist", "proposed"]
+    },
+    "api_availability": {
+      "enum": ["none", "preview", "sandbox", "production", "not_applicable"]
+    },
+    "capabilities": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 4,
+      "uniqueItems": true,
+      "items": { "enum": ["mains", "crews", "moments", "vibes"] }
+    },
+    "support_url": { "$ref": "#/$defs/publicHttpsUrl" },
+    "privacy_url": { "$ref": "#/$defs/publicHttpsUrl" },
+    "submitted_at": { "type": "string", "format": "date" },
+    "reviewed_at": { "type": "string", "format": "date" },
+    "api_contract_url": { "$ref": "#/$defs/publicHttpsUrl" },
+    "status_evidence_url": { "$ref": "#/$defs/publicHttpsUrl" }
+  },
+  "allOf": [
+    {
+      "if": { "properties": { "listing_status": { "const": "proposed" } } },
+      "then": { "required": ["submitted_at", "support_url", "privacy_url"] },
+      "else": { "required": ["reviewed_at"] }
+    },
+    {
+      "if": { "properties": { "listing_status": { "const": "connected" } } },
+      "then": { "required": ["status_evidence_url"] },
+      "else": { "not": { "required": ["status_evidence_url"] } }
+    },
+    {
+      "if": {
+        "properties": {
+          "api_availability": { "enum": ["preview", "sandbox", "production"] }
+        }
+      },
+      "then": { "required": ["api_contract_url"] },
+      "else": { "not": { "required": ["api_contract_url"] } }
+    }
+  ],
+  "$defs": {
+    "publicHttpsUrl": {
+      "type": "string",
+      "format": "uri",
+      "pattern": "^https://[^/\\s]+(?:/[^\\s]*)?$",
+      "maxLength": 2048
+    }
+  }
+}

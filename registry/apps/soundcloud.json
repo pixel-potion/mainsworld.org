@@ -1,0 +1,1 @@
+{"schema_version":"v1","id":"soundcloud","name":"SoundCloud","summary":"A wish-list music service represented in Moments and Vibes.","website":"https://soundcloud.com/","listing_status":"wishlist","api_availability":"none","capabilities":["moments","vibes"],"reviewed_at":"2026-08-29"}

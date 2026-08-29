@@ -1,0 +1,37 @@
+{
+  "schema_version": "v1",
+  "status": "preview",
+  "callable": false,
+  "source_repository": "https://github.com/pixel-potion/Mains.World",
+  "source_repository_access": "restricted",
+  "source_revision": "3da5ce3fb92dc63910a6b59dabd817f15097d35f",
+  "artifacts": {
+    "openapi": {
+      "source_path": "openapi/connectives-v1.json",
+      "public_snapshot_path": "/api/connectives/v1/openapi.json",
+      "sha256": "ca58c4f5166f09ff59fa5009a172d29536bc6c3b2552ad239b7193fce061380e"
+    },
+    "discord_example": {
+      "source_path": "openapi/examples/discord-connected-group-membership.json",
+      "public_snapshot_path": "/api/connectives/v1/discord-connected-group-membership.json",
+      "sha256": "4043b1ef41de71271352145f6a8fbb3e400e3d34e9d09d070d6b5791e78ca1db"
+    },
+    "luma_example": {
+      "source_path": "openapi/examples/luma-vibe-candidate.json",
+      "public_snapshot_path": "/api/connectives/v1/luma-vibe-candidate.json",
+      "sha256": "499d12a33183ce6fed9335fa3021d79ba2da30205d1d80d2e8c4017d3f6358a9"
+    }
+  },
+  "scopes": [
+    "candidate-status:read",
+    "link-sessions:create",
+    "vibe-candidates:write"
+  ],
+  "operations": [
+    { "method": "POST", "path": "/oauth/token" },
+    { "method": "POST", "path": "/connectives/v1/link-sessions" },
+    { "method": "GET", "path": "/connectives/v1/link-sessions/{session_id}" },
+    { "method": "POST", "path": "/connectives/v1/grants/{grant_id}/vibe-candidates" },
+    { "method": "GET", "path": "/connectives/v1/grants/{grant_id}/candidates/{candidate_id}" }
+  ]
+}

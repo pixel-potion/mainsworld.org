@@ -1,0 +1,47 @@
+name: Catalog policy
+
+on:
+  pull_request_target:
+    branches: [main]
+    types: [opened, synchronize, reopened, labeled, unlabeled]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: catalog-policy-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  policy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout trusted policy
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.base.sha }}
+          path: policy
+          fetch-depth: 0
+          persist-credentials: false
+          submodules: false
+          lfs: false
+      - name: Checkout proposed data
+        uses: actions/checkout@v4
+        with:
+          ref: refs/pull/${{ github.event.pull_request.number }}/merge
+          path: proposed
+          fetch-depth: 0
+          persist-credentials: false
+          submodules: false
+          lfs: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: policy/.node-version
+      - run: npm ci --ignore-scripts
+        working-directory: policy
+      - if: ${{ !contains(github.event.pull_request.labels.*.name, 'catalog-maintenance') }}
+        run: node scripts/app-registry.mjs check --root "../proposed" --base "${{ github.event.pull_request.base.sha }}"
+        working-directory: policy
+      - if: ${{ contains(github.event.pull_request.labels.*.name, 'catalog-maintenance') }}
+        run: node scripts/app-registry.mjs check --root "../proposed" --base "${{ github.event.pull_request.base.sha }}" --allow-maintenance
+        working-directory: policy

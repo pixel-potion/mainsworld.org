@@ -105,10 +105,11 @@ answer will not be charging the people who help build it.
 
 We would rather you hear this from us than find out later.
 
-- **There is no public interface yet.** No developer documentation, no
-  self-service keys. Every connection today is built by hand, with us, against
-  your stack. That is slower for us and better for you — you get a person, not a
-  support queue.
+- **There is no public callable interface yet.** The [developer
+  documentation](/developers/) records the catalog and a non-callable preview;
+  there are still no self-service keys. Every connection today is built by hand,
+  with us, against your stack. That is slower for us and better for you — you
+  get a person, not a support queue.
 - **RunPal is the first one**, and it is live. The flow above is built and
   running against it, for moments.
 - **We are small.** The live numbers are on the Stats screen inside the app, and

@@ -1,0 +1,15 @@
+{
+  "schema_version": "2026-08-29",
+  "profile": "community.membership.v1",
+  "provider": "discord",
+  "group_key": "group_opaque_example",
+  "connection_grant_id": "grant_opaque_example",
+  "display": {
+    "name": "Pixel Potion Creative",
+    "icon_url": "https://cdn.example.test/icon.png"
+  },
+  "authority": "owner",
+  "observed_at": "2026-08-29T18:00:00.000Z",
+  "valid_until": "2026-08-29T18:10:00.000Z",
+  "state": "active"
+}

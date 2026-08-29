@@ -1,0 +1,960 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Main's World Connectives",
+    "version": "0.1.0",
+    "description": "Normative, non-deployed starter contract."
+  },
+  "x-mains-world-status": "non-deployed-starter",
+  "x-example-files": [
+    "./examples/discord-connected-group-membership.json",
+    "./examples/luma-vibe-candidate.json"
+  ],
+  "paths": {
+    "/oauth/token": {
+      "post": {
+        "x-mains-world-callable": false,
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "grant_type",
+                  "client_id",
+                  "client_assertion_type",
+                  "client_assertion",
+                  "scope"
+                ],
+                "properties": {
+                  "grant_type": {
+                    "type": "string",
+                    "const": "client_credentials"
+                  },
+                  "client_id": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 256
+                  },
+                  "client_assertion_type": {
+                    "type": "string",
+                    "const": "urn:ietf:params:oauth:client-assertion-type:jwt-bearer"
+                  },
+                  "client_assertion": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 8192
+                  },
+                  "scope": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 256
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Logical token response.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/TokenResponse" }
+              }
+            }
+          },
+          "400": { "$ref": "#/components/responses/InvalidRequest" },
+          "401": { "$ref": "#/components/responses/InvalidToken" }
+        }
+      }
+    },
+    "/connectives/v1/link-sessions": {
+      "post": {
+        "x-mains-world-callable": false,
+        "security": [{ "PartnerOAuth": ["link-sessions:create"] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LinkSessionCreateRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Logical consent session.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/LinkSession" }
+              }
+            }
+          },
+          "400": { "$ref": "#/components/responses/InvalidRequest" },
+          "401": { "$ref": "#/components/responses/InvalidToken" },
+          "403": { "$ref": "#/components/responses/Forbidden" }
+        }
+      }
+    },
+    "/connectives/v1/link-sessions/{session_id}": {
+      "get": {
+        "x-mains-world-callable": false,
+        "security": [{ "PartnerOAuth": ["link-sessions:create"] }],
+        "parameters": [{ "$ref": "#/components/parameters/SessionId" }],
+        "responses": {
+          "200": {
+            "description": "Logical consent session status.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/LinkSessionStatus" }
+              }
+            }
+          },
+          "401": { "$ref": "#/components/responses/InvalidToken" },
+          "403": { "$ref": "#/components/responses/Forbidden" },
+          "404": { "$ref": "#/components/responses/NotFound" }
+        }
+      }
+    },
+    "/connectives/v1/grants/{grant_id}/vibe-candidates": {
+      "post": {
+        "x-mains-world-callable": false,
+        "security": [{ "PartnerOAuth": ["vibe-candidates:write"] }],
+        "parameters": [
+          { "$ref": "#/components/parameters/GrantId" },
+          { "$ref": "#/components/parameters/IdempotencyKey" }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/VibeCandidateEnvelope" }
+            }
+          }
+        },
+        "responses": {
+          "202": {
+            "description": "Logical candidate receipt.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/CandidateStatus" }
+              }
+            }
+          },
+          "400": { "$ref": "#/components/responses/InvalidCandidate" },
+          "401": { "$ref": "#/components/responses/InvalidToken" },
+          "403": { "$ref": "#/components/responses/Forbidden" },
+          "404": { "$ref": "#/components/responses/NotFound" },
+          "409": { "$ref": "#/components/responses/Conflict" },
+          "422": { "$ref": "#/components/responses/AuthorityDenied" }
+        }
+      }
+    },
+    "/connectives/v1/grants/{grant_id}/candidates/{candidate_id}": {
+      "get": {
+        "x-mains-world-callable": false,
+        "security": [{ "PartnerOAuth": ["candidate-status:read"] }],
+        "parameters": [
+          { "$ref": "#/components/parameters/GrantId" },
+          { "$ref": "#/components/parameters/CandidateId" }
+        ],
+        "responses": {
+          "200": {
+            "description": "Logical candidate status.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/CandidateStatus" }
+              }
+            }
+          },
+          "401": { "$ref": "#/components/responses/InvalidToken" },
+          "403": { "$ref": "#/components/responses/Forbidden" },
+          "404": { "$ref": "#/components/responses/NotFound" }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "PartnerOAuth": {
+        "type": "oauth2",
+        "flows": {
+          "clientCredentials": {
+            "tokenUrl": "/oauth/token",
+            "scopes": {
+              "candidate-status:read": "Read candidate status within an approved grant.",
+              "link-sessions:create": "Create and poll application consent sessions.",
+              "vibe-candidates:write": "Submit Vibe candidates within an approved grant."
+            }
+          }
+        }
+      }
+    },
+    "parameters": {
+      "IdempotencyKey": {
+        "name": "Idempotency-Key",
+        "in": "header",
+        "required": true,
+        "schema": { "type": "string", "minLength": 1, "maxLength": 128 }
+      },
+      "SessionId": {
+        "name": "session_id",
+        "in": "path",
+        "required": true,
+        "schema": { "type": "string", "minLength": 1, "maxLength": 256 }
+      },
+      "GrantId": {
+        "name": "grant_id",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256,
+          "pattern": "\\S"
+        }
+      },
+      "CandidateId": {
+        "name": "candidate_id",
+        "in": "path",
+        "required": true,
+        "schema": { "type": "string", "minLength": 1, "maxLength": 256 }
+      }
+    },
+    "responses": {
+      "InvalidRequest": {
+        "description": "Invalid request.",
+        "content": {
+          "application/json": {
+            "schema": { "$ref": "#/components/schemas/ErrorInvalidRequest" }
+          }
+        }
+      },
+      "InvalidCandidate": {
+        "description": "Invalid candidate.",
+        "content": {
+          "application/json": {
+            "schema": { "$ref": "#/components/schemas/ErrorInvalidCandidate" }
+          }
+        }
+      },
+      "InvalidToken": {
+        "description": "Invalid token.",
+        "content": {
+          "application/json": {
+            "schema": { "$ref": "#/components/schemas/ErrorInvalidToken" }
+          }
+        }
+      },
+      "Forbidden": {
+        "description": "Not authorized.",
+        "content": {
+          "application/json": {
+            "schema": { "$ref": "#/components/schemas/ErrorForbidden" }
+          }
+        }
+      },
+      "NotFound": {
+        "description": "Not found.",
+        "content": {
+          "application/json": {
+            "schema": { "$ref": "#/components/schemas/ErrorNotFound" }
+          }
+        }
+      },
+      "Conflict": {
+        "description": "Conflict.",
+        "content": {
+          "application/json": {
+            "schema": { "$ref": "#/components/schemas/ErrorConflict" }
+          }
+        }
+      },
+      "AuthorityDenied": {
+        "description": "Authority not allowed.",
+        "content": {
+          "application/json": {
+            "schema": { "$ref": "#/components/schemas/ErrorAuthorityDenied" }
+          }
+        }
+      }
+    },
+    "schemas": {
+      "TokenResponse": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["access_token", "token_type", "expires_in", "scope"],
+        "properties": {
+          "access_token": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 8192
+          },
+          "token_type": { "type": "string", "const": "Bearer" },
+          "expires_in": { "type": "integer", "minimum": 1, "maximum": 300 },
+          "scope": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 256,
+            "x-mains-world-canonical": true
+          }
+        }
+      },
+      "PartnerTokenClaims": {
+        "type": "object",
+        "additionalProperties": false,
+        "oneOf": [
+          {
+            "properties": {
+              "iss": { "const": "urn:mains-world:connectives:sandbox" },
+              "environment": { "const": "sandbox" }
+            },
+            "required": ["iss", "environment"]
+          },
+          {
+            "properties": {
+              "iss": { "const": "urn:mains-world:connectives:production" },
+              "environment": { "const": "production" }
+            },
+            "required": ["iss", "environment"]
+          }
+        ],
+        "required": [
+          "iss",
+          "sub",
+          "aud",
+          "iat",
+          "exp",
+          "jti",
+          "partner_id",
+          "environment",
+          "scope"
+        ],
+        "properties": {
+          "iss": {
+            "type": "string",
+            "enum": [
+              "urn:mains-world:connectives:sandbox",
+              "urn:mains-world:connectives:production"
+            ]
+          },
+          "sub": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 256,
+            "pattern": "\\S"
+          },
+          "aud": {
+            "type": "string",
+            "const": "urn:mains-world:connectives:v1"
+          },
+          "iat": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991
+          },
+          "exp": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991,
+            "description": "Must be greater than iat and no more than 300 seconds after iat.",
+            "x-mains-world-after-field": "iat",
+            "x-mains-world-max-delta-seconds": 300
+          },
+          "jti": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 256,
+            "pattern": "\\S"
+          },
+          "partner_id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 256,
+            "pattern": "\\S"
+          },
+          "environment": {
+            "type": "string",
+            "enum": ["sandbox", "production"]
+          },
+          "scope": {
+            "type": "string",
+            "minLength": 1,
+            "pattern": "^(?:candidate-status:read|link-sessions:create|vibe-candidates:write)(?:[\\t-\\r ]+(?:candidate-status:read|link-sessions:create|vibe-candidates:write))*$",
+            "x-mains-world-unique-values": true,
+            "x-mains-world-input-order": "semantically-irrelevant",
+            "x-mains-world-validated-order": "lexicographic"
+          }
+        }
+      },
+      "LinkSessionCreateRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["requested_scopes"],
+        "properties": {
+          "requested_scopes": {
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": {
+              "type": "string",
+              "enum": ["candidate-status:read", "vibe-candidates:write"]
+            }
+          },
+          "account_hint": {
+            "type": "string",
+            "maxLength": 256,
+            "description": "Masked display context only."
+          }
+        }
+      },
+      "LinkSession": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "session_id",
+          "confirmation_code",
+          "consent_url",
+          "expires_at"
+        ],
+        "properties": {
+          "session_id": { "type": "string" },
+          "confirmation_code": { "type": "string" },
+          "consent_url": { "type": "string", "format": "uri-reference" },
+          "expires_at": { "type": "string", "format": "date-time" }
+        }
+      },
+      "LinkSessionStatus": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["session_id", "status"],
+        "allOf": [
+          {
+            "if": {
+              "properties": { "status": { "const": "approved" } },
+              "required": ["status"]
+            },
+            "then": {},
+            "else": { "not": { "required": ["grant_id"] } }
+          }
+        ],
+        "properties": {
+          "session_id": { "type": "string" },
+          "status": {
+            "type": "string",
+            "enum": ["pending", "approved", "denied", "expired"]
+          },
+          "grant_id": {
+            "type": "string",
+            "description": "Opaque and present only after approval."
+          }
+        }
+      },
+      "VibeCandidateEnvelope": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "schema_version",
+          "resource_family",
+          "profile",
+          "external_id",
+          "revision",
+          "payload"
+        ],
+        "properties": {
+          "schema_version": { "type": "string", "const": "2026-08-29" },
+          "resource_family": { "type": "string", "const": "vibe" },
+          "profile": { "type": "string", "const": "calendar.event.v1" },
+          "external_id": { "type": "string", "minLength": 1, "maxLength": 128 },
+          "revision": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991,
+            "multipleOf": 1
+          },
+          "payload": { "$ref": "#/components/schemas/VibeCandidatePayload" }
+        }
+      },
+      "VibeCandidatePayload": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "label",
+          "world",
+          "latitude",
+          "longitude",
+          "scheduled_for"
+        ],
+        "properties": {
+          "label": { "type": "string", "minLength": 1, "maxLength": 80 },
+          "world": { "type": "string", "enum": ["land", "underworld"] },
+          "latitude": { "type": "number", "minimum": -90, "maximum": 90 },
+          "longitude": { "type": "number", "minimum": -180, "maximum": 180 },
+          "place_name": {
+            "type": "string",
+            "maxLength": 120,
+            "x-mains-world-blank-means-omitted": true
+          },
+          "place_address": {
+            "type": "string",
+            "maxLength": 200,
+            "x-mains-world-blank-means-omitted": true
+          },
+          "scheduled_for": {
+            "type": "string",
+            "format": "date-time",
+            "pattern": "^\\d{4}-\\d{2}-\\d{2}T",
+            "x-mains-world-after": "request-validation-clock",
+            "x-mains-world-max-horizon-days": 60
+          },
+          "scheduled_until": {
+            "type": "string",
+            "format": "date-time",
+            "pattern": "^\\d{4}-\\d{2}-\\d{2}T",
+            "x-mains-world-after-field": "scheduled_for",
+            "x-mains-world-max-horizon-days": 60
+          }
+        }
+      },
+      "ConnectedGroupMembership": {
+        "description": "Trusted synthetic connector output for documentation only; never a partner or client request.",
+        "type": "object",
+        "additionalProperties": false,
+        "x-mains-world-trusted-output": true,
+        "x-mains-world-read-only": true,
+        "x-mains-world-server-assembled": true,
+        "x-mains-world-submittable": false,
+        "required": [
+          "schema_version",
+          "profile",
+          "provider",
+          "group_key",
+          "connection_grant_id",
+          "display",
+          "authority",
+          "observed_at",
+          "valid_until",
+          "state"
+        ],
+        "properties": {
+          "schema_version": {
+            "type": "string",
+            "const": "2026-08-29",
+            "readOnly": true
+          },
+          "profile": {
+            "type": "string",
+            "const": "community.membership.v1",
+            "readOnly": true
+          },
+          "provider": {
+            "type": "string",
+            "const": "discord",
+            "readOnly": true
+          },
+          "group_key": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 256,
+            "pattern": "\\S",
+            "readOnly": true
+          },
+          "connection_grant_id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 256,
+            "pattern": "\\S",
+            "readOnly": true
+          },
+          "display": {
+            "type": "object",
+            "additionalProperties": false,
+            "readOnly": true,
+            "required": ["name"],
+            "properties": {
+              "name": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 256,
+                "pattern": "\\S",
+                "readOnly": true
+              },
+              "icon_url": {
+                "type": "string",
+                "format": "uri",
+                "minLength": 1,
+                "maxLength": 256,
+                "pattern": "^https://",
+                "readOnly": true
+              }
+            }
+          },
+          "authority": {
+            "type": "string",
+            "enum": ["member", "manager", "owner"],
+            "readOnly": true
+          },
+          "observed_at": {
+            "type": "string",
+            "format": "date-time",
+            "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{3}Z$",
+            "x-mains-world-canonical-utc": true,
+            "readOnly": true
+          },
+          "valid_until": {
+            "type": "string",
+            "format": "date-time",
+            "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{3}Z$",
+            "description": "Canonical UTC instant strictly after observed_at and no more than 900 seconds later.",
+            "x-mains-world-canonical-utc": true,
+            "x-mains-world-after-field": "observed_at",
+            "x-mains-world-max-delta-seconds": 900,
+            "readOnly": true
+          },
+          "state": {
+            "type": "string",
+            "enum": ["active", "stale", "revoked"],
+            "readOnly": true
+          }
+        }
+      },
+      "ExternalCrewHostRef": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["kind", "provider", "group_key", "name_snapshot"],
+        "properties": {
+          "kind": {
+            "type": "string",
+            "const": "external_crew",
+            "readOnly": true
+          },
+          "provider": {
+            "type": "string",
+            "const": "discord",
+            "readOnly": true
+          },
+          "group_key": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 256,
+            "pattern": "\\S",
+            "readOnly": true
+          },
+          "name_snapshot": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 256,
+            "pattern": "\\S",
+            "readOnly": true
+          },
+          "icon_url_snapshot": {
+            "type": "string",
+            "format": "uri",
+            "minLength": 1,
+            "maxLength": 256,
+            "pattern": "^https://",
+            "readOnly": true
+          }
+        }
+      },
+      "ExternalCrewInviteRef": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["kind", "provider", "group_key", "name_snapshot"],
+        "properties": {
+          "kind": {
+            "type": "string",
+            "const": "external_crew",
+            "readOnly": true
+          },
+          "provider": {
+            "type": "string",
+            "const": "discord",
+            "readOnly": true
+          },
+          "group_key": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 256,
+            "pattern": "\\S",
+            "readOnly": true
+          },
+          "name_snapshot": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 256,
+            "pattern": "\\S",
+            "readOnly": true
+          }
+        }
+      },
+      "ExternalVibeAssociations": {
+        "description": "Server-assembled documentation-only sidecars; no client or partner may submit them. When both refs are present, they use the same provider and group_key tuple.",
+        "type": "object",
+        "additionalProperties": false,
+        "minProperties": 1,
+        "x-mains-world-trusted-output": true,
+        "x-mains-world-read-only": true,
+        "x-mains-world-server-assembled": true,
+        "x-mains-world-submittable": false,
+        "x-mains-world-shared-provider-group-key": true,
+        "properties": {
+          "external_host": {
+            "$ref": "#/components/schemas/ExternalCrewHostRef",
+            "readOnly": true
+          },
+          "external_invite": {
+            "$ref": "#/components/schemas/ExternalCrewInviteRef",
+            "readOnly": true
+          }
+        }
+      },
+      "CandidateStatus": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "candidate_id",
+          "resource_family",
+          "profile",
+          "external_id",
+          "revision",
+          "status",
+          "validation_errors"
+        ],
+        "properties": {
+          "candidate_id": { "type": "string" },
+          "resource_family": { "type": "string", "const": "vibe" },
+          "profile": {
+            "type": "string",
+            "enum": ["calendar.event.v1"]
+          },
+          "external_id": { "type": "string", "minLength": 1, "maxLength": 128 },
+          "revision": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "received",
+              "needs_review",
+              "adopted",
+              "dismissed",
+              "withdrawn",
+              "expired",
+              "blocked",
+              "terminally_deleted"
+            ]
+          },
+          "validation_errors": {
+            "type": "array",
+            "items": { "type": "string", "maxLength": 256 }
+          }
+        }
+      },
+      "ErrorCode": {
+        "type": "string",
+        "enum": [
+          "authority_not_allowed",
+          "idempotency_conflict",
+          "inactive_grant",
+          "insufficient_scope",
+          "invalid_candidate",
+          "invalid_request",
+          "invalid_token",
+          "not_found",
+          "revision_conflict"
+        ]
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["error"],
+        "properties": {
+          "error": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["code", "message", "request_id"],
+            "properties": {
+              "code": { "$ref": "#/components/schemas/ErrorCode" },
+              "message": { "type": "string", "minLength": 1, "maxLength": 256 },
+              "request_id": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 256
+              }
+            }
+          }
+        }
+      },
+      "ErrorInvalidRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["error"],
+        "properties": {
+          "error": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["code", "message", "request_id"],
+            "properties": {
+              "code": {
+                "type": "string",
+                "enum": ["invalid_request", "invalid_candidate"]
+              },
+              "message": { "type": "string", "minLength": 1, "maxLength": 256 },
+              "request_id": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 256
+              }
+            }
+          }
+        }
+      },
+      "ErrorInvalidCandidate": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["error"],
+        "properties": {
+          "error": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["code", "message", "request_id"],
+            "properties": {
+              "code": {
+                "type": "string",
+                "enum": ["invalid_request", "invalid_candidate"]
+              },
+              "message": { "type": "string", "minLength": 1, "maxLength": 256 },
+              "request_id": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 256
+              }
+            }
+          }
+        }
+      },
+      "ErrorInvalidToken": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["error"],
+        "properties": {
+          "error": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["code", "message", "request_id"],
+            "properties": {
+              "code": { "type": "string", "enum": ["invalid_token"] },
+              "message": { "type": "string", "minLength": 1, "maxLength": 256 },
+              "request_id": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 256
+              }
+            }
+          }
+        }
+      },
+      "ErrorForbidden": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["error"],
+        "properties": {
+          "error": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["code", "message", "request_id"],
+            "properties": {
+              "code": {
+                "type": "string",
+                "enum": [
+                  "authority_not_allowed",
+                  "inactive_grant",
+                  "insufficient_scope"
+                ]
+              },
+              "message": { "type": "string", "minLength": 1, "maxLength": 256 },
+              "request_id": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 256
+              }
+            }
+          }
+        }
+      },
+      "ErrorNotFound": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["error"],
+        "properties": {
+          "error": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["code", "message", "request_id"],
+            "properties": {
+              "code": { "type": "string", "enum": ["not_found"] },
+              "message": { "type": "string", "minLength": 1, "maxLength": 256 },
+              "request_id": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 256
+              }
+            }
+          }
+        }
+      },
+      "ErrorConflict": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["error"],
+        "properties": {
+          "error": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["code", "message", "request_id"],
+            "properties": {
+              "code": {
+                "type": "string",
+                "enum": ["idempotency_conflict", "revision_conflict"]
+              },
+              "message": { "type": "string", "minLength": 1, "maxLength": 256 },
+              "request_id": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 256
+              }
+            }
+          }
+        }
+      },
+      "ErrorAuthorityDenied": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["error"],
+        "properties": {
+          "error": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["code", "message", "request_id"],
+            "properties": {
+              "code": { "type": "string", "enum": ["authority_not_allowed"] },
+              "message": { "type": "string", "minLength": 1, "maxLength": 256 },
+              "request_id": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 256
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

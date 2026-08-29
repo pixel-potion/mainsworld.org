@@ -8,8 +8,12 @@ name: Build
 on:
   pull_request:
     branches: [main]
+    types: [opened, synchronize, reopened, labeled, unlabeled]
   push:
     branches: [main]
+
+permissions:
+  contents: read
 
 concurrency:
   group: build-${{ github.ref }}
@@ -20,10 +24,23 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: false
       - uses: actions/setup-node@v4
         with:
           node-version-file: .node-version
           cache: npm
       - run: npm ci
+      - run: npm run typecheck
+      - run: npm run test:registry
+      - if: ${{ github.event_name == 'pull_request' && !contains(github.event.pull_request.labels.*.name, 'catalog-maintenance') }}
+        run: npm run apps:check -- --base "${{ github.event.pull_request.base.sha }}"
+      - if: ${{ github.event_name == 'pull_request' && contains(github.event.pull_request.labels.*.name, 'catalog-maintenance') }}
+        run: npm run apps:check -- --base "${{ github.event.pull_request.base.sha }}" --allow-maintenance
+      - if: ${{ github.event_name == 'push' }}
+        run: npm run apps:check
       - run: node --test tests/legal-pages.test.mjs
+      - run: node --test tests/around-the-world.test.mjs
       - run: npm run build
+      - run: npm run test:developers

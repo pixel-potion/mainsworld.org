@@ -1,0 +1,15 @@
+{
+  "schema_version": "v1",
+  "catalog_version": "2026-08-29",
+  "space_source": {
+    "repository": "https://github.com/pixel-potion/Mains.World",
+    "revision": "4babf633b209855c49e1bf698d04b2a03488de8c",
+    "paths": [
+      "src/app/components/backstage/constellation/constellationApps.tsx",
+      "src/app/components/backstage/apps/comingSoonApps.tsx",
+      "src/app/components/backstage/constellation/wishStars.tsx",
+      "src/app/components/backstage/constellation/wishStarsEvents.tsx",
+      "src/app/components/backstage/constellation/constellationSites.ts"
+    ]
+  }
+}

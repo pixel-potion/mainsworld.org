@@ -1,0 +1,17 @@
+{
+  "schema_version": "2026-08-29",
+  "resource_family": "vibe",
+  "profile": "calendar.event.v1",
+  "external_id": "example-luma-event",
+  "revision": 1,
+  "payload": {
+    "label": "Sunset VHS Swap",
+    "world": "land",
+    "latitude": 0,
+    "longitude": 0,
+    "place_name": "Example Hall",
+    "place_address": "100 Example Avenue, Example City",
+    "scheduled_for": "2026-09-12T22:00:00.000Z",
+    "scheduled_until": "2026-09-13T01:00:00.000Z"
+  }
+}
