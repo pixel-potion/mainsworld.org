@@ -125,6 +125,17 @@ function findProhibitedKey(value, location = '$') {
   return null;
 }
 
+function isValidDnsHostname(hostname) {
+  if (hostname.length > 253) return false;
+
+  return hostname.split('.').every(
+    (label) =>
+      label.length > 0 &&
+      label.length <= 63 &&
+      /^[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$/.test(label),
+  );
+}
+
 function isPublicHttpsUrl(value) {
   try {
     const url = new URL(value);
@@ -137,7 +148,9 @@ function isPublicHttpsUrl(value) {
       return false;
     }
 
-    if (isIP(hostname) || !hostname.includes('.')) return false;
+    if (isIP(hostname) || !hostname.includes('.') || !isValidDnsHostname(hostname)) {
+      return false;
+    }
     if (
       reservedDnsSuffixes.some(
         (suffix) => hostname === suffix || hostname.endsWith(`.${suffix}`),

@@ -185,6 +185,27 @@ test('accepts an ordinary public DNS hostname with a trailing dot', async () => 
   await assert.doesNotReject(validateRegistry([app]));
 });
 
+test('rejects malformed public DNS labels', async () => {
+  const tooLongLabel = `${'a'.repeat(64)}.org`;
+  const tooLongHostname = `${'a.'.repeat(126)}aa`;
+
+  for (const [name, hostname] of [
+    ['empty label', 'foo..bar'],
+    ['leading hyphen', '-foo.bar'],
+    ['trailing hyphen', 'foo-.bar'],
+    ['64-character label', tooLongLabel],
+    ['254-character hostname', tooLongHostname],
+  ]) {
+    const app = { ...clone(validApp), website: `https://${hostname}/` };
+    await assert.rejects(validateRegistry([app]), /public HTTPS URL/i, name);
+  }
+});
+
+test('accepts a syntactically valid punycode DNS hostname', async () => {
+  const app = { ...clone(validApp), website: 'https://xn--bcher-kva.com/' };
+  await assert.doesNotReject(validateRegistry([app]));
+});
+
 test('requires proposal submission, support, and privacy fields', async () => {
   for (const field of ['submitted_at', 'support_url', 'privacy_url']) {
     const app = clone(validApp);
