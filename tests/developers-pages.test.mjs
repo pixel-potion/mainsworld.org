@@ -37,9 +37,32 @@ test('renders the preview boundary from platform metadata without runtime access
   for (const artifact of Object.values(platform.artifacts)) {
     assert.match(apiHtml, new RegExp(`href=(?:")?${artifact.public_snapshot_path.replace(/[./]/g, '\\$&')}(?:")?`));
     assert.ok(existsSync(`build${artifact.public_snapshot_path}`), `missing ${artifact.public_snapshot_path}`);
+    assert.match(api, new RegExp(`SHA-256\\s+${artifact.sha256}`));
   }
   assert.match(api, new RegExp(platform.source_revision));
   assert.match(api, /access-restricted normative provenance/i);
+});
+
+test('renders the reviewed Discord, Luma, World App, and listing-only boundaries', () => {
+  const overview = text(html('developers'));
+  const api = text(html('developers/api'));
+  const submit = text(html('developers/submit-an-app'));
+
+  assert.match(api, /external Discord-badged Crews/i);
+  assert.match(api, /never native Crew candidates or native Crew links/i);
+  assert.match(api, /current owner or manager.*external host attribution.*dynamic invite audience/i);
+  assert.match(api, /creates the Vibe remains the operational host/i);
+  assert.match(api, /independently connected and currently match the audience.*explicitly RSVPs or joins/i);
+  assert.match(api, /Disconnecting or leaving removes future eligibility.*does not erase native history/i);
+  assert.match(api, /never grants native host or credit authority/i);
+
+  assert.match(api, /Luma may provide a reviewed Vibe candidate input only/i);
+  assert.match(api, /does not create, host, publish, or join a Vibe/i);
+  assert.match(overview, /identity, authentication, consent, native actions, credits, wallet, Vault, and withdrawals inside the World App/i);
+
+  assert.match(submit, /merge lists the app only/i);
+  assert.match(submit, /never issues credentials.*activates production access/i);
+  assert.match(overview, /merged submission never changes those boundaries/i);
 });
 
 test('ships a resolvable, public-only AI index and developer navigation', () => {
@@ -56,4 +79,30 @@ test('ships a resolvable, public-only AI index and developer navigation', () => 
   assert.doesNotMatch(publicSurfaces, /https?:\/\/[^\s"']*(?:internal|private)[^\s"']*/i);
   assert.match(text(html('developers')), /Developers/);
   assert.match(text(html('developers')), /Apps/);
+});
+
+test('runs type, navigation, registry, and rendered developer gates in CI order', () => {
+  const workflow = readFileSync('.github/workflows/build.yml', 'utf8');
+  const indexOf = (command) => workflow.indexOf(`run: ${command}`);
+
+  for (const command of [
+    'npm ci',
+    'npm run typecheck',
+    'npm run test:registry',
+    'npm run apps:check',
+    'node --test tests/legal-pages.test.mjs',
+    'node --test tests/around-the-world.test.mjs',
+    'npm run build',
+    'npm run test:developers',
+  ]) {
+    assert.notEqual(indexOf(command), -1, `CI is missing ${command}`);
+  }
+  assert.ok(indexOf('npm ci') < indexOf('npm run typecheck'));
+  assert.ok(indexOf('npm run typecheck') < indexOf('npm run test:registry'));
+  assert.ok(indexOf('npm run test:registry') < indexOf('npm run apps:check'));
+  assert.ok(indexOf('node --test tests/legal-pages.test.mjs') < indexOf('node --test tests/around-the-world.test.mjs'));
+  assert.ok(indexOf('node --test tests/around-the-world.test.mjs') < indexOf('npm run build'));
+  assert.ok(indexOf('npm run build') < indexOf('npm run test:developers'));
+  assert.match(workflow, /permissions:\n  contents: read/);
+  assert.match(workflow, /persist-credentials: false/);
 });

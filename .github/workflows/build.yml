@@ -32,6 +32,7 @@ jobs:
           node-version-file: .node-version
           cache: npm
       - run: npm ci
+      - run: npm run typecheck
       - run: npm run test:registry
       - if: ${{ github.event_name == 'pull_request' && !contains(github.event.pull_request.labels.*.name, 'catalog-maintenance') }}
         run: npm run apps:check -- --base "${{ github.event.pull_request.base.sha }}"
@@ -40,5 +41,6 @@ jobs:
       - if: ${{ github.event_name == 'push' }}
         run: npm run apps:check
       - run: node --test tests/legal-pages.test.mjs
+      - run: node --test tests/around-the-world.test.mjs
       - run: npm run build
       - run: npm run test:developers
