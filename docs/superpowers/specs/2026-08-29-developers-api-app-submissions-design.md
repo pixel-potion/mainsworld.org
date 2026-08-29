@@ -108,13 +108,20 @@ The public registry lives under:
 registry/
   README.md
   catalog.json
+  platform.json
   schema/app-v1.schema.json
   apps/<app-id>.json
+  examples/proposed-app.json
 ```
 
 `catalog.json` declares the catalog version and records the exact MW commit and
-source paths used for the initial SPACE audit. This is provenance, not a runtime
-sync. Later catalog changes remain explicit pull requests.
+source paths used for the initial SPACE audit. `platform.json` records the exact
+pinned revised Connectives commit, three preview scopes, five preview
+operations, `callable: false`, and repository-relative paths for the OpenAPI,
+Discord example, and Luma example; it feeds immutable artifact links and
+machine-readable platform guidance and is checked against the rendered API
+page. These are provenance and public documentation inputs, not a runtime sync.
+Later changes remain explicit pull requests.
 
 Each manifest uses a bounded v1 shape:
 
@@ -182,6 +189,11 @@ check deterministic. Status promotion is a separate reviewed change and must
 include `status_evidence_url` for `connected` and `api_contract_url` for any
 public API tier. This prevents a submission from self-declaring that it is
 connected or callable.
+
+Modifying, renaming, or deleting an existing manifest is catalog maintenance,
+not a new-app submission. CI rejects it unless a maintainer applies the
+`catalog-maintenance` pull-request label. The label changes only the review
+mode; final manifests must still pass schema and evidence rules.
 
 One deterministic generation command creates:
 
