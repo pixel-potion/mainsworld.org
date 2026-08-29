@@ -59,13 +59,20 @@ The MW application repository remains authoritative for:
   approval, grants, revocation, audit, and provider secrets; and
 - whether an endpoint or integration is actually deployed and callable.
 
-The docsite may link to a versioned MW contract and explain it. The link must
-pin the exact publicly reachable MW commit that contains the matching endpoint,
-scope, and example revisions; it must not point loosely at a branch that could
-still contain the superseded native Crew-candidate flow. The docs pull request
-must not merge before that pinned commit is available. The docsite must not
-copy preview operations into a second normative API or turn a catalog merge
-into runtime approval.
+The MW repository is access-restricted, so it cannot be the public artifact
+host for builders or their agents. The docsite publishes a reviewed, read-only
+release snapshot of the OpenAPI document and two synthetic examples at stable
+local URLs. `platform.json` records the exact MW source commit and a SHA-256 for
+each copied byte stream. The private MW source remains normative; the public
+snapshot is non-callable release documentation, not a second API or runtime.
+
+A maintainer copies the three allowlisted artifacts from the recorded,
+authenticated MW revision and updates their hashes in a reviewed docsite pull
+request. Public CI proves the committed snapshot agrees with its own metadata
+and rendered documentation; it cannot independently prove that the maintainer
+copied private source honestly. The snapshot must never supply a server URL,
+credential, callback, or activation path, and a catalog merge cannot change its
+callability.
 
 ## Public status model
 
@@ -112,16 +119,21 @@ registry/
   schema/app-v1.schema.json
   apps/<app-id>.json
   examples/proposed-app.json
+static/api/connectives/v1/
+  openapi.json
+  discord-connected-group-membership.json
+  luma-vibe-candidate.json
 ```
 
 `catalog.json` declares the catalog version and records the exact MW commit and
-source paths used for the initial SPACE audit. `platform.json` records the exact
-pinned revised Connectives commit, three preview scopes, five preview
-operations, `callable: false`, and repository-relative paths for the OpenAPI,
-Discord example, and Luma example; it feeds immutable artifact links and
-machine-readable platform guidance and is checked against the rendered API
-page. These are provenance and public documentation inputs, not a runtime sync.
-Later changes remain explicit pull requests.
+source paths used for the initial SPACE audit. `platform.json` separately
+records the access-restricted MW source repository, exact revised Connectives
+source commit, three preview scopes, five preview operations, `callable: false`,
+and—for each public snapshot—the source path, stable local public path, and
+SHA-256. The source commit plus hash identifies a version-pinned release; the
+stable public URL may serve a later reviewed release after a future docs merge.
+These are provenance and public documentation inputs, not a runtime sync.
+Later changes remain explicit maintainer-reviewed pull requests.
 
 Each manifest uses a bounded v1 shape:
 
@@ -263,11 +275,13 @@ The documented preview scope set is:
 `crew-candidates:write` is excluded because the approved Discord model mirrors
 external group membership instead of creating a native Crew candidate.
 
-The page links to the pinned, revised MW OpenAPI document and the matching
-synthetic Discord connected-group and Luma Vibe examples. The MW revision must
-remove the old `/crew-candidates` operation and `crew-candidates:write` scope
-before the docsite can reference it. The page explains that Discord host/invite
-actions remain first-party World App actions and that Luma candidates remain
+The page links to the local public OpenAPI snapshot and matching synthetic
+Discord connected-group and Luma Vibe snapshots. It identifies their exact MW
+source revision and hashes without sending readers to private raw GitHub URLs.
+The source revision and published snapshot must remove the old
+`/crew-candidates` operation and `crew-candidates:write` scope. The page explains
+that these are non-callable release documents, Discord host/invite actions
+remain first-party World App actions, and Luma candidates remain
 review-before-adoption input. The World App remains the identity,
 authentication, consent, credits, wallet/Vault, and native-action boundary.
 
@@ -294,6 +308,13 @@ The repository pull-request template includes an app-submission checklist. It
 does not ask contributors to paste secrets, tokens, client IDs, credentials,
 private callback URLs, or user data.
 
+Ordinary app submissions cannot edit `registry/platform.json` or
+`static/api/connectives/v1/**`. The base-diff gate requires the same
+maintainer-controlled `catalog-maintenance` label used for changes to existing
+catalog records before either surface may change. This label never weakens
+schema, snapshot-hash, contract-parity, non-callability, or public-safety
+validation.
+
 ## AI-readable surface
 
 The same public facts are available in several deliberately simple forms:
@@ -304,6 +325,9 @@ The same public facts are available in several deliberately simple forms:
 - `/llms-full.txt` — expanded rules, status vocabulary, endpoint availability,
   submission procedure, and generated catalog;
 - `/apps.json` — versioned structured catalog derived from the manifests;
+- `/api/connectives/v1/openapi.json` and its two adjacent examples — the public,
+  version-pinned, non-callable release snapshot of the access-restricted MW
+  source;
 - `registry/schema/app-v1.schema.json` — exact submission shape; and
 - `registry/README.md` — step-by-step instructions written for both people and
   coding agents.
@@ -331,6 +355,13 @@ Focused Node tests must prove:
 - the Apps page contains every catalog entry and its honest status;
 - the API page calls every preview endpoint non-callable and contains no server
   URL or public credential instructions;
+- every snapshot byte stream matches its recorded SHA-256, the parsed OpenAPI
+  matches the three scopes and five operations in `platform.json`, and no page
+  or agent index depends on a private MW source URL;
+- the allowlisted public release contains only the OpenAPI and two synthetic
+  examples, with no real IDs, tokens, keys, callback URLs, internal hosts,
+  server URL, or live-operation claim;
+- ordinary app submissions cannot alter platform metadata or snapshot bytes;
 - `crew-candidates:write` does not reappear; and
 - navigation and existing public-doc tests remain green.
 
@@ -364,5 +395,7 @@ private context:
 7. Where the normative future runtime contract lives.
 8. How the Discord external-Crew and Luma reviewed-candidate examples preserve
    World App authority.
+9. Which local public snapshot files an agent can read, which private MW commit
+   and hashes they came from, and why none implies a callable base URL.
 
 All of this must be testable without making a production provider mutation.

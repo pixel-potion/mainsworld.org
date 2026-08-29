@@ -11,9 +11,10 @@ submission flow that humans and coding agents can follow.
 manifest per app feeds deterministic Markdown, JSON, and `llms-full.txt`
 outputs. A Node/Ajv validator and CI diff policy keep new submissions
 `proposed` with no API access. Human pages and `llms.txt` explain that no public
-endpoint is callable. The revised MW OpenAPI commit is pinned as the normative
-preview contract; runtime registration, credentials, grants, and activation
-remain in MW.
+endpoint is callable. The access-restricted MW source commit remains normative;
+the docsite publishes a reviewed, hash-pinned, read-only snapshot of its OpenAPI
+and two synthetic examples. Runtime registration, credentials, grants, and
+activation remain in MW.
 
 **Tech Stack:** Docusaurus 3.10, Node.js 22, native `node:test`, JavaScript ESM,
 JSON Schema 2020-12, Ajv 8, npm, Markdown.
@@ -36,9 +37,10 @@ JSON Schema 2020-12, Ajv 8, npm, Markdown.
 - State that there are no callable public endpoints today. Every Connectives
   operation is a preview marked **Not callable** with no server URL, sandbox,
   self-service keys, or MCP endpoint.
-- Pin the exact public MW commit produced by the companion plan. Do not link to
-  a mutable branch or a revision that still contains the native Crew-candidate
-  path/scope.
+- Record the exact pushed MW source commit produced by the companion plan. The
+  MW repository is access-restricted: never send public readers or agents to a
+  private raw/blob URL. Publish only the three reviewed, hash-pinned snapshot
+  files under `/api/connectives/v1/`.
 - Store public facts only. Reject secrets, tokens, credentials, client IDs,
   private callbacks, Main identifiers, wallets, grant material, and internal
   endpoint fields.
@@ -205,14 +207,17 @@ git commit -m "feat: validate public SPACE app manifests"
 
 ### Task 2: Seed all SPACE apps and generate public outputs
 
-**Dependency:** Complete and push the companion MW plan first. Replace
-`<MW_CONNECTIVES_COMMIT>` below with its exact publicly reachable 40-character
-commit before writing the platform record or generated outputs.
+**Dependency:** Complete, review, and push the companion MW plan first. Use its
+exact 40-character source commit below. Authenticated maintainers can read the
+normative source, while public builders use the docsite snapshot.
 
 **Files:**
 
 - Create: `registry/platform.json`
 - Create: `registry/apps/*.json` (18 files from the seed map)
+- Create: `static/api/connectives/v1/openapi.json`
+- Create: `static/api/connectives/v1/discord-connected-group-membership.json`
+- Create: `static/api/connectives/v1/luma-vibe-candidate.json`
 - Create: `docs/developers/apps.md` (generated)
 - Create: `static/apps.json` (generated)
 - Create: `static/llms-full.txt` (generated)
@@ -225,8 +230,14 @@ Add literal expectations for the exact 18 IDs, status counts, and capability
 arrays in the seed map. Test renderer behavior, not implementation text:
 
 - `registry/platform.json` has `callable: false`, the exact three scopes, exact
-  five operation method/path pairs, a 40-character pinned MW revision, and the
-  exact three public artifact paths;
+  five operation method/path pairs, the 40-character MW source revision,
+  `source_repository_access: "restricted"`, and exact source/public path plus
+  SHA-256 metadata for all three artifacts;
+- every local snapshot matches its recorded SHA-256; parsed OpenAPI paths,
+  scopes, `servers` absence, and non-callable flags agree with platform metadata;
+- the snapshot safety audit rejects real-looking identifiers/credentials,
+  callbacks, internal hosts, deployment server URLs, or callable claims while
+  allowing normative schema field names such as `client_id` and `access_token`;
 - `renderAppsJson` returns the exact `v1` envelope and sorted app array;
 - `renderAppsMarkdown` produces one visible row per app, status labels, API
   labels, capabilities, and public website links;
@@ -245,6 +256,16 @@ provider configuration. Preserve the SPACE capability arrays exactly, including
 Discord as `crews`; explain its future Vibe host/invite fit in the API guide,
 not by changing the current catalog mapping.
 
+Copy exactly these reviewed files from MW commit
+`3da5ce3fb92dc63910a6b59dabd817f15097d35f` into the corresponding public
+snapshot paths. This is a bulk mechanical copy, not an edit:
+
+| Source path | Public snapshot path | SHA-256 |
+| --- | --- | --- |
+| `openapi/connectives-v1.json` | `/api/connectives/v1/openapi.json` | `ca58c4f5166f09ff59fa5009a172d29536bc6c3b2552ad239b7193fce061380e` |
+| `openapi/examples/discord-connected-group-membership.json` | `/api/connectives/v1/discord-connected-group-membership.json` | `4043b1ef41de71271352145f6a8fbb3e400e3d34e9d09d070d6b5791e78ca1db` |
+| `openapi/examples/luma-vibe-candidate.json` | `/api/connectives/v1/luma-vibe-candidate.json` | `499d12a33183ce6fed9335fa3021d79ba2da30205d1d80d2e8c4017d3f6358a9` |
+
 Also add `registry/platform.json` as the sole structured input for expanded
 platform guidance:
 
@@ -253,12 +274,25 @@ platform guidance:
   "schema_version": "v1",
   "status": "preview",
   "callable": false,
-  "repository": "https://github.com/pixel-potion/Mains.World",
-  "connectives_revision": "<MW_CONNECTIVES_COMMIT>",
+  "source_repository": "https://github.com/pixel-potion/Mains.World",
+  "source_repository_access": "restricted",
+  "source_revision": "3da5ce3fb92dc63910a6b59dabd817f15097d35f",
   "artifacts": {
-    "openapi": "openapi/connectives-v1.json",
-    "discord_example": "openapi/examples/discord-connected-group-membership.json",
-    "luma_example": "openapi/examples/luma-vibe-candidate.json"
+    "openapi": {
+      "source_path": "openapi/connectives-v1.json",
+      "public_snapshot_path": "/api/connectives/v1/openapi.json",
+      "sha256": "ca58c4f5166f09ff59fa5009a172d29536bc6c3b2552ad239b7193fce061380e"
+    },
+    "discord_example": {
+      "source_path": "openapi/examples/discord-connected-group-membership.json",
+      "public_snapshot_path": "/api/connectives/v1/discord-connected-group-membership.json",
+      "sha256": "4043b1ef41de71271352145f6a8fbb3e400e3d34e9d09d070d6b5791e78ca1db"
+    },
+    "luma_example": {
+      "source_path": "openapi/examples/luma-vibe-candidate.json",
+      "public_snapshot_path": "/api/connectives/v1/luma-vibe-candidate.json",
+      "sha256": "499d12a33183ce6fed9335fa3021d79ba2da30205d1d80d2e8c4017d3f6358a9"
+    }
   },
   "scopes": [
     "candidate-status:read",
@@ -281,8 +315,10 @@ platform guidance:
 }
 ```
 
-Validate this record with exact keys, a public HTTPS repository, safe
-repository-relative artifact paths, and literal scope/operation tuples. It is
+Validate this record with exact keys, the restricted HTTPS source repository,
+safe source paths, safe root-relative public snapshot paths, lowercase SHA-256
+values, and literal scope/operation tuples. Validate the committed snapshot
+bytes and parsed contract parity without fetching private MW in public CI. It is
 documentation input, not a runtime registry.
 
 - [ ] **Step 4: Implement deterministic renderers and CLI modes**
@@ -300,10 +336,10 @@ nonzero without modifying the tree.
 
 `renderLlmsFull` consumes both validated app manifests and
 `registry/platform.json`. Its no-callable statement, scopes, operation list,
-pinned contract/example URLs derived from the repository/revision/artifact
-paths, status rules, submission rules, and catalog rows all come from those
-reviewed inputs; no second hand-maintained endpoint or artifact list is
-introduced.
+local snapshot URLs, restricted-source provenance, status rules, submission
+rules, and catalog rows all come from those reviewed inputs; no second
+hand-maintained endpoint or artifact list is introduced. It warns agents that
+the snapshot supplies neither a base URL nor credentials.
 
 The apps JSON envelope is:
 
@@ -322,7 +358,7 @@ The apps JSON envelope is:
 env PATH=/Users/philiployd/.nvm/versions/node/v22.20.0/bin:/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin node scripts/app-registry.mjs generate
 env PATH=/Users/philiployd/.nvm/versions/node/v22.20.0/bin:/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin node --test tests/app-registry.test.mjs
 env PATH=/Users/philiployd/.nvm/versions/node/v22.20.0/bin:/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin node scripts/app-registry.mjs check
-git add registry/platform.json registry/apps docs/developers/apps.md static/apps.json static/llms-full.txt scripts/app-registry.mjs tests/app-registry.test.mjs
+git add registry/platform.json registry/apps docs/developers/apps.md static/apps.json static/llms-full.txt static/api/connectives/v1 scripts/app-registry.mjs tests/app-registry.test.mjs
 git commit -m "feat: publish the SPACE app catalog"
 ```
 
@@ -352,6 +388,8 @@ production base-diff policy and prove:
 - an added manifest claiming `preview`, `sandbox`, or `production` fails;
 - modifying, renaming, or deleting an existing manifest fails in ordinary
   submission mode; and
+- modifying `registry/platform.json` or any
+  `static/api/connectives/v1/**` snapshot fails in ordinary submission mode;
 - explicit maintenance mode permits those changes only when the final registry
   still satisfies schema, review-date, status-evidence, and API-contract rules.
 
@@ -362,14 +400,18 @@ This test uses real `git init/add/commit/diff`, not a mocked path list.
 - [ ] **Step 3: Implement `--base` diff enforcement**
 
 `node scripts/app-registry.mjs check --base <commit>` uses the complete
-`git diff --name-status <commit>...HEAD -- registry/apps` result. It requires
-each added manifest to be `proposed` with `api_availability: none` and rejects
-modified, renamed, copied, or deleted existing manifests. Reject an
-invalid/missing base explicitly; never silently skip the PR policy.
+`git diff --name-status <commit>...HEAD -- registry/apps registry/platform.json
+static/api/connectives/v1` result. It requires each added manifest to be
+`proposed` with `api_availability: none`, rejects modified/renamed/copied/deleted
+existing manifests, and rejects platform/snapshot changes outside maintenance
+mode. Reject an invalid/missing base explicitly; never silently skip the PR
+policy.
 
-`--allow-maintenance` permits changes to existing manifests but never weakens
-schema or evidence rules. It is not documented as a builder escape hatch; CI
-uses it only after a maintainer applies the `catalog-maintenance` PR label.
+`--allow-maintenance` permits changes to existing manifests or the reviewed
+platform snapshot surface but never weakens schema, evidence, hash, parity,
+public-safety, or non-callability rules. It is not documented as a builder
+escape hatch; CI uses it only after a maintainer applies the
+`catalog-maintenance` pull-request label.
 
 - [ ] **Step 4: Add builder and agent instructions**
 
@@ -418,9 +460,10 @@ git commit -m "feat: review app submissions through docs PRs"
 
 ### Task 4: Publish developer, preview API, and AI-readable guidance
 
-**Dependency:** Task 2 already records the companion MW plan's exact publicly
-reachable Connectives commit in `registry/platform.json`. The API page and its
-tests must use that value for every contract/example link.
+**Dependency:** Task 2 records the companion MW plan's exact source commit and
+the three local public snapshot paths in `registry/platform.json`. The API page
+and its tests must use those local paths and disclose the restricted-source
+provenance without linking readers to private raw files.
 
 **Files:**
 
@@ -448,9 +491,9 @@ outputs:
   each of the five preview operations **Not callable**;
 - `/apps.json`, `/llms.txt`, and `/llms-full.txt` exist in the build output;
 - every local path advertised by `llms.txt` resolves in `build/`; and
-- `registry/platform.json` contains a 40-character commit and every raw MW URL
-  uses `/blob/<that exact commit>/` (or `/raw/<that exact commit>/` where
-  appropriate), never `/main/`.
+- `registry/platform.json` contains the 40-character source revision and every
+  advertised artifact URL resolves locally in `build/api/connectives/v1/`;
+  rendered pages and agent files contain no private MW raw/blob dependency.
 
 Do not test exact paragraphs or stylistic wording.
 
@@ -470,8 +513,8 @@ Write concise public pages:
 - overview: listing/runtime boundary and platform status;
 - Apps: generated table and legend;
 - API: available-now statement, preview credentials/scopes/operation table,
-  Discord external-Crew flow, Luma candidate flow, errors, and exact pinned MW
-  OpenAPI/example links; and
+  Discord external-Crew flow, Luma candidate flow, errors, exact local snapshot
+  links, and pinned restricted-source revision/hashes; and
 - Submit an app: GitHub web and local/agent paths, review checklist, commands,
   and what happens after merge.
 
@@ -490,6 +533,8 @@ changes while writing the page.
 - add a **Developers** sidebar category for the four pages;
 - add a compact Developers navbar/footer link;
 - point `connect-your-app.md` at the new pages;
+- exclude `superpowers/**` from the Docusaurus docs plugin: implementation
+  plans/specs stay reviewable in GitHub but are not public routes or MDX input;
 - replace only the obsolete “no developer documentation” sentence while
   preserving the truthful no-public-interface/no-self-service-key boundary; and
 - do not describe the rolled-back SPACE map controls as live.
@@ -542,9 +587,9 @@ Confirm:
 
 - all 18 manifests appear once in Markdown and JSON;
 - generated files are byte-stable after a second generation;
-- no secret-like values or private endpoints exist;
-- no `crew-candidates:write`, `/crew-candidates`, mutable MW branch link, server
-  URL, or callable claim exists;
+- no secret-like values or private raw/blob artifact endpoints exist;
+- no `crew-candidates:write`, `/crew-candidates`, private/mutable MW artifact
+  link, server URL, or callable claim exists;
 - app-submission merge is repeatedly described as listing only; and
 - `git diff origin/main --name-status` contains only the planned public docs,
   registry, validation, test, and CI files.
@@ -580,11 +625,15 @@ The PR body must state:
 
 - all 18 SPACE entries and honest statuses are public;
 - no public API endpoint is callable;
-- the exact pinned MW Connectives commit;
+- the exact MW source commit and three public snapshot hashes;
 - how builders submit a proposed manifest;
 - merge publishes a listing only;
 - verification commands/results; and
 - no deployment, provider mutation, credential, OAuth configuration, or
   production-data change occurred.
+
+Apply the maintainer-controlled `catalog-maintenance` label because this initial
+reviewed release intentionally adds `registry/platform.json` and the three
+public snapshot files. Do not merge or deploy.
 
 Do not merge or deploy. Return the PR URL to the user for review.
