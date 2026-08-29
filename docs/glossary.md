@@ -34,9 +34,18 @@ Main's World has its own vocabulary. Here's what everything means.
   - **SKY** — public: anyone can see it.
   - **LAND** — your connections: only people you've connected with.
   - **DEEP** — private: yours alone, unless you tag someone in.
-- **World filters** — independent SKY, LAND, and DEEP toggles that decide which
-  worlds appear on the map and in the moments list. They change only your view,
-  never who can open a moment. See
+- **SPACE** — the fourth map world, which gathers authorized content supplied by
+  external apps. SPACE is a viewing and navigation layer, not a fourth privacy
+  setting; app content still lives in SKY, LAND, or DEEP. See
+  [the worlds & privacy](/how-it-works/the-worlds).
+- **Earth** — the real-world map where Main's World moments and authorized app
+  content appear together.
+- **SPACE/EARTH switcher** — the fixed control that opens SPACE to discover and
+  manage connected apps, then returns to the Earth map. It changes the current
+  view, not the SPACE filter or a moment's privacy.
+- **World filters** — nested SPACE, SKY, LAND, and DEEP controls that decide
+  which worlds, kinds of content, and connected apps appear on the map and in
+  the moments list. They change only your view, never who can open a moment. See
   [the worlds & privacy](/how-it-works/the-worlds).
 - **Vibe** — a live, shared gathering on the map — hosted, never owned. See
   [Vibes](/how-it-works/vibes).
@@ -76,9 +85,10 @@ Main's World has its own vocabulary. Here's what everything means.
   than moved: nothing anyone burns becomes anyone else's balance. See
   [The economy](/the-economy).
 - **App connection** — a link you choose to make between Main's World and another
-  app you use, letting that app send moments into your world. **RunPal** is live;
-  you choose which world its moments land in, and more apps are planned. See
-  [Roadmap](/roadmap).
+  app you use, letting that app send moments into your world. Connected apps are
+  reviewed and managed in SPACE; their authorized moments also appear on Earth
+  under their chosen SKY, LAND, or DEEP privacy. **RunPal** is live, and more
+  apps are planned. See [Roadmap](/roadmap).
 - **$MAIN** — the earned currency, created only by eligible appreciation on a
   moment you authored or were tagged in, or a comment you wrote. You can't buy
   it or give it to yourself. See

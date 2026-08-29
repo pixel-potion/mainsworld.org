@@ -47,9 +47,9 @@ keep contributions:
 ## Style notes
 
 - Say **moments** (not posts), **Mains** (accounts), **vibes**, **crews**, and the
-  three worlds **SKY / LAND / DEEP**. The map uses independent world filters, so
-  moments from more than one world can appear together without creating a fourth
-  world. The [Glossary](/glossary) is the reference.
+  three privacy worlds **SKY / LAND / DEEP**. **SPACE** is the fourth map world:
+  it organizes external-app content without becoming a privacy setting. The
+  [Glossary](/glossary) is the reference.
 - Prefer short sentences and concrete words.
 - Link generously to other pages so readers can find their way.
 

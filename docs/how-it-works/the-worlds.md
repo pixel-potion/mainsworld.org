@@ -1,16 +1,16 @@
 ---
 sidebar_position: 1
 title: The worlds & privacy
-description: SKY, LAND, and DEEP — the three worlds that decide who can see what, the map filters that show them, and the privacy model underneath.
+description: SKY, LAND, and DEEP decide who can see what; SPACE and the map filters decide what appears in your view.
 ---
 
 # The worlds & privacy
 
-Everything you share on Main's World lives in one of three **worlds**. The world
-you choose decides who can see it. That's the whole privacy model, and it's meant
-to be simple enough to hold in your head.
+Everything you share on Main's World lives in one of three **privacy worlds**.
+The world you choose decides who can see it. That's the whole privacy model, and
+it's meant to be simple enough to hold in your head.
 
-## The three worlds
+## The three privacy worlds
 
 - **SKY** — public. Anyone on Main's World can see it.
 - **LAND** — your connections. Only people you've connected with can see it.
@@ -21,13 +21,41 @@ pick a world for each moment, and the world tells you who can see it.
 
 ## Filtering the map
 
-The map has independent **SKY**, **LAND**, and **DEEP** filters. Turn each one
-on or off to decide which worlds appear together on the map and in the moments
-list. These are viewing choices only: turning on a filter never gives access to a
-moment you were not already allowed to open.
+The map has four top-level filters: **SPACE**, **SKY**, **LAND**, and **DEEP**.
+SKY, LAND, and DEEP decide which privacy worlds appear together on the map and
+in the moments list. SPACE controls content supplied by external apps. These
+are viewing choices only: turning on a filter never gives access to a moment you
+were not already allowed to open.
 
 Every visible moment keeps its world's color, so a mixed view still makes clear
 where it lives. Your filter choices are remembered on your device.
+
+Each world can open into **Mains**, **crews**, **moments**, and **vibes**. Under
+SPACE, a branch can open again into the apps that supply that kind of content.
+The switch hides or shows a branch; the arrow beside it opens the branch without
+changing its setting. Turning off a parent temporarily masks its children but
+does not erase their choices, so they return as they were when the parent comes
+back on. Search can take you directly to a nested setting.
+
+## SPACE is a map world, not a privacy setting
+
+SPACE is the fourth world in the map navigation. It gathers content from
+registered external apps, including apps a person chooses to connect, while SKY,
+LAND, and DEEP remain the only worlds that decide who may see a moment. A RunPal
+moment can therefore be both SPACE content and a LAND moment: LAND controls who
+is allowed to open it; SPACE and the RunPal filter control whether it appears in
+that person's current view.
+
+The fixed **SPACE/EARTH switcher** moves between two views of the same world:
+
+- Choose **SPACE** from Earth to enter the connected-app universe, where apps
+  can be discovered, connected, and managed.
+- Choose **EARTH** from Space to return to the map where authorized app content
+  appears alongside Main's World content.
+
+Moving between them does not connect or disconnect an app, change a moment's
+privacy world, or delete anything already published. It also does not change
+whether the SPACE filter is on.
 
 ## Tagging opens a door
 

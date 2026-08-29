@@ -14,6 +14,11 @@ else: in a running app, a ticketing app, a travel app, a music app.
 A **connection** lets one of those apps send that activity to the map on its
 user's behalf, so nobody has to post the same thing twice.
 
+Once connected, the app appears in **SPACE**, Main's World's connected-app
+universe, where the Main can review and manage it. Authorized moments from the
+app also appear on the Earth map under the SKY, LAND, or DEEP privacy world the
+Main chose.
+
 ## Come as you are
 
 We are not asking anyone to migrate.

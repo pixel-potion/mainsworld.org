@@ -132,7 +132,7 @@ verification; current wallet sign-in alone is not that verification.
 
 ### The worlds
 
-Every moment lives in exactly one of three worlds, and you choose which:
+Every moment lives in exactly one of three privacy worlds, and you choose which:
 
 | World        | Who can see it                                   |
 | ------------ | ------------------------------------------------ |
@@ -147,9 +147,16 @@ Even the one way a moment travels beyond its world — a view-only **special lin
 its creator can mint for a single moment or vibe, and kill at any time — exists
 only by that creator's hand.
 
-The map has independent SKY, LAND, and DEEP filters, so you can show any
-combination of worlds you are allowed to see. Each moment keeps its world's
-color, and the filters never change who can open a moment.
+The map has independent SKY, LAND, and DEEP privacy-world filters, so you can
+show any combination of worlds you are allowed to see. Each moment keeps its
+world's color, and the filters never change who can open a moment.
+
+SPACE is a fourth client-facing map world, but not a fourth privacy world. It
+gathers authorized content supplied by external apps and layers that content
+onto the same Earth map. A connected-app moment still belongs to SKY, LAND, or
+THE DEEP; SPACE can change whether it appears in the current view, never who is
+allowed to open it. The SPACE/EARTH switcher opens the app universe for discovery
+and management, then returns to the map.
 
 ### Moments
 
@@ -261,16 +268,18 @@ separately and Orb verification gates Vault claims.
 What's here now, and what's coming. We try to be honest about the difference — see
 the [Roadmap](/roadmap) for detail.
 
-**Live today:** independent SKY, LAND, and DEEP filters on a real map; moments
-with photos and video; time travel through the map's timeline; appreciation and
-comments; friending and following; RunPal connection; basic crews; Vault claims
+**Live today:** independent SPACE, SKY, LAND, and DEEP display filters on a real
+map; SPACE as the connected-app world and RunPal as its first live connection;
+moments with photos and video; time travel through the map's timeline;
+appreciation and comments; friending and following; basic crews; Vault claims
 for Orb-verified wallets; and vibes — including vibes planned ahead, with a
 start, an end, and a place.
 
 **Coming:** invites for people who have not joined Main's World yet; richer Vibe
-themes; crew shared ownership, wallets, and member-approved
-splits; more app connections; and **SPACE** — a fourth world for gatherings with
-no place at all, where distance becomes social rather than physical.
+themes; crew shared ownership, wallets, and member-approved splits; more app
+connections; and a possible future expansion of SPACE for placeless virtual
+gatherings, where distance becomes social rather than physical. That gathering
+model is not live and still needs its own audience and moderation rules.
 
 ## 6. Open questions
 
