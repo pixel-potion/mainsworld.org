@@ -1,6 +1,7 @@
 import Ajv2020 from 'ajv/dist/2020.js';
 import addFormats from 'ajv-formats';
 import { readdir, readFile } from 'node:fs/promises';
+import { isIP } from 'node:net';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -15,7 +16,14 @@ const STATUS_RANK = {
   wishlist: 4,
 };
 const prohibitedKeyPattern =
-  /secret|token|credential|clientid|callback|main(?:id|identifier|account|address)|wallet|grant|internal(?:endpoint|url|host|service)/i;
+  /secret|token|credential|clientid|callback|identity(?:id|identifier)?|(?:main)?user(?:id|identifier)?|main(?:id|identifier|account|address)|wallet|grant|internal(?:endpoint|url|host|service)/i;
+const publicUrlFields = [
+  'website',
+  'support_url',
+  'privacy_url',
+  'api_contract_url',
+  'status_evidence_url',
+];
 
 let validateApp;
 
@@ -40,6 +48,76 @@ function findProhibitedKey(value, location = '$') {
       const found = findProhibitedKey(child, `${location}.${key}`);
       if (found) return found;
     }
+  }
+
+  return null;
+}
+
+function isPrivateIpv4(hostname) {
+  const octets = hostname.split('.').map(Number);
+  const [first, second, third] = octets;
+
+  return (
+    first === 0 ||
+    first === 10 ||
+    first === 127 ||
+    (first === 100 && second >= 64 && second <= 127) ||
+    (first === 169 && second === 254) ||
+    (first === 172 && second >= 16 && second <= 31) ||
+    (first === 192 && second === 168) ||
+    (first === 192 && second === 0 && third === 2) ||
+    (first === 198 && second === 51 && third === 100) ||
+    (first === 203 && second === 0 && third === 113)
+  );
+}
+
+function isPrivateIpv6(hostname) {
+  const normalized = hostname.toLowerCase();
+  return (
+    normalized === '::' ||
+    normalized === '::1' ||
+    normalized.startsWith('fc') ||
+    normalized.startsWith('fd') ||
+    /^fe[89ab]/.test(normalized)
+  );
+}
+
+function isPublicHttpsUrl(value) {
+  try {
+    const url = new URL(value);
+    const hostname = url.hostname.toLowerCase().replace(/^\[|\]$/g, '');
+
+    if (url.protocol !== 'https:' || url.username || url.password || !hostname) {
+      return false;
+    }
+
+    if (
+      hostname === 'localhost' ||
+      hostname.endsWith('.localhost') ||
+      hostname === 'local' ||
+      hostname.endsWith('.local') ||
+      hostname === 'test' ||
+      hostname.endsWith('.test') ||
+      hostname === 'invalid' ||
+      hostname.endsWith('.invalid')
+    ) {
+      return false;
+    }
+
+    if (isIP(hostname) === 4) return !isPrivateIpv4(hostname);
+    if (isIP(hostname) === 6) return !isPrivateIpv6(hostname);
+
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+function findNonPublicUrl(record) {
+  if (!record || typeof record !== 'object') return null;
+
+  for (const field of publicUrlFields) {
+    if (field in record && !isPublicHttpsUrl(record[field])) return field;
   }
 
   return null;
@@ -81,6 +159,11 @@ export async function validateRegistry(records) {
 
     if (!validator(record)) {
       throw new Error(`Schema validation failed: ${formatSchemaErrors(validator.errors)}`);
+    }
+
+    const nonPublicUrl = findNonPublicUrl(record);
+    if (nonPublicUrl) {
+      throw new Error(`Public HTTPS URL required for ${nonPublicUrl}.`);
     }
 
     if (ids.has(record.id)) {

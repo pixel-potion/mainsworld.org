@@ -128,6 +128,20 @@ test('rejects HTTP and malformed public URLs', async () => {
   }
 });
 
+test('rejects public URLs with credentials or non-public hosts', async () => {
+  for (const [field, value] of [
+    ['website', 'https://user:secret@example.com/'],
+    ['support_url', 'https://localhost/private'],
+    ['privacy_url', 'https://10.0.0.1/private'],
+    ['api_contract_url', 'https://[::1]/openapi.json'],
+  ]) {
+    const app = { ...clone(validApp), [field]: value };
+    if (field === 'api_contract_url') app.api_availability = 'preview';
+
+    await assert.rejects(validateRegistry([app]), /public HTTPS URL/i, field);
+  }
+});
+
 test('requires proposal submission, support, and privacy fields', async () => {
   for (const field of ['submitted_at', 'support_url', 'privacy_url']) {
     const app = clone(validApp);
@@ -195,6 +209,11 @@ test('rejects prohibited public-data key families before schema validation', asy
     'client_id',
     'callback_url',
     'main_identifier',
+    'identity',
+    'main_user_id',
+    'mainUserId',
+    'user_id',
+    'userIdentifier',
     'walletAddress',
     'grant_id',
     'internal_endpoint',
