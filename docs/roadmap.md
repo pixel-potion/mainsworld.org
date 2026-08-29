@@ -24,7 +24,14 @@ What's still ahead:
 - **Invite beyond your Mains.** Hold a spot for someone who hasn't joined Main's
   World yet.
 
-## Connections to other apps
+## SPACE and connections to other apps
+
+**SPACE is live as Main's World's fourth map world.** It adds content from
+external apps to the Earth map without becoming a new privacy setting. The
+SPACE/EARTH switcher opens the connected-app universe to review and manage apps,
+then returns to the map. SPACE, SKY, LAND, DEEP, their content types, and each
+registered app can be filtered as one nested view; those choices never grant
+access to private content or change what an app is allowed to send.
 
 **RunPal, a running app, is the first — and it is live.** Once connected, a
 finished run arrives as a moment with its route drawn on the map, so something
@@ -38,8 +45,16 @@ in **[The economy](/the-economy)** — and later updates to that same run are
 free. Disconnecting stops anything new arriving, and the moments already on
 your map stay yours.
 
-More apps are planned. The list is worth arguing about — if there's one you want,
-say so via [Contribute](/contribute).
+More apps are planned. The list is worth arguing about — if there's one you
+want, say so via [Contribute](/contribute).
+
+### Future exploration: gatherings without a place
+
+**Not live.** A future expansion could use SPACE for virtual gatherings that
+are not tied to a physical point, with social relationships taking the place of
+distance. That idea still needs its own audience, moderation, lifecycle, and
+map design. It is not part of today's connected-app SPACE and would not silently
+replace SKY, LAND, or DEEP as the privacy model.
 
 ## Crews
 
@@ -54,13 +69,6 @@ available and was taken back out, because on real phones in real light too many
 screens were harder to read than the dark ones they replaced. It is being worked
 on again, and it will come back when it is genuinely better to look at rather
 than merely available. There is no date.
-
-## SPACE — a future world
-
-Today's worlds (SKY, LAND, DEEP) are about *where you physically are*. **SPACE**
-is an idea for a fourth world that's about *where you are among people* — a home
-for gatherings that aren't tied to a physical spot, so you can be together with
-people far away. It's an early concept, shared here so it can grow in the open.
 
 ---
 

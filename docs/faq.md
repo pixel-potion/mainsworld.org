@@ -117,8 +117,9 @@ used to sign in without Main's World asking for your name or email.
 ### Do I need to find an Orb?
 
 No, not to start. Verifying at an Orb unlocks the Vault, where $MAIN is claimed.
-Posting moments, appreciating other people's, the three worlds, vibes and crews
-all work without it. See [Getting started](/how-it-works/getting-started).
+Posting moments, appreciating other people's, the three privacy worlds, SPACE,
+vibes and crews all work without it. See
+[Getting started](/how-it-works/getting-started).
 
 ### How do I actually use the app?
 

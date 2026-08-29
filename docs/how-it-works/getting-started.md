@@ -64,7 +64,8 @@ once, that you are a unique human.
 
 In Main's World, that unlocks one thing: the Vault, where $MAIN is claimed. See
 [the economy](/the-economy). Everything else — posting moments, appreciating
-other people's, all three worlds, vibes and crews — works without it.
+other people's, all three privacy worlds, SPACE, vibes and crews — works without
+it.
 
 You do not need to find an Orb to start.
 
