@@ -83,32 +83,25 @@ to be in one group or the other, there are no headings at all.
 
 ## Narrowing what you see
 
-The fixed world rail on the right opens one nested set of **world filters**.
-SPACE, SKY, LAND, and DEEP sit at the top. Open any world to narrow its Mains,
-crews, moments, or vibes; open a SPACE branch again to reach the external apps
-that supply that kind of content. A search at the top can jump straight to a
-nested setting.
-
-More settings narrow what is on screen:
+The **world filters** in the top right corner let you independently show or hide
+SKY, LAND, and DEEP moments. More settings narrow what is on screen:
 
 - **Whose moments you see** — everyone, the Mains you've connected with, the
   Mains you [follow](/glossary), or only your own.
-- **Which external apps count.** **RunPal** is live; more
+- **Whether moments that arrived from another app count.** **RunPal** is live;
+  more
   [app connections](/roadmap) are planned.
 
 These narrow the **map as well as the list**, so the pins thin out to match
-what you asked for. Turning off a geographic privacy world can leave an
-anonymous ghost dot, so the map still shows that something is there without
-revealing it. Turning off SPACE, a SPACE content type, or an external app simply
-removes that app's presentation from the map and list; it does not change the
-moment's privacy, connection, or published record.
+what you asked for. A moment that a setting filters out becomes an anonymous
+dot, so the map still shows that something is there without revealing it.
+Excluding content from another app changes only the current view; it does not
+change the moment's privacy, app connection, or published record.
 
 Your choices are remembered on your device, so things open the way you left
-them. Turning off a parent temporarily masks the choices below it without
-erasing them, so its earlier setup returns when the parent comes back on. When
-something is narrowed the filter control carries a mark saying so, so a short
-list always explains itself — and setting "whose moments" back to everyone
-widens it again.
+them. When something is narrowed the filter control carries a mark saying so,
+so a short list always explains itself — and setting "whose moments" back to
+everyone widens it again.
 
 ## How long a moment stays on the map
 

@@ -26,12 +26,17 @@ What's still ahead:
 
 ## SPACE and connections to other apps
 
-**SPACE is live as Main's World's fourth map world.** It adds content from
-external apps to the Earth map without becoming a new privacy setting. The
-SPACE/EARTH switcher opens the connected-app universe to review and manage apps,
-then returns to the map. SPACE, SKY, LAND, DEEP, their content types, and each
-registered app can be filtered as one nested view; those choices never grant
-access to private content or change what an app is allowed to send.
+**The connected-app direction is settled; the new map controls are not live.**
+SPACE is Main's World's fourth client-facing world for authorized content from
+external apps, not a new privacy setting. The current SPACE experience remains
+the place to review and manage apps, and authorized app moments can appear on
+the Earth map under SKY, LAND, or DEEP.
+
+The first fixed four-world rail, SPACE/EARTH switcher, and nested visibility
+tree were rolled back on August 29, 2026 after live mobile review. A smaller,
+more focused mobile and desktop presentation is now being designed. Until that
+ships, the map uses its earlier controls and no page should describe the
+four-world filter hierarchy as live.
 
 **RunPal, a running app, is the first — and it is live.** Once connected, a
 finished run arrives as a moment with its route drawn on the map, so something
