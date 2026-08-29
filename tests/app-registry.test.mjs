@@ -1,16 +1,48 @@
 import assert from 'node:assert/strict';
-import { mkdtemp, mkdir, rm, writeFile } from 'node:fs/promises';
+import { createHash } from 'node:crypto';
+import { cp, mkdtemp, mkdir, readFile, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 import test from 'node:test';
 
 import {
   loadRegistry,
+  loadPlatform,
   renderAppsJson,
   renderAppsMarkdown,
   renderLlmsFull,
+  validatePlatform,
   validateRegistry,
 } from '../scripts/app-registry.mjs';
+
+const repositoryRoot = path.resolve(import.meta.dirname, '..');
+const expectedApps = [
+  ['runpal', 'connected', 'none', ['moments']],
+  ['alerts', 'first_party', 'not_applicable', ['mains']],
+  ['photos', 'coming_soon', 'none', ['moments']],
+  ['discord', 'coming_soon', 'none', ['crews']],
+  ['instagram', 'coming_soon', 'none', ['moments', 'mains']],
+  ['luma', 'coming_soon', 'none', ['vibes']],
+  ['spotify', 'coming_soon', 'none', ['moments', 'vibes']],
+  ['strava', 'coming_soon', 'none', ['moments']],
+  ['eventmagic', 'wishlist', 'none', ['vibes', 'crews']],
+  ['garmin', 'wishlist', 'none', ['moments']],
+  ['gphotos', 'wishlist', 'none', ['moments']],
+  ['meetup', 'wishlist', 'none', ['vibes', 'crews']],
+  ['partiful', 'wishlist', 'none', ['vibes']],
+  ['soundcloud', 'wishlist', 'none', ['moments', 'vibes']],
+  ['telegram', 'wishlist', 'none', ['crews', 'mains']],
+  ['tiktok', 'wishlist', 'none', ['moments']],
+  ['whatsapp', 'wishlist', 'none', ['crews', 'mains']],
+  ['x', 'wishlist', 'none', ['moments', 'mains']],
+];
+const expectedOperations = [
+  ['POST', '/oauth/token'],
+  ['POST', '/connectives/v1/link-sessions'],
+  ['GET', '/connectives/v1/link-sessions/{session_id}'],
+  ['POST', '/connectives/v1/grants/{grant_id}/vibe-candidates'],
+  ['GET', '/connectives/v1/grants/{grant_id}/candidates/{candidate_id}'],
+];
 
 const validApp = {
   schema_version: 'v1',
@@ -308,8 +340,111 @@ test('does not classify unrelated UUID keys as Main identifiers', async () => {
   await assert.rejects(validateRegistry([malformed]), /schema validation/i);
 });
 
-test('exports placeholder renderers for the later generated-artifact task', () => {
-  assert.equal(typeof renderAppsJson, 'function');
-  assert.equal(typeof renderAppsMarkdown, 'function');
-  assert.equal(typeof renderLlmsFull, 'function');
+test('loads every approved SPACE app with its honest status and capability mapping', async () => {
+  const apps = await loadRegistry(repositoryRoot);
+  assert.equal(apps.length, 18);
+  assert.deepEqual(
+    apps.map((app) => [app.id, app.listing_status, app.api_availability, app.capabilities]),
+    expectedApps,
+  );
+  assert.deepEqual(
+    Object.fromEntries(
+      ['connected', 'first_party', 'coming_soon', 'proposed', 'wishlist'].map((status) => [
+        status,
+        apps.filter((app) => app.listing_status === status).length,
+      ]),
+    ),
+    { connected: 1, first_party: 1, coming_soon: 6, proposed: 0, wishlist: 10 },
+  );
+});
+
+test('validates the pinned non-callable preview platform and its exact snapshot hashes', async () => {
+  const platform = await loadPlatform(repositoryRoot);
+  assert.equal(platform.callable, false);
+  assert.equal(platform.source_repository_access, 'restricted');
+  assert.equal(platform.source_revision, '3da5ce3fb92dc63910a6b59dabd817f15097d35f');
+  assert.deepEqual(platform.scopes, [
+    'candidate-status:read',
+    'link-sessions:create',
+    'vibe-candidates:write',
+  ]);
+  assert.deepEqual(platform.operations.map(({ method, path: operationPath }) => [method, operationPath]), expectedOperations);
+  assert.deepEqual(
+    Object.fromEntries(
+      Object.entries(platform.artifacts).map(([name, artifact]) => [
+        name,
+        [artifact.source_path, artifact.public_snapshot_path, artifact.sha256],
+      ]),
+    ),
+    {
+      openapi: ['openapi/connectives-v1.json', '/api/connectives/v1/openapi.json', 'ca58c4f5166f09ff59fa5009a172d29536bc6c3b2552ad239b7193fce061380e'],
+      discord_example: ['openapi/examples/discord-connected-group-membership.json', '/api/connectives/v1/discord-connected-group-membership.json', '4043b1ef41de71271352145f6a8fbb3e400e3d34e9d09d070d6b5791e78ca1db'],
+      luma_example: ['openapi/examples/luma-vibe-candidate.json', '/api/connectives/v1/luma-vibe-candidate.json', '499d12a33183ce6fed9335fa3021d79ba2da30205d1d80d2e8c4017d3f6358a9'],
+    },
+  );
+  await assert.doesNotReject(validatePlatform(platform, repositoryRoot));
+});
+
+test('rejects altered snapshot bytes and contract deployment claims', async () => {
+  const root = await mkdtemp(path.join(tmpdir(), 'mainsworld-platform-'));
+  try {
+    await cp(path.join(repositoryRoot, 'registry'), path.join(root, 'registry'), { recursive: true });
+    await cp(path.join(repositoryRoot, 'static', 'api'), path.join(root, 'static', 'api'), { recursive: true });
+    const platform = await loadPlatform(root);
+    const openapiPath = path.join(root, 'static', 'api', 'connectives', 'v1', 'openapi.json');
+    await writeFile(openapiPath, `${await readFile(openapiPath, 'utf8')} `);
+    await assert.rejects(validatePlatform(platform, root), /hash/i);
+
+    await cp(path.join(repositoryRoot, 'static', 'api'), path.join(root, 'static', 'api'), { recursive: true, force: true });
+    const contract = JSON.parse(await readFile(openapiPath, 'utf8'));
+    contract.x_provider_client_id = 'discord_123456789';
+    await writeFile(openapiPath, `${JSON.stringify(contract, null, 2)}\n`);
+    platform.artifacts.openapi.sha256 = createHash('sha256')
+      .update(await readFile(openapiPath))
+      .digest('hex');
+    await assert.rejects(validatePlatform(platform, root), /unsafe|callable/i);
+  } finally {
+    await rm(root, { recursive: true, force: true });
+  }
+});
+
+test('rejects unsafe preview metadata while allowing normative OpenAPI field vocabulary', async () => {
+  const platform = await loadPlatform(repositoryRoot);
+  const unsafe = structuredClone(platform);
+  unsafe.callback_url = 'https://private.mains.world/callback';
+  await assert.rejects(validatePlatform(unsafe, repositoryRoot), /unknown|unsafe|callback/i);
+
+  const copiedContract = JSON.parse(
+    await readFile(path.join(repositoryRoot, 'static', 'api', 'connectives', 'v1', 'openapi.json'), 'utf8'),
+  );
+  assert.ok(JSON.stringify(copiedContract).includes('client_id'));
+  assert.ok(JSON.stringify(copiedContract).includes('access_token'));
+});
+
+test('renders deterministic public catalog outputs from validated inputs', async () => {
+  const apps = await loadRegistry(repositoryRoot);
+  const catalog = JSON.parse(await readFile(path.join(repositoryRoot, 'registry', 'catalog.json'), 'utf8'));
+  const platform = await loadPlatform(repositoryRoot);
+  const json = renderAppsJson(catalog, apps);
+  const markdown = renderAppsMarkdown(apps);
+  const llms = renderLlmsFull(catalog, apps, platform);
+
+  assert.deepEqual(JSON.parse(json), {
+    schema_version: 'v1',
+    catalog_version: '2026-08-29',
+    space_source: catalog.space_source,
+    apps,
+  });
+  for (const [id, status, api, capabilities] of expectedApps) {
+    assert.match(markdown, new RegExp(`\\[${apps.find((app) => app.id === id).name.replace(/[.*+?^${}()|[\\]\\\\]/g, '\\\\$&')}\\]`));
+    assert.match(markdown, new RegExp(status.replace('_', ' '), 'i'));
+    assert.match(markdown, new RegExp(api.replace('_', ' '), 'i'));
+    assert.match(markdown, new RegExp(capabilities.join(', ')));
+  }
+  assert.match(llms, /There are no public, self-service Main's World API endpoints to call today\./);
+  assert.match(llms, /No base URL, credential, sandbox, public endpoint, or MCP endpoint exists\./);
+  for (const [method, operationPath] of expectedOperations) assert.match(llms, new RegExp(`${method} ${operationPath.replace(/[{}]/g, '\\$&')}`));
+  assert.equal(renderAppsJson(catalog, apps), json);
+  assert.equal(renderAppsMarkdown(apps), markdown);
+  assert.equal(renderLlmsFull(catalog, apps, platform), llms);
 });

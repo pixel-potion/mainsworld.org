@@ -1,0 +1,260 @@
+{
+  "schema_version": "v1",
+  "catalog_version": "2026-08-29",
+  "space_source": {
+    "repository": "https://github.com/pixel-potion/Mains.World",
+    "revision": "4babf633b209855c49e1bf698d04b2a03488de8c",
+    "paths": [
+      "src/app/components/backstage/constellation/constellationApps.tsx",
+      "src/app/components/backstage/apps/comingSoonApps.tsx",
+      "src/app/components/backstage/constellation/wishStars.tsx",
+      "src/app/components/backstage/constellation/wishStarsEvents.tsx",
+      "src/app/components/backstage/constellation/constellationSites.ts"
+    ]
+  },
+  "apps": [
+    {
+      "schema_version": "v1",
+      "id": "runpal",
+      "name": "RunPal",
+      "summary": "A connected running partner represented in Moments.",
+      "website": "https://runpal.fit/",
+      "listing_status": "connected",
+      "api_availability": "none",
+      "capabilities": [
+        "moments"
+      ],
+      "status_evidence_url": "https://mains.world/space",
+      "reviewed_at": "2026-08-29"
+    },
+    {
+      "schema_version": "v1",
+      "id": "alerts",
+      "name": "Safety Alerts",
+      "summary": "A Main's World safety capability represented in Mains.",
+      "website": "https://mains.world/how-it-works/safety-alerts",
+      "listing_status": "first_party",
+      "api_availability": "not_applicable",
+      "capabilities": [
+        "mains"
+      ],
+      "reviewed_at": "2026-08-29"
+    },
+    {
+      "schema_version": "v1",
+      "id": "photos",
+      "name": "Apple Photos",
+      "summary": "A future connection for camera-roll memories in Moments.",
+      "website": "https://www.icloud.com/photos/",
+      "listing_status": "coming_soon",
+      "api_availability": "none",
+      "capabilities": [
+        "moments"
+      ],
+      "reviewed_at": "2026-08-29"
+    },
+    {
+      "schema_version": "v1",
+      "id": "discord",
+      "name": "Discord",
+      "summary": "A future connection for Discord communities in Crews.",
+      "website": "https://discord.com/",
+      "listing_status": "coming_soon",
+      "api_availability": "none",
+      "capabilities": [
+        "crews"
+      ],
+      "reviewed_at": "2026-08-29"
+    },
+    {
+      "schema_version": "v1",
+      "id": "instagram",
+      "name": "Instagram",
+      "summary": "A future connection for shared photos and posts in Moments and Mains.",
+      "website": "https://www.instagram.com/",
+      "listing_status": "coming_soon",
+      "api_availability": "none",
+      "capabilities": [
+        "moments",
+        "mains"
+      ],
+      "reviewed_at": "2026-08-29"
+    },
+    {
+      "schema_version": "v1",
+      "id": "luma",
+      "name": "Luma",
+      "summary": "A future event connection represented in Vibes.",
+      "website": "https://lu.ma/",
+      "listing_status": "coming_soon",
+      "api_availability": "none",
+      "capabilities": [
+        "vibes"
+      ],
+      "reviewed_at": "2026-08-29"
+    },
+    {
+      "schema_version": "v1",
+      "id": "spotify",
+      "name": "Spotify",
+      "summary": "A future music connection represented in Moments and Vibes.",
+      "website": "https://open.spotify.com/",
+      "listing_status": "coming_soon",
+      "api_availability": "none",
+      "capabilities": [
+        "moments",
+        "vibes"
+      ],
+      "reviewed_at": "2026-08-29"
+    },
+    {
+      "schema_version": "v1",
+      "id": "strava",
+      "name": "Strava",
+      "summary": "A future fitness connection represented in Moments.",
+      "website": "https://www.strava.com/",
+      "listing_status": "coming_soon",
+      "api_availability": "none",
+      "capabilities": [
+        "moments"
+      ],
+      "reviewed_at": "2026-08-29"
+    },
+    {
+      "schema_version": "v1",
+      "id": "eventmagic",
+      "name": "EventMagic.ai",
+      "summary": "A wish-list event service represented in Vibes and Crews.",
+      "website": "https://eventmagic.ai/",
+      "listing_status": "wishlist",
+      "api_availability": "none",
+      "capabilities": [
+        "vibes",
+        "crews"
+      ],
+      "reviewed_at": "2026-08-29"
+    },
+    {
+      "schema_version": "v1",
+      "id": "garmin",
+      "name": "Garmin",
+      "summary": "A wish-list fitness service represented in Moments.",
+      "website": "https://connect.garmin.com/",
+      "listing_status": "wishlist",
+      "api_availability": "none",
+      "capabilities": [
+        "moments"
+      ],
+      "reviewed_at": "2026-08-29"
+    },
+    {
+      "schema_version": "v1",
+      "id": "gphotos",
+      "name": "Google Photos",
+      "summary": "A wish-list photo service represented in Moments.",
+      "website": "https://photos.google.com/",
+      "listing_status": "wishlist",
+      "api_availability": "none",
+      "capabilities": [
+        "moments"
+      ],
+      "reviewed_at": "2026-08-29"
+    },
+    {
+      "schema_version": "v1",
+      "id": "meetup",
+      "name": "Meetup",
+      "summary": "A wish-list event service represented in Vibes and Crews.",
+      "website": "https://www.meetup.com/",
+      "listing_status": "wishlist",
+      "api_availability": "none",
+      "capabilities": [
+        "vibes",
+        "crews"
+      ],
+      "reviewed_at": "2026-08-29"
+    },
+    {
+      "schema_version": "v1",
+      "id": "partiful",
+      "name": "Partiful",
+      "summary": "A wish-list event service represented in Vibes.",
+      "website": "https://partiful.com/",
+      "listing_status": "wishlist",
+      "api_availability": "none",
+      "capabilities": [
+        "vibes"
+      ],
+      "reviewed_at": "2026-08-29"
+    },
+    {
+      "schema_version": "v1",
+      "id": "soundcloud",
+      "name": "SoundCloud",
+      "summary": "A wish-list music service represented in Moments and Vibes.",
+      "website": "https://soundcloud.com/",
+      "listing_status": "wishlist",
+      "api_availability": "none",
+      "capabilities": [
+        "moments",
+        "vibes"
+      ],
+      "reviewed_at": "2026-08-29"
+    },
+    {
+      "schema_version": "v1",
+      "id": "telegram",
+      "name": "Telegram",
+      "summary": "A wish-list community service represented in Crews and Mains.",
+      "website": "https://telegram.org/",
+      "listing_status": "wishlist",
+      "api_availability": "none",
+      "capabilities": [
+        "crews",
+        "mains"
+      ],
+      "reviewed_at": "2026-08-29"
+    },
+    {
+      "schema_version": "v1",
+      "id": "tiktok",
+      "name": "TikTok",
+      "summary": "A wish-list social video service represented in Moments.",
+      "website": "https://www.tiktok.com/",
+      "listing_status": "wishlist",
+      "api_availability": "none",
+      "capabilities": [
+        "moments"
+      ],
+      "reviewed_at": "2026-08-29"
+    },
+    {
+      "schema_version": "v1",
+      "id": "whatsapp",
+      "name": "WhatsApp",
+      "summary": "A wish-list community service represented in Crews and Mains.",
+      "website": "https://www.whatsapp.com/",
+      "listing_status": "wishlist",
+      "api_availability": "none",
+      "capabilities": [
+        "crews",
+        "mains"
+      ],
+      "reviewed_at": "2026-08-29"
+    },
+    {
+      "schema_version": "v1",
+      "id": "x",
+      "name": "X",
+      "summary": "A wish-list social service represented in Moments and Mains.",
+      "website": "https://x.com/",
+      "listing_status": "wishlist",
+      "api_availability": "none",
+      "capabilities": [
+        "moments",
+        "mains"
+      ],
+      "reviewed_at": "2026-08-29"
+    }
+  ]
+}

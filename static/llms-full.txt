@@ -1,0 +1,59 @@
+# Main's World public developer catalog
+
+There are no public, self-service Main's World API endpoints to call today.
+No base URL, credential, sandbox, public endpoint, or MCP endpoint exists.
+
+The Connectives preview is read-only release documentation from the restricted normative source revision 3da5ce3fb92dc63910a6b59dabd817f15097d35f. It is not a runtime API and provides neither activation nor access.
+
+## Local preview snapshots
+
+- /api/connectives/v1/openapi.json (SHA-256: ca58c4f5166f09ff59fa5009a172d29536bc6c3b2552ad239b7193fce061380e)
+- /api/connectives/v1/discord-connected-group-membership.json (SHA-256: 4043b1ef41de71271352145f6a8fbb3e400e3d34e9d09d070d6b5791e78ca1db)
+- /api/connectives/v1/luma-vibe-candidate.json (SHA-256: 499d12a33183ce6fed9335fa3021d79ba2da30205d1d80d2e8c4017d3f6358a9)
+
+## Preview scopes
+
+- candidate-status:read
+- link-sessions:create
+- vibe-candidates:write
+
+## Preview operations
+
+- POST /oauth/token — Not callable
+- POST /connectives/v1/link-sessions — Not callable
+- GET /connectives/v1/link-sessions/{session_id} — Not callable
+- POST /connectives/v1/grants/{grant_id}/vibe-candidates — Not callable
+- GET /connectives/v1/grants/{grant_id}/candidates/{candidate_id} — Not callable
+
+## Listing and submission rules
+
+A merged manifest changes a public listing only. It never grants credentials, callbacks, provider access, runtime registration, or production activation. New external listings are proposed with no public API access until a separate reviewed promotion.
+
+## Status legend
+
+- Connected: bespoke partner integration exists today.
+- First party: Main's World operated capability.
+- Coming soon: represented, not connected or callable.
+- Proposed: reviewed listing, not connected or activated.
+- Wishlist: future possibility; no connector promised.
+
+## SPACE catalog (2026-08-29)
+
+- RunPal (runpal): Connected; API: None; SPACE: moments; https://runpal.fit/
+- Safety Alerts (alerts): First Party; API: Not Applicable; SPACE: mains; https://mains.world/how-it-works/safety-alerts
+- Apple Photos (photos): Coming Soon; API: None; SPACE: moments; https://www.icloud.com/photos/
+- Discord (discord): Coming Soon; API: None; SPACE: crews; https://discord.com/
+- Instagram (instagram): Coming Soon; API: None; SPACE: moments, mains; https://www.instagram.com/
+- Luma (luma): Coming Soon; API: None; SPACE: vibes; https://lu.ma/
+- Spotify (spotify): Coming Soon; API: None; SPACE: moments, vibes; https://open.spotify.com/
+- Strava (strava): Coming Soon; API: None; SPACE: moments; https://www.strava.com/
+- EventMagic.ai (eventmagic): Wishlist; API: None; SPACE: vibes, crews; https://eventmagic.ai/
+- Garmin (garmin): Wishlist; API: None; SPACE: moments; https://connect.garmin.com/
+- Google Photos (gphotos): Wishlist; API: None; SPACE: moments; https://photos.google.com/
+- Meetup (meetup): Wishlist; API: None; SPACE: vibes, crews; https://www.meetup.com/
+- Partiful (partiful): Wishlist; API: None; SPACE: vibes; https://partiful.com/
+- SoundCloud (soundcloud): Wishlist; API: None; SPACE: moments, vibes; https://soundcloud.com/
+- Telegram (telegram): Wishlist; API: None; SPACE: crews, mains; https://telegram.org/
+- TikTok (tiktok): Wishlist; API: None; SPACE: moments; https://www.tiktok.com/
+- WhatsApp (whatsapp): Wishlist; API: None; SPACE: crews, mains; https://www.whatsapp.com/
+- X (x): Wishlist; API: None; SPACE: moments, mains; https://x.com/
