@@ -26,6 +26,17 @@ const sidebars: SidebarsConfig = {
     'country-availability',
     'roadmap',
     'connect-your-app',
+    {
+      type: 'category',
+      label: 'Developers',
+      collapsed: false,
+      items: [
+        'developers/index',
+        'developers/apps',
+        'developers/api',
+        'developers/submit-an-app',
+      ],
+    },
     'whitepaper',
     {
       type: 'category',

@@ -1,0 +1,18 @@
+No public Main's World API endpoint is callable today.
+
+Main's World publishes reviewed release documentation only. It provides no
+server or base URL, sandbox, credentials, self-service keys, public OAuth
+registration, public write API, SDK, or MCP endpoint.
+
+- Developers: /developers/
+- Apps: /developers/apps/
+- API preview: /developers/api/
+- Submit an app: /developers/submit-an-app/
+- Public catalog: /apps.json
+- Full developer catalog: /llms-full.txt
+- OpenAPI snapshot: /api/connectives/v1/openapi.json
+- Discord example snapshot: /api/connectives/v1/discord-connected-group-membership.json
+- Luma example snapshot: /api/connectives/v1/luma-vibe-candidate.json
+- Public schema: https://github.com/pixel-potion/mainsworld.org/blob/main/registry/schema/app-v1.schema.json
+- Registry instructions: https://github.com/pixel-potion/mainsworld.org/blob/main/registry/README.md
+- GitHub submission directory: https://github.com/pixel-potion/mainsworld.org/tree/main/registry/apps

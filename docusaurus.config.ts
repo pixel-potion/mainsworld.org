@@ -91,6 +91,7 @@ const config: Config = {
         {type: 'docSidebar', sidebarId: 'knowledge', position: 'left', label: 'Learn'},
         {to: '/manifesto', label: 'Manifesto', position: 'left'},
         {to: '/what-is-ship', label: 'What is SHIP', position: 'left'},
+        {to: '/developers/', label: 'Developers', position: 'left'},
         {
           type: 'dropdown',
           label: 'Legal',
@@ -137,6 +138,8 @@ const config: Config = {
         {
           title: 'Take part',
           items: [
+            {label: 'Developers', to: '/developers/'},
+            {label: 'Submit an app', to: '/developers/submit-an-app'},
             {label: 'Open the app', href: 'https://mains.world'},
             {label: 'Request a feature or report a bug', href: 'https://mainsworld.featurebase.app/'},
             {label: '@itsamainsworld on X', href: 'https://x.com/itsamainsworld'},
