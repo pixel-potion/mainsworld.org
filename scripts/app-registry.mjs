@@ -90,6 +90,27 @@ const requiredOperations = [
   ['POST', '/connectives/v1/grants/{grant_id}/vibe-candidates'],
   ['GET', '/connectives/v1/grants/{grant_id}/candidates/{candidate_id}'],
 ];
+const standardHttpMethods = new Set([
+  'get', 'put', 'post', 'delete', 'options', 'head', 'patch', 'trace',
+]);
+const snapshotConcreteUrlKeys = new Set([
+  'redirecturi', 'callbackurl', 'webhookurl', 'serviceurl', 'baseurl',
+  'serverurl', 'endpointurl', 'deploymenturl', 'xmainsworldbaseurl',
+]);
+const snapshotConcreteIdentifierKeys = new Set([
+  'providerclientid', 'providerappid', 'providerapplicationid',
+  'xproviderclientid', 'xproviderappid', 'xproviderapplicationid',
+]);
+const snapshotConcreteCredentialKeys = new Set([
+  'secret', 'clientsecret', 'privatekey', 'apikey', 'accesstoken',
+  'refreshtoken', 'idtoken', 'authorization',
+]);
+const snapshotCredentialPatterns = [
+  /\bghp_[A-Za-z0-9]{20,}\b/,
+  /\bgithub_pat_[A-Za-z0-9_]{20,}\b/,
+  /\b(?:sk|pk)_(?:live|test)_[A-Za-z0-9]{12,}\b/i,
+  /\b(?:Bearer|Basic)\s+[A-Za-z0-9._~+\/-]{16,}\b/i,
+];
 const expectedArtifactPaths = {
   openapi: ['openapi/connectives-v1.json', '/api/connectives/v1/openapi.json'],
   discord_example: [
@@ -320,24 +341,71 @@ function snapshotDiskPath(root, publicSnapshotPath) {
   return path.join(root, 'static', publicSnapshotPath.replace(/^\//, ''));
 }
 
-function auditSnapshotText(text, name) {
-  const forbidden = [
-    /https?:\/\/(?:localhost|[^/\s]*\.(?:internal|local|lan|corp))(?:[/:]|$)/i,
-    /https?:\/\/[^/\s]*(?:api|staging|prod)[^/\s]*\.(?:mains\.world|internal)(?:[/:]|$)/i,
-    /(?:client_secret|private_key|authorization\s*:\s*bearer|callback_url)\s*["=:]/i,
-    /"(?:x_)?(?:provider|discord|luma)_(?:app|client|application)_id"\s*:\s*"[a-z0-9_-]{6,}"/i,
-    /(?:sk|pk)_(?:live|test)_[a-z0-9]{12,}/i,
-    /x-mains-world-callable"?\s*:\s*true/i,
-  ];
-  if (forbidden.some((pattern) => pattern.test(text))) {
-    throw new Error(`Snapshot ${name} contains unsafe or callable material.`);
+function compactSnapshotKey(key) {
+  return key.replace(/[^a-z0-9]/gi, '').toLowerCase();
+}
+
+function isUnsafeSnapshotUrl(value) {
+  try {
+    const url = new URL(value);
+    const hostname = url.hostname.toLowerCase().replace(/^\[|\]$/g, '');
+    if (url.protocol !== 'https:' && url.protocol !== 'http:') return false;
+    if (hostname === 'cdn.example.test') return false;
+    return (
+      isIP(hostname) !== 0 ||
+      hostname === 'localhost' ||
+      ['internal', 'local', 'lan', 'corp', 'home', 'onion', 'invalid', 'arpa', 'alt'].some(
+        (suffix) => hostname === suffix || hostname.endsWith(`.${suffix}`),
+      ) ||
+      hostname.endsWith('.test')
+    );
+  } catch {
+    return false;
   }
+}
+
+function findUnsafeSnapshotValue(value, location = '$', parentKey = '') {
+  if (typeof value === 'string') {
+    if (snapshotCredentialPatterns.some((pattern) => pattern.test(value))) {
+      return `${location} contains concrete credential material`;
+    }
+    if (snapshotConcreteCredentialKeys.has(compactSnapshotKey(parentKey)) && value.length > 0) {
+      return `${location} contains concrete credential material`;
+    }
+    if (snapshotConcreteUrlKeys.has(compactSnapshotKey(parentKey)) && /^https?:\/\//i.test(value)) {
+      return `${location} contains a concrete ${parentKey}`;
+    }
+    if (snapshotConcreteIdentifierKeys.has(compactSnapshotKey(parentKey)) && value.length >= 6) {
+      return `${location} contains a concrete provider identifier`;
+    }
+    if (isUnsafeSnapshotUrl(value)) return `${location} contains a private or internal URL`;
+    return null;
+  }
+
+  if (Array.isArray(value)) {
+    for (const [index, item] of value.entries()) {
+      const found = findUnsafeSnapshotValue(item, `${location}[${index}]`, parentKey);
+      if (found) return found;
+    }
+    return null;
+  }
+
+  if (value && typeof value === 'object') {
+    for (const [key, child] of Object.entries(value)) {
+      if (key === 'x-mains-world-callable' && child === true) {
+        return `${location}.${key} makes the snapshot callable`;
+      }
+      const found = findUnsafeSnapshotValue(child, `${location}.${key}`, key);
+      if (found) return found;
+    }
+  }
+  return null;
 }
 
 function contractOperations(contract) {
   return Object.entries(contract.paths ?? []).flatMap(([operationPath, methods]) =>
     Object.entries(methods)
-      .filter(([method, operation]) => ['get', 'post'].includes(method) && operation && typeof operation === 'object')
+      .filter(([method, operation]) => standardHttpMethods.has(method.toLowerCase()) && operation && typeof operation === 'object')
       .map(([method, operation]) => ({ method: method.toUpperCase(), path: operationPath, operation })),
   );
 }
@@ -389,9 +457,10 @@ export async function validatePlatform(platform, root = repositoryRoot) {
     const bytes = await readFile(snapshotDiskPath(root, artifact.public_snapshot_path));
     const digest = createHash('sha256').update(bytes).digest('hex');
     if (digest !== artifact.sha256) throw new Error(`Snapshot hash mismatch for ${name}.`);
-    const text = bytes.toString('utf8');
-    auditSnapshotText(text, name);
-    snapshots[name] = JSON.parse(text);
+    const snapshot = JSON.parse(bytes.toString('utf8'));
+    const unsafeValue = findUnsafeSnapshotValue(snapshot);
+    if (unsafeValue) throw new Error(`Snapshot ${name} is unsafe: ${unsafeValue}.`);
+    snapshots[name] = snapshot;
   }
 
   const openapi = snapshots.openapi;
@@ -399,7 +468,10 @@ export async function validatePlatform(platform, root = repositoryRoot) {
     throw new Error('OpenAPI snapshot must remain non-deployed and have no server URL.');
   }
   const parsedOperations = contractOperations(openapi);
+  const expectedPaths = [...new Set(requiredOperations.map(([, operationPath]) => operationPath))].sort();
+  const actualPaths = Object.keys(openapi.paths ?? {}).sort();
   if (
+    JSON.stringify(actualPaths) !== JSON.stringify(expectedPaths) ||
     JSON.stringify(parsedOperations.map(({ method, path: operationPath }) => [method, operationPath])) !==
     JSON.stringify(requiredOperations) ||
     parsedOperations.some(({ operation }) => operation['x-mains-world-callable'] !== false)

@@ -80,6 +80,25 @@ async function withRegistry(files, run) {
   }
 }
 
+async function withMutatedOpenApi(mutate, run) {
+  const root = await mkdtemp(path.join(tmpdir(), 'mainsworld-platform-'));
+  try {
+    await cp(path.join(repositoryRoot, 'registry'), path.join(root, 'registry'), { recursive: true });
+    await cp(path.join(repositoryRoot, 'static', 'api'), path.join(root, 'static', 'api'), { recursive: true });
+    const platform = await loadPlatform(root);
+    const openapiPath = path.join(root, 'static', 'api', 'connectives', 'v1', 'openapi.json');
+    const contract = JSON.parse(await readFile(openapiPath, 'utf8'));
+    mutate(contract);
+    await writeFile(openapiPath, `${JSON.stringify(contract, null, 2)}\n`);
+    platform.artifacts.openapi.sha256 = createHash('sha256')
+      .update(await readFile(openapiPath))
+      .digest('hex');
+    await run(platform, root);
+  } finally {
+    await rm(root, { recursive: true, force: true });
+  }
+}
+
 test('accepts a valid proposed manifest', async () => {
   await assert.doesNotReject(validateRegistry([clone(validApp)]));
 });
@@ -419,6 +438,48 @@ test('rejects unsafe preview metadata while allowing normative OpenAPI field voc
   );
   assert.ok(JSON.stringify(copiedContract).includes('client_id'));
   assert.ok(JSON.stringify(copiedContract).includes('access_token'));
+});
+
+test('rejects a concrete callback URL even when the snapshot hash is recomputed', async () => {
+  await withMutatedOpenApi((contract) => {
+    contract.redirect_uri = 'https://internal.mains.world/callback';
+  }, async (platform, root) => {
+    await assert.rejects(validatePlatform(platform, root), /unsafe|callback|url/i);
+  });
+});
+
+test('rejects realistic token material even when the snapshot hash is recomputed', async () => {
+  await withMutatedOpenApi((contract) => {
+    contract.examples = { access_token: 'ghp_abcdefghijklmnopqrstuvwxyz0123456789' };
+  }, async (platform, root) => {
+    await assert.rejects(validatePlatform(platform, root), /unsafe|secret|token/i);
+  });
+});
+
+test('rejects a concrete private service URL even when the snapshot hash is recomputed', async () => {
+  await withMutatedOpenApi((contract) => {
+    contract.service_url = 'https://10.0.0.1/api';
+  }, async (platform, root) => {
+    await assert.rejects(validatePlatform(platform, root), /unsafe|service|url/i);
+  });
+});
+
+test('rejects a deployment base URL even when the snapshot hash is recomputed', async () => {
+  await withMutatedOpenApi((contract) => {
+    contract['x-mains-world-base-url'] = 'https://api.mains.world';
+  }, async (platform, root) => {
+    await assert.rejects(validatePlatform(platform, root), /unsafe|base|url/i);
+  });
+});
+
+test('rejects an undeclared standard HTTP operation even when it is marked non-callable', async () => {
+  await withMutatedOpenApi((contract) => {
+    contract.paths['/connectives/v1/hidden'] = {
+      delete: { 'x-mains-world-callable': false },
+    };
+  }, async (platform, root) => {
+    await assert.rejects(validatePlatform(platform, root), /operation|path/i);
+  });
 });
 
 test('renders deterministic public catalog outputs from validated inputs', async () => {
