@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import {execFileSync} from 'node:child_process';
-import {existsSync, readdirSync, readFileSync} from 'node:fs';
+import {readdirSync, readFileSync} from 'node:fs';
 import {join, relative} from 'node:path';
 import {test} from 'node:test';
 
@@ -18,6 +18,16 @@ const renderedSitemapPages = () => sitemapLocations().map((location) => {
 });
 const canonical = (html) => html.match(/<link\s+[^>]*rel=(?:["'])?canonical(?:["'])?[^>]*href=(?:["'])?([^\s"'>]+)/i)?.[1]
   ?? html.match(/<link\s+[^>]*href=(?:["'])?([^\s"'>]+)[^>]*rel=(?:["'])?canonical(?:["'])?[^>]*>/i)?.[1];
+const mcpNonCallable = /(?:no\s+[^.]*MCP endpoint|MCP endpoint(?:\s+is)?\s+(?:not callable|does not exist|is unavailable))/i;
+const discoveryArtifacts = () => [
+  'build/robots.txt',
+  'build/sitemap.xml',
+  'build/llms.txt',
+  'build/llms-full.txt',
+  'build/apps.json',
+  ...['developers', 'developers/apps', 'developers/api', 'developers/submit-an-app'].map((route) => `build/${route}/index.html`),
+  ...walk('build/api/connectives/v1').filter((path) => path.endsWith('.json')),
+];
 
 test('ships crawlable robots and a public-only sitemap', () => {
   assert.equal(read('static/robots.txt'), 'User-agent: *\nAllow: /\nSitemap: https://mainsworld.org/sitemap.xml\n');
@@ -47,8 +57,9 @@ test('keeps AI discovery documents explicitly non-callable', () => {
   for (const path of ['build/llms.txt', 'build/llms-full.txt']) {
     const content = read(path);
     assert.match(content, /no public.*API.*(?:callable|to call)|no .*public API access/i, `${path} must deny public API calls`);
-    assert.match(content, /(?:no |or )MCP endpoint/i, `${path} must deny public MCP endpoints`);
+    assert.match(content, mcpNonCallable, `${path} must deny public MCP endpoints`);
   }
+  assert.doesNotMatch('Use an API or MCP endpoint.', mcpNonCallable, 'a positive MCP phrase must not satisfy the denial check');
 });
 
 test('excludes internal plans and private discovery origins from the built site', () => {
@@ -59,17 +70,9 @@ test('excludes internal plans and private discovery origins from the built site'
     assert.doesNotMatch(relative(buildDir, path), /superpowers\//i, `internal path shipped: ${path}`);
   }
 
-  const discoveryArtifacts = [
-    'build/robots.txt',
-    'build/sitemap.xml',
-    'build/llms.txt',
-    'build/llms-full.txt',
-    'build/developers/api/index.html',
-    'build/api/connectives/v1/openapi.json',
-  ];
   const privateOrigin = /https?:\/\/[^\s"'<]*(?:supabase(?:\.co)?|workers\.dev|localhost|127\.0\.0\.1|0\.0\.0\.0|(?:internal|private|staging|dev)\.)[^\s"'<]*/i;
   const privateProductApi = /https:\/\/mains\.world\/(?:api|mcp)(?:[/?#]|$)/i;
-  for (const path of discoveryArtifacts) {
+  for (const path of discoveryArtifacts()) {
     const content = read(path);
     assert.doesNotMatch(content, privateOrigin, `private backend origin leaked in ${path}`);
     assert.doesNotMatch(content, privateProductApi, `private product API or MCP URL leaked in ${path}`);
