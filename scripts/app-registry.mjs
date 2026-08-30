@@ -386,7 +386,21 @@ function isUnsafeSnapshotUrl(value) {
   }
 }
 
-function findUnsafeSnapshotValue(value, location = '$', parentKey = '', allowedUnsafeUrlLocations = new Set()) {
+function pathEquals(actual, expected) {
+  return actual.length === expected.length && actual.every((segment, index) => segment === expected[index]);
+}
+
+function pathIsAllowed(pathSegments, allowedPaths) {
+  return allowedPaths.some((allowedPath) => pathEquals(pathSegments, allowedPath));
+}
+
+function findUnsafeSnapshotValue(
+  value,
+  location = '$',
+  parentKey = '',
+  pathSegments = [],
+  allowedUnsafeUrlPaths = [],
+) {
   if (typeof value === 'string') {
     if (snapshotCredentialPatterns.some((pattern) => pattern.test(value))) {
       return `${location} contains concrete credential material`;
@@ -400,7 +414,7 @@ function findUnsafeSnapshotValue(value, location = '$', parentKey = '', allowedU
     if (snapshotConcreteIdentifierKeys.has(compactSnapshotKey(parentKey)) && value.length >= 6) {
       return `${location} contains a concrete provider identifier`;
     }
-    if (!allowedUnsafeUrlLocations.has(location) && isUnsafeSnapshotUrl(value)) {
+    if (!pathIsAllowed(pathSegments, allowedUnsafeUrlPaths) && isUnsafeSnapshotUrl(value)) {
       return `${location} contains a private or internal URL`;
     }
     return null;
@@ -408,7 +422,13 @@ function findUnsafeSnapshotValue(value, location = '$', parentKey = '', allowedU
 
   if (Array.isArray(value)) {
     for (const [index, item] of value.entries()) {
-      const found = findUnsafeSnapshotValue(item, `${location}[${index}]`, parentKey, allowedUnsafeUrlLocations);
+      const found = findUnsafeSnapshotValue(
+        item,
+        `${location}[${index}]`,
+        parentKey,
+        [...pathSegments, index],
+        allowedUnsafeUrlPaths,
+      );
       if (found) return found;
     }
     return null;
@@ -419,7 +439,13 @@ function findUnsafeSnapshotValue(value, location = '$', parentKey = '', allowedU
       if (key === 'x-mains-world-callable' && child === true) {
         return `${location}.${key} makes the snapshot callable`;
       }
-      const found = findUnsafeSnapshotValue(child, `${location}.${key}`, key, allowedUnsafeUrlLocations);
+      const found = findUnsafeSnapshotValue(
+        child,
+        `${location}.${key}`,
+        key,
+        [...pathSegments, key],
+        allowedUnsafeUrlPaths,
+      );
       if (found) return found;
     }
   }
@@ -451,14 +477,26 @@ function openApiTokenUrl(contract) {
   return contract.components?.securitySchemes?.PartnerOAuth?.flows?.clientCredentials?.tokenUrl;
 }
 
-function hasPathOrOperationServerOverride(contract) {
-  return Object.values(contract.paths ?? {}).some((pathItem) =>
-    pathItem &&
-    typeof pathItem === 'object' &&
-    ('servers' in pathItem || Object.values(pathItem).some((operation) =>
-      operation && typeof operation === 'object' && 'servers' in operation,
-    )),
-  );
+function findDisallowedServerPath(value, pathSegments = [], allowRootServer = false) {
+  if (Array.isArray(value)) {
+    for (const [index, item] of value.entries()) {
+      const found = findDisallowedServerPath(item, [...pathSegments, index], allowRootServer);
+      if (found) return found;
+    }
+    return null;
+  }
+
+  if (!value || typeof value !== 'object') return null;
+
+  for (const [key, child] of Object.entries(value)) {
+    const childPath = [...pathSegments, key];
+    if (key === 'servers' && !(allowRootServer && pathEquals(childPath, ['servers']))) {
+      return childPath;
+    }
+    const found = findDisallowedServerPath(child, childPath, allowRootServer);
+    if (found) return found;
+  }
+  return null;
 }
 
 export async function loadPlatform(root = repositoryRoot) {
@@ -513,13 +551,13 @@ export async function validatePlatform(platform, root = repositoryRoot) {
       name === 'openapi' &&
       hasExactNonRoutablePreviewServer(snapshot.servers) &&
       openApiTokenUrl(snapshot) === nonRoutablePreviewTokenUrl;
-    const allowedUnsafeUrlLocations = isExactNonRoutableTransition
-      ? new Set([
-        '$.servers[0].url',
-        '$.components.securitySchemes.PartnerOAuth.flows.clientCredentials.tokenUrl',
-      ])
-      : new Set();
-    const unsafeValue = findUnsafeSnapshotValue(snapshot, '$', '', allowedUnsafeUrlLocations);
+    const allowedUnsafeUrlPaths = isExactNonRoutableTransition
+      ? [
+        ['servers', 0, 'url'],
+        ['components', 'securitySchemes', 'PartnerOAuth', 'flows', 'clientCredentials', 'tokenUrl'],
+      ]
+      : [];
+    const unsafeValue = findUnsafeSnapshotValue(snapshot, '$', '', [], allowedUnsafeUrlPaths);
     if (unsafeValue) throw new Error(`Snapshot ${name} is unsafe: ${unsafeValue}.`);
     snapshots[name] = snapshot;
   }
@@ -538,8 +576,8 @@ export async function validatePlatform(platform, root = repositoryRoot) {
   ) {
     throw new Error('OpenAPI snapshot has an unsafe server or OAuth token URL.');
   }
-  if (hasPathOrOperationServerOverride(openapi)) {
-    throw new Error('OpenAPI snapshot must not define path- or operation-level server overrides.');
+  if (findDisallowedServerPath(openapi, [], isExactNonRoutableTransition)) {
+    throw new Error('OpenAPI snapshot must not define server overrides outside its approved root location.');
   }
   const parsedOperations = contractOperations(openapi);
   const expectedPaths = [...new Set(requiredOperations.map(([, operationPath]) => operationPath))].sort();

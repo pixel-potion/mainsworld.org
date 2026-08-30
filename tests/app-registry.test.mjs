@@ -887,11 +887,11 @@ test('allows only the exact non-routable OpenAPI transition while preserving the
     }],
     ['a path-level server override', (contract) => {
       setTransition(contract);
-      contract.paths['/oauth/token'].servers = [structuredClone(exactServer)];
+      contract.paths['/oauth/token'].servers = [];
     }],
     ['an operation-level server override', (contract) => {
       setTransition(contract);
-      contract.paths['/oauth/token'].post.servers = [structuredClone(exactServer)];
+      contract.paths['/oauth/token'].post.servers = [];
     }],
     ['an otherwise allowed URL outside the approved locations', (contract) => {
       setTransition(contract);
@@ -902,6 +902,82 @@ test('allows only the exact non-routable OpenAPI transition while preserving the
   for (const [label, mutate] of invalidTransitions) {
     await withMutatedOpenApi(mutate, async (platform, root) => {
       await assert.rejects(validatePlatform(platform, root), /server|token|unsafe|url|operation|path/i, label);
+    });
+  }
+});
+
+test('rejects reserved URL location collisions and nested server overrides', async () => {
+  const exactServer = {
+    url: 'https://example.invalid',
+    description: 'Non-callable documentation preview. No network endpoint exists.',
+  };
+  const setTransition = (contract) => {
+    contract.servers = [structuredClone(exactServer)];
+    contract.components.securitySchemes.PartnerOAuth.flows.clientCredentials.tokenUrl =
+      'https://example.invalid/oauth/token';
+  };
+
+  for (const [label, mutate] of [
+    ['a dotted token path key', (contract) => {
+      setTransition(contract);
+      contract['components.securitySchemes.PartnerOAuth.flows.clientCredentials.tokenUrl'] =
+        'https://example.invalid/oauth/token';
+    }],
+    ['a bracketed server path key', (contract) => {
+      setTransition(contract);
+      contract['servers[0].url'] = 'https://example.invalid';
+    }],
+    ['a legacy component Path Item server', (contract) => {
+      contract.components.pathItems = {
+        callbackTarget: { servers: [{ url: 'https://api.mains.world' }] },
+      };
+    }],
+    ['a transition callback Path Item server', (contract) => {
+      setTransition(contract);
+      contract.paths['/oauth/token'].post.callbacks = {
+        candidateReady: {
+          '{$request.body#/callback}': {
+            post: { servers: [{ url: 'https://api.mains.world' }] },
+          },
+        },
+      };
+    }],
+  ]) {
+    await withMutatedOpenApi(mutate, async (platform, root) => {
+      await assert.rejects(validatePlatform(platform, root), /server|unsafe|url/i, label);
+    });
+  }
+});
+
+test('rejects direct path and operation servers in legacy and transition modes', async () => {
+  const exactServer = {
+    url: 'https://example.invalid',
+    description: 'Non-callable documentation preview. No network endpoint exists.',
+  };
+  const setTransition = (contract) => {
+    contract.servers = [structuredClone(exactServer)];
+    contract.components.securitySchemes.PartnerOAuth.flows.clientCredentials.tokenUrl =
+      'https://example.invalid/oauth/token';
+  };
+
+  for (const [label, mutate] of [
+    ['a legacy path server', (contract) => {
+      contract.paths['/oauth/token'].servers = [];
+    }],
+    ['a legacy operation server', (contract) => {
+      contract.paths['/oauth/token'].post.servers = [];
+    }],
+    ['a transition path server', (contract) => {
+      setTransition(contract);
+      contract.paths['/oauth/token'].servers = [];
+    }],
+    ['a transition operation server', (contract) => {
+      setTransition(contract);
+      contract.paths['/oauth/token'].post.servers = [];
+    }],
+  ]) {
+    await withMutatedOpenApi(mutate, async (platform, root) => {
+      await assert.rejects(validatePlatform(platform, root), /server|override/i, label);
     });
   }
 });
