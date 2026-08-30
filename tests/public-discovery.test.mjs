@@ -97,6 +97,18 @@ test('rejects contradictory API and MCP availability claims in both AI discovery
   }));
 });
 
+test('rejects availability claims that share a sentence with denial language', () => {
+  for (const path of ['build/llms.txt', 'build/llms-full.txt']) {
+    assert.throws(
+      () => registryPolicy.validateDiscoveryDocuments({
+        [path]: 'No public API is callable; a public MCP endpoint is available.',
+      }),
+      /contradictory|availability claim/i,
+      `${path} must reject a positive availability clause despite a preceding denial`,
+    );
+  }
+});
+
 test('excludes internal plans and private discovery origins from the built site', () => {
   assert.equal(execFileSync('git', ['ls-files', '--', 'docs/superpowers'], {encoding: 'utf8'}), '');
 

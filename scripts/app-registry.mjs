@@ -452,7 +452,7 @@ function findUnsafeSnapshotValue(
     if (snapshotConcreteIdentifierKeys.has(compactSnapshotKey(parentKey)) && value.length >= 6) {
       return `${location} contains a concrete provider identifier`;
     }
-    if (/^https?:\/\//i.test(value) && !isReviewedSnapshotHttpValue(pathSegments, value, reviewedHttpValues)) {
+    if (/https?:\/\/[^\s"'<>]+/i.test(value) && !isReviewedSnapshotHttpValue(pathSegments, value, reviewedHttpValues)) {
       return `${location} contains an unreviewed HTTP URL`;
     }
     return null;
@@ -517,7 +517,7 @@ export function validateDiscoveryDocuments(documents) {
       throw new TypeError(`Discovery document ${documentPath} must contain text.`);
     }
     const contradictoryClaim = content
-      .split(/(?<=[.!?])(?:\s+|$)|\n+/)
+      .split(/(?<=[.!?;])(?:\s+|$)|\n+/)
       .find((statement) =>
         positiveDiscoveryAvailability.test(statement) &&
         !negativeDiscoveryAvailability.test(statement),
@@ -638,7 +638,9 @@ export async function validatePlatform(platform, root = repositoryRoot) {
   }
   if (
     Object.hasOwn(openapi, 'webhooks') ||
-    Object.hasOwn(openapi.components ?? {}, 'pathItems')
+    Object.hasOwn(openapi, 'security') ||
+    Object.hasOwn(openapi.components ?? {}, 'pathItems') ||
+    Object.hasOwn(openapi.components ?? {}, 'callbacks')
   ) {
     throw new Error('OpenAPI snapshot must not contain webhooks or component Path Items.');
   }

@@ -894,6 +894,14 @@ test('allows reserved non-routable URLs only at their structural OpenAPI paths',
   }
 });
 
+test('rejects an HTTP URL embedded anywhere in a snapshot string after recomputing its hash', async () => {
+  await withMutatedOpenApi((contract) => {
+    contract.info.description = 'Docs: https://api.mains.world';
+  }, async (platform, root) => {
+    await assert.rejects(validatePlatform(platform, root), /OpenAPI|HTTP|URL|unsafe/i);
+  });
+});
+
 test('rejects altered snapshot bytes and contract deployment claims', async () => {
   const root = await mkdtemp(path.join(tmpdir(), 'mainsworld-platform-'));
   try {
@@ -996,6 +1004,27 @@ for (const [name, mutate] of [
   test(`rejects ${name} even when the OpenAPI hash is recomputed`, async () => {
     await withMutatedOpenApi(mutate, async (platform, root) => {
       await assert.rejects(validatePlatform(platform, root), /OpenAPI|security|HTTP|URL|unsafe/i);
+    });
+  });
+}
+
+for (const [name, mutate] of [
+  ['root-level security', (contract) => {
+    contract.security = [{ PartnerOAuth: ['link-sessions:create'] }];
+  }],
+  ['component callbacks', (contract) => {
+    contract.components.callbacks = {
+      candidateReady: {
+        '{$request.body#/callback}': {
+          post: { responses: { 200: { description: 'Accepted.' } } },
+        },
+      },
+    };
+  }],
+]) {
+  test(`rejects ${name} without relying on callability or servers`, async () => {
+    await withMutatedOpenApi(mutate, async (platform, root) => {
+      await assert.rejects(validatePlatform(platform, root), /OpenAPI|operation|security|callback/i);
     });
   });
 }
