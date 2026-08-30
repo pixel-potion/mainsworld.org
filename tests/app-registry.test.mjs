@@ -51,6 +51,10 @@ const expectedOperations = [
   ['POST', '/connectives/v1/grants/{grant_id}/vibe-candidates'],
   ['GET', '/connectives/v1/grants/{grant_id}/candidates/{candidate_id}'],
 ];
+const documentationServer = {
+  url: 'https://example.invalid',
+  description: 'Non-callable documentation preview. No network endpoint exists.',
+};
 
 const validApp = {
   schema_version: 'v1',
@@ -805,7 +809,7 @@ test('validates the pinned non-callable preview platform and its exact snapshot 
   const platform = await loadPlatform(repositoryRoot);
   assert.equal(platform.callable, false);
   assert.equal(platform.source_repository_access, 'restricted');
-  assert.equal(platform.source_revision, '3da5ce3fb92dc63910a6b59dabd817f15097d35f');
+  assert.equal(platform.source_revision, 'ce8df37f26781edf6901344e0905c0f6286f3eb6');
   assert.deepEqual(platform.scopes, [
     'candidate-status:read',
     'link-sessions:create',
@@ -820,12 +824,36 @@ test('validates the pinned non-callable preview platform and its exact snapshot 
       ]),
     ),
     {
-      openapi: ['openapi/connectives-v1.json', '/api/connectives/v1/openapi.json', 'ca58c4f5166f09ff59fa5009a172d29536bc6c3b2552ad239b7193fce061380e'],
+      openapi: ['openapi/connectives-v1.json', '/api/connectives/v1/openapi.json', 'fea7f6ec8a49625b5baab5c681a675edc06ba59a6207a149893011862fe8c4f4'],
       discord_example: ['openapi/examples/discord-connected-group-membership.json', '/api/connectives/v1/discord-connected-group-membership.json', '4043b1ef41de71271352145f6a8fbb3e400e3d34e9d09d070d6b5791e78ca1db'],
       luma_example: ['openapi/examples/luma-vibe-candidate.json', '/api/connectives/v1/luma-vibe-candidate.json', '499d12a33183ce6fed9335fa3021d79ba2da30205d1d80d2e8c4017d3f6358a9'],
     },
   );
+  const openapi = JSON.parse(
+    await readFile(path.join(repositoryRoot, 'static', 'api', 'connectives', 'v1', 'openapi.json'), 'utf8'),
+  );
+  assert.deepEqual(openapi.servers, [documentationServer]);
+  assert.equal(
+    openapi.components.securitySchemes.PartnerOAuth.flows.clientCredentials.tokenUrl,
+    'https://example.invalid/oauth/token',
+  );
   await assert.doesNotReject(validatePlatform(platform, repositoryRoot));
+});
+
+test('rejects non-reserved, missing, empty, and operation-level OpenAPI servers even when the snapshot hash is recomputed', async () => {
+  const mutations = [
+    (contract) => { contract.servers = [{ url: 'https://mainsworld.org' }]; },
+    (contract) => { contract.components.securitySchemes.PartnerOAuth.flows.clientCredentials.tokenUrl = '/oauth/token'; },
+    (contract) => { contract.servers = []; },
+    (contract) => { delete contract.servers; },
+    (contract) => { contract.paths['/oauth/token'].post.servers = [documentationServer]; },
+  ];
+
+  for (const mutate of mutations) {
+    await withMutatedOpenApi(mutate, async (platform, root) => {
+      await assert.rejects(validatePlatform(platform, root), /server|token|OpenAPI/i);
+    });
+  }
 });
 
 test('rejects altered snapshot bytes and contract deployment claims', async () => {

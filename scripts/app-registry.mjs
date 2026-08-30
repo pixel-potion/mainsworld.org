@@ -95,6 +95,11 @@ const requiredOperations = [
   ['POST', '/connectives/v1/grants/{grant_id}/vibe-candidates'],
   ['GET', '/connectives/v1/grants/{grant_id}/candidates/{candidate_id}'],
 ];
+const documentationServer = {
+  url: 'https://example.invalid',
+  description: 'Non-callable documentation preview. No network endpoint exists.',
+};
+const documentationTokenUrl = 'https://example.invalid/oauth/token';
 const standardHttpMethods = new Set([
   'get', 'put', 'post', 'delete', 'options', 'head', 'patch', 'trace',
 ]);
@@ -362,6 +367,7 @@ function compactSnapshotKey(key) {
 }
 
 function isUnsafeSnapshotUrl(value) {
+  if (value === documentationServer.url || value === documentationTokenUrl) return false;
   try {
     const url = new URL(value);
     const hostname = url.hostname.toLowerCase().replace(/^\[|\]$/g, '');
@@ -480,10 +486,19 @@ export async function validatePlatform(platform, root = repositoryRoot) {
   }
 
   const openapi = snapshots.openapi;
-  if ('servers' in openapi || openapi['x-mains-world-status'] !== 'non-deployed-starter') {
-    throw new Error('OpenAPI snapshot must remain non-deployed and have no server URL.');
+  if (
+    JSON.stringify(openapi.servers) !== JSON.stringify([documentationServer]) ||
+    openapi['x-mains-world-status'] !== 'non-deployed-starter'
+  ) {
+    throw new Error('OpenAPI snapshot must use exactly the reserved non-routable documentation server.');
   }
   const parsedOperations = contractOperations(openapi);
+  if (
+    Object.values(openapi.paths ?? {}).some((pathItem) => pathItem && typeof pathItem === 'object' && 'servers' in pathItem) ||
+    parsedOperations.some(({ operation }) => 'servers' in operation)
+  ) {
+    throw new Error('OpenAPI snapshot must not override the reserved documentation server.');
+  }
   const expectedPaths = [...new Set(requiredOperations.map(([, operationPath]) => operationPath))].sort();
   const actualPaths = Object.keys(openapi.paths ?? {}).sort();
   if (
@@ -499,6 +514,9 @@ export async function validatePlatform(platform, root = repositoryRoot) {
   );
   if (JSON.stringify(contractScopes.sort()) !== JSON.stringify([...requiredScopes].sort())) {
     throw new Error('OpenAPI snapshot scopes do not match platform metadata.');
+  }
+  if (openapi.components?.securitySchemes?.PartnerOAuth?.flows?.clientCredentials?.tokenUrl !== documentationTokenUrl) {
+    throw new Error('OpenAPI snapshot OAuth token URL must use the reserved non-routable documentation server.');
   }
   return structuredClone(platform);
 }

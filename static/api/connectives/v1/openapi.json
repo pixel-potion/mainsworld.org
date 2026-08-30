@@ -5,6 +5,12 @@
     "version": "0.1.0",
     "description": "Normative, non-deployed starter contract."
   },
+  "servers": [
+    {
+      "url": "https://example.invalid",
+      "description": "Non-callable documentation preview. No network endpoint exists."
+    }
+  ],
   "x-mains-world-status": "non-deployed-starter",
   "x-example-files": [
     "./examples/discord-connected-group-membership.json",
@@ -184,7 +190,7 @@
         "type": "oauth2",
         "flows": {
           "clientCredentials": {
-            "tokenUrl": "/oauth/token",
+            "tokenUrl": "https://example.invalid/oauth/token",
             "scopes": {
               "candidate-status:read": "Read candidate status within an approved grant.",
               "link-sessions:create": "Create and poll application consent sessions.",
