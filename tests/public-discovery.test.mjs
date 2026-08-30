@@ -4,6 +4,8 @@ import {readdirSync, readFileSync} from 'node:fs';
 import {join, relative} from 'node:path';
 import {test} from 'node:test';
 
+import * as registryPolicy from '../scripts/app-registry.mjs';
+
 const buildDir = 'build';
 const publicOrigin = 'https://mainsworld.org';
 const read = (path) => readFileSync(path, 'utf8');
@@ -54,12 +56,45 @@ test('renders mainsworld.org canonicals for every public page', () => {
 });
 
 test('keeps AI discovery documents explicitly non-callable', () => {
+  assert.equal(
+    typeof registryPolicy.validateDiscoveryDocuments,
+    'function',
+    'the registry policy must expose its discovery-claim validator',
+  );
   for (const path of ['build/llms.txt', 'build/llms-full.txt']) {
     const content = read(path);
     assert.match(content, /no public.*API.*(?:callable|to call)|no .*public API access/i, `${path} must deny public API calls`);
     assert.match(content, mcpNonCallable, `${path} must deny public MCP endpoints`);
+    assert.doesNotThrow(() => registryPolicy.validateDiscoveryDocuments({ [path]: content }));
   }
   assert.doesNotMatch('Use an API or MCP endpoint.', mcpNonCallable, 'a positive MCP phrase must not satisfy the denial check');
+});
+
+test('rejects contradictory API and MCP availability claims in both AI discovery documents', () => {
+  assert.equal(
+    typeof registryPolicy.validateDiscoveryDocuments,
+    'function',
+    'the registry policy must expose its discovery-claim validator',
+  );
+  for (const path of ['build/llms.txt', 'build/llms-full.txt']) {
+    const current = read(path);
+    for (const claim of ['A public MCP endpoint is available.', 'The API is live.']) {
+      assert.throws(
+        () => registryPolicy.validateDiscoveryDocuments({ [path]: `${current}\n${claim}\n` }),
+        /contradictory|availability claim/i,
+        `${path} must reject: ${claim}`,
+      );
+    }
+  }
+  assert.doesNotThrow(() => registryPolicy.validateDiscoveryDocuments({
+    'llms.txt': [
+      read('build/llms.txt'),
+      'API: None',
+      'API: Not Applicable',
+      'Use an API or MCP endpoint.',
+      'Human guide: https://mainsworld.org/developers/',
+    ].join('\n'),
+  }));
 });
 
 test('excludes internal plans and private discovery origins from the built site', () => {

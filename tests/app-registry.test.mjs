@@ -114,17 +114,25 @@ async function withCatalog(catalog, run) {
 }
 
 async function withMutatedOpenApi(mutate, run) {
+  return withMutatedSnapshot('openapi', mutate, run);
+}
+
+async function withMutatedSnapshot(name, mutate, run) {
   const root = await mkdtemp(path.join(tmpdir(), 'mainsworld-platform-'));
   try {
     await cp(path.join(repositoryRoot, 'registry'), path.join(root, 'registry'), { recursive: true });
     await cp(path.join(repositoryRoot, 'static', 'api'), path.join(root, 'static', 'api'), { recursive: true });
     const platform = await loadPlatform(root);
-    const openapiPath = path.join(root, 'static', 'api', 'connectives', 'v1', 'openapi.json');
-    const contract = JSON.parse(await readFile(openapiPath, 'utf8'));
-    mutate(contract);
-    await writeFile(openapiPath, `${JSON.stringify(contract, null, 2)}\n`);
-    platform.artifacts.openapi.sha256 = createHash('sha256')
-      .update(await readFile(openapiPath))
+    const snapshotPath = path.join(
+      root,
+      'static',
+      platform.artifacts[name].public_snapshot_path.replace(/^\//, ''),
+    );
+    const snapshot = JSON.parse(await readFile(snapshotPath, 'utf8'));
+    mutate(snapshot);
+    await writeFile(snapshotPath, `${JSON.stringify(snapshot, null, 2)}\n`);
+    platform.artifacts[name].sha256 = createHash('sha256')
+      .update(await readFile(snapshotPath))
       .digest('hex');
     await run(platform, root);
   } finally {
@@ -192,6 +200,7 @@ async function withProposedCheckout(mutate, run) {
     await Promise.all([
       cp(path.join(repositoryRoot, 'docs', 'developers', 'apps.md'), path.join(root, 'docs', 'developers', 'apps.md')),
       cp(path.join(repositoryRoot, 'static', 'apps.json'), path.join(root, 'static', 'apps.json')),
+      cp(path.join(repositoryRoot, 'static', 'llms.txt'), path.join(root, 'static', 'llms.txt')),
       cp(path.join(repositoryRoot, 'static', 'llms-full.txt'), path.join(root, 'static', 'llms-full.txt')),
       writeFile(path.join(root, 'scripts', 'app-registry.mjs'), 'process.exit(0);\n'),
       writeFile(path.join(root, 'package.json'), JSON.stringify({ scripts: { 'apps:check': 'exit 0' } }, null, 2)),
@@ -961,6 +970,128 @@ test('rejects an undeclared standard HTTP operation even when it is marked non-c
   }, async (platform, root) => {
     await assert.rejects(validatePlatform(platform, root), /operation|path/i);
   });
+});
+
+for (const [name, mutate] of [
+  ['an extra OAuth security scheme', (contract) => {
+    contract.components.securitySchemes.SecondOAuth = { type: 'oauth2', flows: {} };
+  }],
+  ['an OAuth authorization URL', (contract) => {
+    contract.components.securitySchemes.PartnerOAuth.flows.authorizationCode = {
+      authorizationUrl: 'https://auth.example.com/authorize',
+      tokenUrl: 'https://auth.example.com/token',
+      scopes: {},
+    };
+  }],
+  ['an external reference URL', (contract) => {
+    contract.components.schemas.ExternalRecord = { $ref: 'https://schemas.example.com/record.json' };
+  }],
+  ['an external documentation URL', (contract) => {
+    contract.externalDocs = { url: 'https://docs.example.com/connectives' };
+  }],
+  ['a Main\'s World API URL in an ordinary OpenAPI field', (contract) => {
+    contract.info.termsOfService = 'https://api.mains.world';
+  }],
+]) {
+  test(`rejects ${name} even when the OpenAPI hash is recomputed`, async () => {
+    await withMutatedOpenApi(mutate, async (platform, root) => {
+      await assert.rejects(validatePlatform(platform, root), /OpenAPI|security|HTTP|URL|unsafe/i);
+    });
+  });
+}
+
+for (const [name, operationPath, method, security] of [
+  ['logical token operation', '/oauth/token', 'post', []],
+  ['link-session creation', '/connectives/v1/link-sessions', 'post', []],
+  ['link-session polling', '/connectives/v1/link-sessions/{session_id}', 'get', []],
+  ['candidate submission', '/connectives/v1/grants/{grant_id}/vibe-candidates', 'post', []],
+  ['candidate status', '/connectives/v1/grants/{grant_id}/candidates/{candidate_id}', 'get', []],
+]) {
+  test(`pins the reviewed security requirement for ${name}`, async () => {
+    await withMutatedOpenApi((contract) => {
+      contract.paths[operationPath][method].security = security;
+    }, async (platform, root) => {
+      await assert.rejects(validatePlatform(platform, root), /OpenAPI|operation|security/i);
+    });
+  });
+}
+
+for (const [name, mutate] of [
+  ['OpenAPI webhooks', (contract) => {
+    contract.webhooks = {
+      candidateReady: { post: { responses: { 200: { description: 'Accepted.' } } } },
+    };
+  }],
+  ['operation callbacks', (contract) => {
+    contract.paths['/connectives/v1/link-sessions'].post.callbacks = {
+      candidateReady: { '{$request.body#/callback}': { post: { responses: { 200: { description: 'Accepted.' } } } } },
+    };
+  }],
+  ['component Path Items', (contract) => {
+    contract.components.pathItems = {
+      HiddenItem: { post: { responses: { 200: { description: 'Accepted.' } } } },
+    };
+  }],
+]) {
+  test(`rejects hidden operation inventory in ${name} without relying on callability or servers`, async () => {
+    await withMutatedOpenApi(mutate, async (platform, root) => {
+      await assert.rejects(validatePlatform(platform, root), /OpenAPI|operation|webhook|callback|Path Item/i);
+    });
+  });
+}
+
+for (const [name, snapshotName, mutate] of [
+  ['Discord provider', 'discord_example', (snapshot) => { snapshot.provider = 'discord-production'; }],
+  ['Discord group identifier', 'discord_example', (snapshot) => { snapshot.group_key = 'real-group-123'; }],
+  ['Discord grant identifier', 'discord_example', (snapshot) => { snapshot.connection_grant_id = 'real-grant-123'; }],
+  ['Discord CDN fixture', 'discord_example', (snapshot) => { snapshot.display.icon_url = 'https://cdn.example.com/icon.png'; }],
+  ['Discord observation timestamp', 'discord_example', (snapshot) => { snapshot.observed_at = '2026-08-30T18:00:00.000Z'; }],
+  ['Discord expiry timestamp', 'discord_example', (snapshot) => { snapshot.valid_until = '2026-08-30T18:10:00.000Z'; }],
+  ['Luma event identifier', 'luma_example', (snapshot) => { snapshot.external_id = 'real-luma-event'; }],
+  ['Luma event label', 'luma_example', (snapshot) => { snapshot.payload.label = 'Private gathering'; }],
+  ['Luma coordinates', 'luma_example', (snapshot) => {
+    snapshot.payload.latitude = 41.8781;
+    snapshot.payload.longitude = -87.6298;
+  }],
+  ['Luma place', 'luma_example', (snapshot) => { snapshot.payload.place_name = 'Private venue'; }],
+  ['Luma address', 'luma_example', (snapshot) => { snapshot.payload.place_address = '123 Real Street'; }],
+  ['Luma start timestamp', 'luma_example', (snapshot) => { snapshot.payload.scheduled_for = '2026-09-20T22:00:00.000Z'; }],
+  ['Luma end timestamp', 'luma_example', (snapshot) => { snapshot.payload.scheduled_until = '2026-09-21T01:00:00.000Z'; }],
+]) {
+  test(`rejects drift in the reviewed synthetic ${name} after recomputing its hash`, async () => {
+    await withMutatedSnapshot(snapshotName, mutate, async (platform, root) => {
+      await assert.rejects(validatePlatform(platform, root), /snapshot|synthetic|reviewed/i);
+    });
+  });
+}
+
+for (const instanceKey of ['example', 'examples', 'default']) {
+  test(`rejects inline OpenAPI ${instanceKey} instance data after recomputing the hash`, async () => {
+    await withMutatedOpenApi((contract) => {
+      contract.paths['/oauth/token'].post.requestBody.content['application/x-www-form-urlencoded'].schema[instanceKey] = {
+        scope: 'candidate-status:read',
+      };
+    }, async (platform, root) => {
+      await assert.rejects(validatePlatform(platform, root), /OpenAPI|instance|example|default/i);
+    });
+  });
+}
+
+test('catalog policy rejects contradictory availability claims in either AI discovery document', async () => {
+  for (const [relativePath, claim] of [
+    ['static/llms.txt', 'A public MCP endpoint is available.'],
+    ['static/llms-full.txt', 'The API is live.'],
+  ]) {
+    await withProposedCheckout(async (root) => {
+      const filename = path.join(root, relativePath);
+      await writeFile(filename, `${await readFile(filename, 'utf8')}\n${claim}\n`);
+    }, async (root) => {
+      await assert.rejects(
+        runTrustedPolicy(['check', '--root', root], { cwd: repositoryRoot }),
+        /contradictory|availability claim/i,
+      );
+    });
+  }
 });
 
 test('renders deterministic public catalog outputs from validated inputs', async () => {

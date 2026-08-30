@@ -6,7 +6,7 @@ import { mkdir, readdir, readFile, writeFile } from 'node:fs/promises';
 import { isIP } from 'node:net';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { promisify } from 'node:util';
+import { isDeepStrictEqual, promisify } from 'node:util';
 
 const moduleDirectory = path.dirname(fileURLToPath(import.meta.url));
 const repositoryRoot = path.resolve(moduleDirectory, '..');
@@ -95,6 +95,13 @@ const requiredOperations = [
   ['POST', '/connectives/v1/grants/{grant_id}/vibe-candidates'],
   ['GET', '/connectives/v1/grants/{grant_id}/candidates/{candidate_id}'],
 ];
+const requiredOperationSecurity = [
+  undefined,
+  [{ PartnerOAuth: ['link-sessions:create'] }],
+  [{ PartnerOAuth: ['link-sessions:create'] }],
+  [{ PartnerOAuth: ['vibe-candidates:write'] }],
+  [{ PartnerOAuth: ['candidate-status:read'] }],
+];
 const documentationServer = {
   url: 'https://example.invalid',
   description: 'Non-callable documentation preview. No network endpoint exists.',
@@ -132,6 +139,55 @@ const expectedArtifactPaths = {
     '/api/connectives/v1/luma-vibe-candidate.json',
   ],
 };
+const reviewedSnapshotHttpValues = {
+  openapi: [
+    { path: ['servers', 0, 'url'], value: 'https://example.invalid' },
+    {
+      path: ['components', 'securitySchemes', 'PartnerOAuth', 'flows', 'clientCredentials', 'tokenUrl'],
+      value: 'https://example.invalid/oauth/token',
+    },
+  ],
+  discord_example: [
+    { path: ['display', 'icon_url'], value: 'https://cdn.example.test/icon.png' },
+  ],
+  luma_example: [],
+};
+const reviewedSyntheticSnapshots = {
+  discord_example: {
+    schema_version: '2026-08-29',
+    profile: 'community.membership.v1',
+    provider: 'discord',
+    group_key: 'group_opaque_example',
+    connection_grant_id: 'grant_opaque_example',
+    display: {
+      name: 'Pixel Potion Creative',
+      icon_url: 'https://cdn.example.test/icon.png',
+    },
+    authority: 'owner',
+    observed_at: '2026-08-29T18:00:00.000Z',
+    valid_until: '2026-08-29T18:10:00.000Z',
+    state: 'active',
+  },
+  luma_example: {
+    schema_version: '2026-08-29',
+    resource_family: 'vibe',
+    profile: 'calendar.event.v1',
+    external_id: 'example-luma-event',
+    revision: 1,
+    payload: {
+      label: 'Sunset VHS Swap',
+      world: 'land',
+      latitude: 0,
+      longitude: 0,
+      place_name: 'Example Hall',
+      place_address: '100 Example Avenue, Example City',
+      scheduled_for: '2026-09-12T22:00:00.000Z',
+      scheduled_until: '2026-09-13T01:00:00.000Z',
+    },
+  },
+};
+const positiveDiscoveryAvailability = /\b(?:public\s+)?(?:api(?:\s+endpoints?)?|oauth(?:\s+registration)?|credentials?|servers?|base\s+urls?|mcp(?:\s+endpoints?)?)\b[^.!?\n]{0,80}\b(?:(?:is|are|remains?|becomes?|now|currently)\s+)?(?:live|callable|available|enabled|active|ready|deployed|exists?)\b/i;
+const negativeDiscoveryAvailability = /\b(?:no|not|neither|without|none|unavailable|non-callable|does\s+not\s+exist|not\s+applicable)\b/i;
 
 function isSafeCatalogSourcePath(value) {
   return (
@@ -366,31 +422,14 @@ function compactSnapshotKey(key) {
   return key.replace(/[^a-z0-9]/gi, '').toLowerCase();
 }
 
-function isUnsafeSnapshotUrl(value) {
-  try {
-    const url = new URL(value);
-    const hostname = url.hostname.toLowerCase().replace(/^\[|\]$/g, '');
-    if (url.protocol !== 'https:' && url.protocol !== 'http:') return false;
-    if (hostname === 'cdn.example.test') return false;
-    return (
-      isIP(hostname) !== 0 ||
-      hostname === 'localhost' ||
-      ['internal', 'local', 'lan', 'corp', 'home', 'onion', 'invalid', 'arpa', 'alt'].some(
-        (suffix) => hostname === suffix || hostname.endsWith(`.${suffix}`),
-      ) ||
-      hostname.endsWith('.test')
-    );
-  } catch {
-    return false;
-  }
-}
-
 function pathEquals(actual, expected) {
   return actual.length === expected.length && actual.every((segment, index) => segment === expected[index]);
 }
 
-function pathIsAllowed(pathSegments, allowedPaths) {
-  return allowedPaths.some((allowedPath) => pathEquals(pathSegments, allowedPath));
+function isReviewedSnapshotHttpValue(pathSegments, value, reviewedHttpValues) {
+  return reviewedHttpValues.some(
+    (reviewed) => reviewed.value === value && pathEquals(pathSegments, reviewed.path),
+  );
 }
 
 function findUnsafeSnapshotValue(
@@ -398,7 +437,7 @@ function findUnsafeSnapshotValue(
   location = '$',
   parentKey = '',
   pathSegments = [],
-  allowedUnsafeUrlPaths = [],
+  reviewedHttpValues = [],
 ) {
   if (typeof value === 'string') {
     if (snapshotCredentialPatterns.some((pattern) => pattern.test(value))) {
@@ -413,8 +452,8 @@ function findUnsafeSnapshotValue(
     if (snapshotConcreteIdentifierKeys.has(compactSnapshotKey(parentKey)) && value.length >= 6) {
       return `${location} contains a concrete provider identifier`;
     }
-    if (!pathIsAllowed(pathSegments, allowedUnsafeUrlPaths) && isUnsafeSnapshotUrl(value)) {
-      return `${location} contains a private or internal URL`;
+    if (/^https?:\/\//i.test(value) && !isReviewedSnapshotHttpValue(pathSegments, value, reviewedHttpValues)) {
+      return `${location} contains an unreviewed HTTP URL`;
     }
     return null;
   }
@@ -426,7 +465,7 @@ function findUnsafeSnapshotValue(
         `${location}[${index}]`,
         parentKey,
         [...pathSegments, index],
-        allowedUnsafeUrlPaths,
+        reviewedHttpValues,
       );
       if (found) return found;
     }
@@ -443,12 +482,51 @@ function findUnsafeSnapshotValue(
         `${location}.${key}`,
         key,
         [...pathSegments, key],
-        allowedUnsafeUrlPaths,
+        reviewedHttpValues,
       );
       if (found) return found;
     }
   }
   return null;
+}
+
+function findDisallowedOpenApiInstanceData(value, location = '$') {
+  if (Array.isArray(value)) {
+    for (const [index, item] of value.entries()) {
+      const found = findDisallowedOpenApiInstanceData(item, `${location}[${index}]`);
+      if (found) return found;
+    }
+    return null;
+  }
+  if (!value || typeof value !== 'object') return null;
+
+  for (const [key, child] of Object.entries(value)) {
+    if (key === 'example' || key === 'examples' || key === 'default') return `${location}.${key}`;
+    const found = findDisallowedOpenApiInstanceData(child, `${location}.${key}`);
+    if (found) return found;
+  }
+  return null;
+}
+
+export function validateDiscoveryDocuments(documents) {
+  if (!documents || typeof documents !== 'object' || Array.isArray(documents)) {
+    throw new TypeError('Discovery documents must be an object keyed by path.');
+  }
+  for (const [documentPath, content] of Object.entries(documents)) {
+    if (typeof content !== 'string') {
+      throw new TypeError(`Discovery document ${documentPath} must contain text.`);
+    }
+    const contradictoryClaim = content
+      .split(/(?<=[.!?])(?:\s+|$)|\n+/)
+      .find((statement) =>
+        positiveDiscoveryAvailability.test(statement) &&
+        !negativeDiscoveryAvailability.test(statement),
+      );
+    if (contradictoryClaim) {
+      throw new Error(`Discovery document ${documentPath} contains a contradictory availability claim.`);
+    }
+  }
+  return documents;
 }
 
 function contractOperations(contract) {
@@ -461,10 +539,6 @@ function contractOperations(contract) {
 
 function hasExactDocumentationServer(servers) {
   return JSON.stringify(servers) === JSON.stringify([documentationServer]);
-}
-
-function openApiTokenUrl(contract) {
-  return contract.components?.securitySchemes?.PartnerOAuth?.flows?.clientCredentials?.tokenUrl;
 }
 
 function findDisallowedServerPath(value, pathSegments = []) {
@@ -535,17 +609,21 @@ export async function validatePlatform(platform, root = repositoryRoot) {
     const digest = createHash('sha256').update(bytes).digest('hex');
     if (digest !== artifact.sha256) throw new Error(`Snapshot hash mismatch for ${name}.`);
     const snapshot = JSON.parse(bytes.toString('utf8'));
-    const allowedUnsafeUrlPaths = name === 'openapi' &&
-      hasExactDocumentationServer(snapshot.servers) &&
-      openApiTokenUrl(snapshot) === documentationTokenUrl
-      ? [
-        ['servers', 0, 'url'],
-        ['components', 'securitySchemes', 'PartnerOAuth', 'flows', 'clientCredentials', 'tokenUrl'],
-      ]
-      : [];
-    const unsafeValue = findUnsafeSnapshotValue(snapshot, '$', '', [], allowedUnsafeUrlPaths);
+    const unsafeValue = findUnsafeSnapshotValue(
+      snapshot,
+      '$',
+      '',
+      [],
+      reviewedSnapshotHttpValues[name] ?? [],
+    );
     if (unsafeValue) throw new Error(`Snapshot ${name} is unsafe: ${unsafeValue}.`);
     snapshots[name] = snapshot;
+  }
+
+  for (const [name, reviewedSnapshot] of Object.entries(reviewedSyntheticSnapshots)) {
+    if (!isDeepStrictEqual(snapshots[name], reviewedSnapshot)) {
+      throw new Error(`Snapshot ${name} must match the reviewed synthetic fixture.`);
+    }
   }
 
   const openapi = snapshots.openapi;
@@ -558,6 +636,16 @@ export async function validatePlatform(platform, root = repositoryRoot) {
   if (findDisallowedServerPath(openapi)) {
     throw new Error('OpenAPI snapshot must not override the reserved documentation server.');
   }
+  if (
+    Object.hasOwn(openapi, 'webhooks') ||
+    Object.hasOwn(openapi.components ?? {}, 'pathItems')
+  ) {
+    throw new Error('OpenAPI snapshot must not contain webhooks or component Path Items.');
+  }
+  const inlineInstanceData = findDisallowedOpenApiInstanceData(openapi);
+  if (inlineInstanceData) {
+    throw new Error(`OpenAPI snapshot must not contain inline instance data at ${inlineInstanceData}.`);
+  }
   const parsedOperations = contractOperations(openapi);
   const expectedPaths = [...new Set(requiredOperations.map(([, operationPath]) => operationPath))].sort();
   const actualPaths = Object.keys(openapi.paths ?? {}).sort();
@@ -565,9 +653,22 @@ export async function validatePlatform(platform, root = repositoryRoot) {
     JSON.stringify(actualPaths) !== JSON.stringify(expectedPaths) ||
     JSON.stringify(parsedOperations.map(({ method, path: operationPath }) => [method, operationPath])) !==
     JSON.stringify(requiredOperations) ||
-    parsedOperations.some(({ operation }) => operation['x-mains-world-callable'] !== false)
+    parsedOperations.some(({ operation }) => operation['x-mains-world-callable'] !== false) ||
+    parsedOperations.some(({ operation }) => Object.hasOwn(operation, 'callbacks')) ||
+    parsedOperations.some(({ operation }, index) => {
+      const requiredSecurity = requiredOperationSecurity[index];
+      return requiredSecurity === undefined
+        ? Object.hasOwn(operation, 'security')
+        : !isDeepStrictEqual(operation.security, requiredSecurity);
+    })
   ) {
     throw new Error('OpenAPI snapshot does not match non-callable platform operations.');
+  }
+  if (
+    Object.keys(openapi.components?.securitySchemes ?? {}).length !== 1 ||
+    !Object.hasOwn(openapi.components?.securitySchemes ?? {}, 'PartnerOAuth')
+  ) {
+    throw new Error('OpenAPI snapshot must define exactly the reviewed PartnerOAuth security scheme.');
   }
   const contractScopes = Object.keys(
     openapi.components?.securitySchemes?.PartnerOAuth?.flows?.clientCredentials?.scopes ?? {},
@@ -798,6 +899,18 @@ async function runCli() {
   const { mode, root: requestedRoot, base, allowMaintenance } = parseCliArguments(process.argv.slice(2));
   const root = requestedRoot ?? repositoryRoot;
   const rendered = await renderAll(root);
+  const discoveryDocuments = mode === 'generate'
+    ? {
+      'static/llms.txt': await readFile(path.join(root, 'static', 'llms.txt'), 'utf8'),
+      'static/llms-full.txt': rendered[generatedOutputs.llmsFull],
+    }
+    : Object.fromEntries(await Promise.all(
+      ['static/llms.txt', 'static/llms-full.txt'].map(async (relativePath) => [
+        relativePath,
+        await readFile(path.join(root, relativePath), 'utf8'),
+      ]),
+    ));
+  validateDiscoveryDocuments(discoveryDocuments);
   if (mode === 'generate') {
     await Promise.all(Object.entries(rendered).map(async ([relativePath, content]) => {
       const outputPath = path.join(root, relativePath);
