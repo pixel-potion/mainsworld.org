@@ -16,6 +16,7 @@
     "apps:generate": "node scripts/app-registry.mjs generate",
     "apps:check": "node scripts/app-registry.mjs check",
     "test:registry": "node --test tests/app-registry.test.mjs",
+    "test:public-discovery": "node --test tests/public-discovery.test.mjs",
     "test:developers": "node --test tests/developers-pages.test.mjs"
   },
   "dependencies": {

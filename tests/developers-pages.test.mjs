@@ -93,6 +93,7 @@ test('runs type, navigation, registry, and rendered developer gates in CI order'
     'node --test tests/legal-pages.test.mjs',
     'node --test tests/around-the-world.test.mjs',
     'npm run build',
+    'npm run test:public-discovery',
     'npm run test:developers',
   ]) {
     assert.notEqual(indexOf(command), -1, `CI is missing ${command}`);
@@ -102,7 +103,8 @@ test('runs type, navigation, registry, and rendered developer gates in CI order'
   assert.ok(indexOf('npm run test:registry') < indexOf('npm run apps:check'));
   assert.ok(indexOf('node --test tests/legal-pages.test.mjs') < indexOf('node --test tests/around-the-world.test.mjs'));
   assert.ok(indexOf('node --test tests/around-the-world.test.mjs') < indexOf('npm run build'));
-  assert.ok(indexOf('npm run build') < indexOf('npm run test:developers'));
+  assert.ok(indexOf('npm run build') < indexOf('npm run test:public-discovery'));
+  assert.ok(indexOf('npm run test:public-discovery') < indexOf('npm run test:developers'));
   assert.match(workflow, /permissions:\n  contents: read/);
   assert.match(workflow, /persist-credentials: false/);
 });

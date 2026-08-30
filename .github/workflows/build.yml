@@ -43,4 +43,5 @@ jobs:
       - run: node --test tests/legal-pages.test.mjs
       - run: node --test tests/around-the-world.test.mjs
       - run: npm run build
+      - run: npm run test:public-discovery
       - run: npm run test:developers
