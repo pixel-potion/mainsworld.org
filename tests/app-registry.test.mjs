@@ -825,7 +825,85 @@ test('validates the pinned non-callable preview platform and its exact snapshot 
       luma_example: ['openapi/examples/luma-vibe-candidate.json', '/api/connectives/v1/luma-vibe-candidate.json', '499d12a33183ce6fed9335fa3021d79ba2da30205d1d80d2e8c4017d3f6358a9'],
     },
   );
+  const contract = JSON.parse(
+    await readFile(path.join(repositoryRoot, 'static', 'api', 'connectives', 'v1', 'openapi.json'), 'utf8'),
+  );
+  assert.equal('servers' in contract, false);
+  assert.equal(contract.components.securitySchemes.PartnerOAuth.flows.clientCredentials.tokenUrl, '/oauth/token');
   await assert.doesNotReject(validatePlatform(platform, repositoryRoot));
+});
+
+test('allows only the exact non-routable OpenAPI transition while preserving the legacy preview', async () => {
+  const exactServer = {
+    url: 'https://example.invalid',
+    description: 'Non-callable documentation preview. No network endpoint exists.',
+  };
+  const setTransition = (contract) => {
+    contract.servers = [structuredClone(exactServer)];
+    contract.components.securitySchemes.PartnerOAuth.flows.clientCredentials.tokenUrl =
+      'https://example.invalid/oauth/token';
+  };
+
+  await withMutatedOpenApi(setTransition, async (platform, root) => {
+    await assert.doesNotReject(validatePlatform(platform, root));
+  });
+
+  const invalidTransitions = [
+    ['server without the matching token URL', (contract) => {
+      contract.servers = [structuredClone(exactServer)];
+    }],
+    ['token URL without the matching server', (contract) => {
+      contract.components.securitySchemes.PartnerOAuth.flows.clientCredentials.tokenUrl =
+        'https://example.invalid/oauth/token';
+    }],
+    ['an empty server list', (contract) => {
+      setTransition(contract);
+      contract.servers = [];
+    }],
+    ['an extra server', (contract) => {
+      setTransition(contract);
+      contract.servers.push(structuredClone(exactServer));
+    }],
+    ['a different invalid server URL', (contract) => {
+      setTransition(contract);
+      contract.servers[0].url = 'https://preview.example.invalid';
+    }],
+    ['a routable server URL', (contract) => {
+      setTransition(contract);
+      contract.servers[0].url = 'https://api.mains.world';
+    }],
+    ['a private server URL', (contract) => {
+      setTransition(contract);
+      contract.servers[0].url = 'https://127.0.0.1';
+    }],
+    ['a wrong server description', (contract) => {
+      setTransition(contract);
+      contract.servers[0].description = 'Preview endpoint.';
+    }],
+    ['a wrong transition token URL', (contract) => {
+      setTransition(contract);
+      contract.components.securitySchemes.PartnerOAuth.flows.clientCredentials.tokenUrl =
+        'https://example.invalid/token';
+    }],
+    ['a path-level server override', (contract) => {
+      setTransition(contract);
+      contract.paths['/oauth/token'].servers = [structuredClone(exactServer)];
+    }],
+    ['an operation-level server override', (contract) => {
+      setTransition(contract);
+      contract.paths['/oauth/token'].post.servers = [structuredClone(exactServer)];
+    }],
+    ['an otherwise allowed URL outside the approved locations', (contract) => {
+      setTransition(contract);
+      contract.documentation_url = 'https://example.invalid';
+    }],
+  ];
+
+  for (const [label, mutate] of invalidTransitions) {
+    await withMutatedOpenApi(mutate, async (platform, root) => {
+      await assert.rejects(validatePlatform(platform, root), /server|token|unsafe|url|operation|path/i, label);
+    });
+  }
 });
 
 test('rejects altered snapshot bytes and contract deployment claims', async () => {
