@@ -840,18 +840,47 @@ test('validates the pinned non-callable preview platform and its exact snapshot 
   await assert.doesNotReject(validatePlatform(platform, repositoryRoot));
 });
 
-test('rejects non-reserved, missing, empty, and operation-level OpenAPI servers even when the snapshot hash is recomputed', async () => {
+test('rejects non-reserved, missing, empty, extra, and nested OpenAPI servers even when the snapshot hash is recomputed', async () => {
   const mutations = [
     (contract) => { contract.servers = [{ url: 'https://mainsworld.org' }]; },
     (contract) => { contract.components.securitySchemes.PartnerOAuth.flows.clientCredentials.tokenUrl = '/oauth/token'; },
     (contract) => { contract.servers = []; },
     (contract) => { delete contract.servers; },
+    (contract) => { contract.servers.push(structuredClone(documentationServer)); },
+    (contract) => { contract.paths['/oauth/token'].servers = [documentationServer]; },
     (contract) => { contract.paths['/oauth/token'].post.servers = [documentationServer]; },
+    (contract) => {
+      contract.components.pathItems = { callbackTarget: { servers: [documentationServer] } };
+    },
+    (contract) => {
+      contract.paths['/oauth/token'].post.callbacks = {
+        candidateReady: { '{$request.body#/callback}': { post: { servers: [documentationServer] } } },
+      };
+    },
   ];
 
   for (const mutate of mutations) {
     await withMutatedOpenApi(mutate, async (platform, root) => {
       await assert.rejects(validatePlatform(platform, root), /server|token|OpenAPI/i);
+    });
+  }
+});
+
+test('allows reserved non-routable URLs only at their structural OpenAPI paths', async () => {
+  for (const mutate of [
+    (contract) => {
+      contract['servers[0].url'] = 'https://example.invalid';
+    },
+    (contract) => {
+      contract['components.securitySchemes.PartnerOAuth.flows.clientCredentials.tokenUrl'] =
+        'https://example.invalid/oauth/token';
+    },
+    (contract) => {
+      contract.documentation_url = 'https://example.invalid';
+    },
+  ]) {
+    await withMutatedOpenApi(mutate, async (platform, root) => {
+      await assert.rejects(validatePlatform(platform, root), /server|token|unsafe|url/i);
     });
   }
 });

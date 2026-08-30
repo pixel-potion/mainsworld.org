@@ -367,7 +367,6 @@ function compactSnapshotKey(key) {
 }
 
 function isUnsafeSnapshotUrl(value) {
-  if (value === documentationServer.url || value === documentationTokenUrl) return false;
   try {
     const url = new URL(value);
     const hostname = url.hostname.toLowerCase().replace(/^\[|\]$/g, '');
@@ -386,7 +385,21 @@ function isUnsafeSnapshotUrl(value) {
   }
 }
 
-function findUnsafeSnapshotValue(value, location = '$', parentKey = '') {
+function pathEquals(actual, expected) {
+  return actual.length === expected.length && actual.every((segment, index) => segment === expected[index]);
+}
+
+function pathIsAllowed(pathSegments, allowedPaths) {
+  return allowedPaths.some((allowedPath) => pathEquals(pathSegments, allowedPath));
+}
+
+function findUnsafeSnapshotValue(
+  value,
+  location = '$',
+  parentKey = '',
+  pathSegments = [],
+  allowedUnsafeUrlPaths = [],
+) {
   if (typeof value === 'string') {
     if (snapshotCredentialPatterns.some((pattern) => pattern.test(value))) {
       return `${location} contains concrete credential material`;
@@ -400,13 +413,21 @@ function findUnsafeSnapshotValue(value, location = '$', parentKey = '') {
     if (snapshotConcreteIdentifierKeys.has(compactSnapshotKey(parentKey)) && value.length >= 6) {
       return `${location} contains a concrete provider identifier`;
     }
-    if (isUnsafeSnapshotUrl(value)) return `${location} contains a private or internal URL`;
+    if (!pathIsAllowed(pathSegments, allowedUnsafeUrlPaths) && isUnsafeSnapshotUrl(value)) {
+      return `${location} contains a private or internal URL`;
+    }
     return null;
   }
 
   if (Array.isArray(value)) {
     for (const [index, item] of value.entries()) {
-      const found = findUnsafeSnapshotValue(item, `${location}[${index}]`, parentKey);
+      const found = findUnsafeSnapshotValue(
+        item,
+        `${location}[${index}]`,
+        parentKey,
+        [...pathSegments, index],
+        allowedUnsafeUrlPaths,
+      );
       if (found) return found;
     }
     return null;
@@ -417,7 +438,13 @@ function findUnsafeSnapshotValue(value, location = '$', parentKey = '') {
       if (key === 'x-mains-world-callable' && child === true) {
         return `${location}.${key} makes the snapshot callable`;
       }
-      const found = findUnsafeSnapshotValue(child, `${location}.${key}`, key);
+      const found = findUnsafeSnapshotValue(
+        child,
+        `${location}.${key}`,
+        key,
+        [...pathSegments, key],
+        allowedUnsafeUrlPaths,
+      );
       if (found) return found;
     }
   }
@@ -430,6 +457,34 @@ function contractOperations(contract) {
       .filter(([method, operation]) => standardHttpMethods.has(method.toLowerCase()) && operation && typeof operation === 'object')
       .map(([method, operation]) => ({ method: method.toUpperCase(), path: operationPath, operation })),
   );
+}
+
+function hasExactDocumentationServer(servers) {
+  return JSON.stringify(servers) === JSON.stringify([documentationServer]);
+}
+
+function openApiTokenUrl(contract) {
+  return contract.components?.securitySchemes?.PartnerOAuth?.flows?.clientCredentials?.tokenUrl;
+}
+
+function findDisallowedServerPath(value, pathSegments = []) {
+  if (Array.isArray(value)) {
+    for (const [index, item] of value.entries()) {
+      const found = findDisallowedServerPath(item, [...pathSegments, index]);
+      if (found) return found;
+    }
+    return null;
+  }
+
+  if (!value || typeof value !== 'object') return null;
+
+  for (const [key, child] of Object.entries(value)) {
+    const childPath = [...pathSegments, key];
+    if (key === 'servers' && !pathEquals(childPath, ['servers'])) return childPath;
+    const found = findDisallowedServerPath(child, childPath);
+    if (found) return found;
+  }
+  return null;
 }
 
 export async function loadPlatform(root = repositoryRoot) {
@@ -480,25 +535,30 @@ export async function validatePlatform(platform, root = repositoryRoot) {
     const digest = createHash('sha256').update(bytes).digest('hex');
     if (digest !== artifact.sha256) throw new Error(`Snapshot hash mismatch for ${name}.`);
     const snapshot = JSON.parse(bytes.toString('utf8'));
-    const unsafeValue = findUnsafeSnapshotValue(snapshot);
+    const allowedUnsafeUrlPaths = name === 'openapi' &&
+      hasExactDocumentationServer(snapshot.servers) &&
+      openApiTokenUrl(snapshot) === documentationTokenUrl
+      ? [
+        ['servers', 0, 'url'],
+        ['components', 'securitySchemes', 'PartnerOAuth', 'flows', 'clientCredentials', 'tokenUrl'],
+      ]
+      : [];
+    const unsafeValue = findUnsafeSnapshotValue(snapshot, '$', '', [], allowedUnsafeUrlPaths);
     if (unsafeValue) throw new Error(`Snapshot ${name} is unsafe: ${unsafeValue}.`);
     snapshots[name] = snapshot;
   }
 
   const openapi = snapshots.openapi;
   if (
-    JSON.stringify(openapi.servers) !== JSON.stringify([documentationServer]) ||
+    !hasExactDocumentationServer(openapi.servers) ||
     openapi['x-mains-world-status'] !== 'non-deployed-starter'
   ) {
     throw new Error('OpenAPI snapshot must use exactly the reserved non-routable documentation server.');
   }
-  const parsedOperations = contractOperations(openapi);
-  if (
-    Object.values(openapi.paths ?? {}).some((pathItem) => pathItem && typeof pathItem === 'object' && 'servers' in pathItem) ||
-    parsedOperations.some(({ operation }) => 'servers' in operation)
-  ) {
+  if (findDisallowedServerPath(openapi)) {
     throw new Error('OpenAPI snapshot must not override the reserved documentation server.');
   }
+  const parsedOperations = contractOperations(openapi);
   const expectedPaths = [...new Set(requiredOperations.map(([, operationPath]) => operationPath))].sort();
   const actualPaths = Object.keys(openapi.paths ?? {}).sort();
   if (
