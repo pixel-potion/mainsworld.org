@@ -417,6 +417,18 @@ for (const [name, content] of [
     'iteratively entity-encoded embedded markup',
     '<iframe srcdoc="&amp;lt;a &amp;#104;&amp;#114;&amp;#101;&amp;#102;=&amp;quot;/vault&amp;quot;&amp;gt;Vault&amp;lt;/a&amp;gt;"></iframe>',
   ],
+  [
+    'semicolon-less decimal numeric character references',
+    '<iframe srcdoc="&#60a &#104ref=&#34&#47vault&#34&#62Vault&#60/a&#62"></iframe>',
+  ],
+  [
+    'semicolon-less hexadecimal numeric character references',
+    '<iframe srcdoc="&lt;a &#x68ref=&#x22&#x2fvault&#x22&#x3eVault&lt;/a&#x3e"></iframe>',
+  ],
+  [
+    'nested semicolon-less numeric character references',
+    '<iframe srcdoc="&amp;#60a &amp;#104ref=&amp;#34&amp;#47vault&amp;#34&amp;#62Vault&amp;#60/a&amp;#62"></iframe>',
+  ],
   ['CSS escape syntax', String.raw`<style>.card { background: url(\contribute); }</style>`],
 ]) {
   test(`parses ${name} before applying the default-private allowlist`, () => {
@@ -433,6 +445,19 @@ for (const target of [
   'https://public@www.iana.org/',
 ]) {
   test(`rejects userinfo on absolute discovery URL: ${target}`, () => {
+    assert.throws(
+      () => validateDiscoveryReferences({ 'unsafe.md': `[External](${target})` }),
+      /private|credential|userinfo|target|reference|URL/i,
+    );
+  });
+}
+
+for (const target of [
+  'https://@www.iana.org/',
+  'https://:@www.iana.org/',
+  'https://@mainsworld.org/developers/api',
+]) {
+  test(`rejects an empty raw userinfo authority delimiter: ${target}`, () => {
     assert.throws(
       () => validateDiscoveryReferences({ 'unsafe.md': `[External](${target})` }),
       /private|credential|userinfo|target|reference|URL/i,

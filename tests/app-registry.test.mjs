@@ -617,6 +617,16 @@ test('rejects HTTP and malformed public URLs', async () => {
   }
 });
 
+for (const value of [
+  'https://@www.iana.org/',
+  'https://:@www.iana.org/',
+]) {
+  test(`rejects an empty raw userinfo authority delimiter in a registry URL: ${value}`, async () => {
+    const app = { ...clone(validApp), website: value };
+    await assert.rejects(validateRegistry([app]), /public HTTPS URL/i);
+  });
+}
+
 test('rejects credentialed, raw-IP, and special-use public URLs', async () => {
   for (const [name, field, value] of [
     ['credentials', 'website', 'https://user:secret@www.iana.org/'],

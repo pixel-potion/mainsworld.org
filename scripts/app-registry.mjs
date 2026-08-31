@@ -420,7 +420,15 @@ function isNonPublicHostname(hostname) {
   );
 }
 
+function hasRawAuthorityUserinfoDelimiter(value) {
+  return (
+    typeof value === 'string' &&
+    /^[A-Za-z][A-Za-z0-9+.-]*:\/\/[^/?#]*@/.test(value.replaceAll('\\', '/'))
+  );
+}
+
 function isPublicHttpsUrl(value) {
+  if (hasRawAuthorityUserinfoDelimiter(value)) return false;
   try {
     const url = new URL(value);
     const hostname = normalizedHostname(url.hostname);
@@ -804,7 +812,7 @@ function decodedDiscoveryContent(content) {
   for (let pass = 0; pass < 4; pass += 1) {
     const previous = decoded;
     const next = decoded.replace(
-      /&(?:#x([0-9a-f]+)|#(\d+)|(colon|sol|quest|num|amp|lt|gt|quot|apos|equals));/gi,
+      /&(?:#x([0-9a-f]+);?|#(\d+);?|(colon|sol|quest|num|amp|lt|gt|quot|apos|equals);)/gi,
       (match, hex, decimal, name) => {
         if (name) return namedEntities[name.toLowerCase()];
         const codePoint = Number.parseInt(hex ?? decimal, hex ? 16 : 10);
@@ -991,6 +999,7 @@ function findDisallowedUrlCandidate(candidate, documentPath, allowedBuildPaths) 
   if (reviewedNonHttpDiscoveryReferences.has(rawReference)) return null;
   if (candidate.css && rawReference.includes('\\')) return rawReference;
   const reference = rawReference.replaceAll('\\', '/');
+  if (hasRawAuthorityUserinfoDelimiter(reference)) return rawReference;
   if (reference.startsWith('//')) return rawReference;
   if (specialNetworkScheme.test(reference) && !/^(?:https?|wss?|ftp):\/\//i.test(reference)) {
     return rawReference;
