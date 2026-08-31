@@ -16,6 +16,7 @@
     "apps:generate": "node scripts/app-registry.mjs generate",
     "apps:check": "node scripts/app-registry.mjs check",
     "test:registry": "node --test tests/app-registry.test.mjs",
+    "test:public-discovery": "node --test tests/public-discovery.test.mjs",
     "test:developers": "node --test tests/developers-pages.test.mjs"
   },
   "dependencies": {
@@ -24,6 +25,7 @@
     "@docusaurus/preset-classic": "3.10.2",
     "@mdx-js/react": "^3.0.0",
     "clsx": "^2.0.0",
+    "parse5": "7.3.0",
     "prism-react-renderer": "^2.3.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"

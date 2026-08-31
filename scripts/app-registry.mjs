@@ -6,7 +6,8 @@ import { mkdir, readdir, readFile, writeFile } from 'node:fs/promises';
 import { isIP } from 'node:net';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { promisify } from 'node:util';
+import { isDeepStrictEqual, promisify } from 'node:util';
+import { parseFragment } from 'parse5';
 
 const moduleDirectory = path.dirname(fileURLToPath(import.meta.url));
 const repositoryRoot = path.resolve(moduleDirectory, '..');
@@ -70,6 +71,7 @@ const reservedDnsSuffixes = [
   'internal',
   'home',
   'lan',
+  'localdomain',
   'corp',
 ];
 
@@ -95,6 +97,31 @@ const requiredOperations = [
   ['POST', '/connectives/v1/grants/{grant_id}/vibe-candidates'],
   ['GET', '/connectives/v1/grants/{grant_id}/candidates/{candidate_id}'],
 ];
+const requiredOperationSecurity = [
+  undefined,
+  [{ PartnerOAuth: ['link-sessions:create'] }],
+  [{ PartnerOAuth: ['link-sessions:create'] }],
+  [{ PartnerOAuth: ['vibe-candidates:write'] }],
+  [{ PartnerOAuth: ['candidate-status:read'] }],
+];
+const documentationServer = {
+  url: 'https://example.invalid',
+  description: 'Non-callable documentation preview. No network endpoint exists.',
+};
+const documentationTokenUrl = 'https://example.invalid/oauth/token';
+const reviewedPartnerOAuth = {
+  type: 'oauth2',
+  flows: {
+    clientCredentials: {
+      tokenUrl: documentationTokenUrl,
+      scopes: {
+        'candidate-status:read': 'Read candidate status within an approved grant.',
+        'link-sessions:create': 'Create and poll application consent sessions.',
+        'vibe-candidates:write': 'Submit Vibe candidates within an approved grant.',
+      },
+    },
+  },
+};
 const standardHttpMethods = new Set([
   'get', 'put', 'post', 'delete', 'options', 'head', 'patch', 'trace',
 ]);
@@ -127,12 +154,202 @@ const expectedArtifactPaths = {
     '/api/connectives/v1/luma-vibe-candidate.json',
   ],
 };
-const nonRoutablePreviewServer = {
-  url: 'https://example.invalid',
-  description: 'Non-callable documentation preview. No network endpoint exists.',
+const reviewedSnapshotUriValues = {
+  openapi: [
+    { path: ['servers', 0, 'url'], value: 'https://example.invalid' },
+    {
+      path: ['components', 'securitySchemes', 'PartnerOAuth', 'flows', 'clientCredentials', 'tokenUrl'],
+      value: 'https://example.invalid/oauth/token',
+    },
+    {
+      path: ['paths', '/oauth/token', 'post', 'requestBody', 'content', 'application/x-www-form-urlencoded', 'schema', 'properties', 'client_assertion_type', 'const'],
+      value: 'urn:ietf:params:oauth:client-assertion-type:jwt-bearer',
+    },
+    { path: ['paths', '/connectives/v1/link-sessions', 'post', 'security', 0, 'PartnerOAuth', 0], value: 'link-sessions:create' },
+    { path: ['paths', '/connectives/v1/link-sessions/{session_id}', 'get', 'security', 0, 'PartnerOAuth', 0], value: 'link-sessions:create' },
+    { path: ['paths', '/connectives/v1/grants/{grant_id}/vibe-candidates', 'post', 'security', 0, 'PartnerOAuth', 0], value: 'vibe-candidates:write' },
+    { path: ['paths', '/connectives/v1/grants/{grant_id}/candidates/{candidate_id}', 'get', 'security', 0, 'PartnerOAuth', 0], value: 'candidate-status:read' },
+    { path: ['components', 'schemas', 'PartnerTokenClaims', 'oneOf', 0, 'properties', 'iss', 'const'], value: 'urn:mains-world:connectives:sandbox' },
+    { path: ['components', 'schemas', 'PartnerTokenClaims', 'oneOf', 1, 'properties', 'iss', 'const'], value: 'urn:mains-world:connectives:production' },
+    { path: ['components', 'schemas', 'PartnerTokenClaims', 'properties', 'iss', 'enum', 0], value: 'urn:mains-world:connectives:sandbox' },
+    { path: ['components', 'schemas', 'PartnerTokenClaims', 'properties', 'iss', 'enum', 1], value: 'urn:mains-world:connectives:production' },
+    { path: ['components', 'schemas', 'PartnerTokenClaims', 'properties', 'aud', 'const'], value: 'urn:mains-world:connectives:v1' },
+    {
+      path: ['components', 'schemas', 'PartnerTokenClaims', 'properties', 'scope', 'pattern'],
+      value: '^(?:candidate-status:read|link-sessions:create|vibe-candidates:write)(?:[\\t-\\r ]+(?:candidate-status:read|link-sessions:create|vibe-candidates:write))*$',
+    },
+    {
+      path: ['components', 'schemas', 'ConnectedGroupMembership', 'properties', 'display', 'properties', 'icon_url', 'pattern'],
+      value: '^https://',
+    },
+    {
+      path: ['components', 'schemas', 'ExternalCrewHostRef', 'properties', 'icon_url_snapshot', 'pattern'],
+      value: '^https://',
+    },
+    { path: ['components', 'schemas', 'LinkSessionCreateRequest', 'properties', 'requested_scopes', 'items', 'enum', 0], value: 'candidate-status:read' },
+    { path: ['components', 'schemas', 'LinkSessionCreateRequest', 'properties', 'requested_scopes', 'items', 'enum', 1], value: 'vibe-candidates:write' },
+  ],
+  discord_example: [
+    { path: ['display', 'icon_url'], value: 'https://cdn.example.test/icon.png' },
+  ],
+  luma_example: [],
 };
-const nonRoutablePreviewTokenUrl = 'https://example.invalid/oauth/token';
-const legacyPreviewTokenUrl = '/oauth/token';
+const reviewedSnapshotUnsafeKeys = {
+  openapi: [
+    {
+      path: ['components', 'securitySchemes', 'PartnerOAuth', 'flows', 'clientCredentials', 'scopes', 'candidate-status:read'],
+      value: 'candidate-status:read',
+    },
+    {
+      path: ['components', 'securitySchemes', 'PartnerOAuth', 'flows', 'clientCredentials', 'scopes', 'link-sessions:create'],
+      value: 'link-sessions:create',
+    },
+    {
+      path: ['components', 'securitySchemes', 'PartnerOAuth', 'flows', 'clientCredentials', 'scopes', 'vibe-candidates:write'],
+      value: 'vibe-candidates:write',
+    },
+    {
+      path: ['components', 'schemas', 'TokenResponse', 'properties', 'access_token'],
+      value: 'access_token',
+    },
+  ],
+  discord_example: [],
+  luma_example: [],
+};
+const reviewedSyntheticSnapshots = {
+  discord_example: {
+    schema_version: '2026-08-29',
+    profile: 'community.membership.v1',
+    provider: 'discord',
+    group_key: 'group_opaque_example',
+    connection_grant_id: 'grant_opaque_example',
+    display: {
+      name: 'Pixel Potion Creative',
+      icon_url: 'https://cdn.example.test/icon.png',
+    },
+    authority: 'owner',
+    observed_at: '2026-08-29T18:00:00.000Z',
+    valid_until: '2026-08-29T18:10:00.000Z',
+    state: 'active',
+  },
+  luma_example: {
+    schema_version: '2026-08-29',
+    resource_family: 'vibe',
+    profile: 'calendar.event.v1',
+    external_id: 'example-luma-event',
+    revision: 1,
+    payload: {
+      label: 'Sunset VHS Swap',
+      world: 'land',
+      latitude: 0,
+      longitude: 0,
+      place_name: 'Example Hall',
+      place_address: '100 Example Avenue, Example City',
+      scheduled_for: '2026-09-12T22:00:00.000Z',
+      scheduled_until: '2026-09-13T01:00:00.000Z',
+    },
+  },
+};
+const discoverySubjectSignal = /\b(?:api(?:\s+(?:calls?|endpoints?))?|oauth(?:\s+(?:registration|endpoints?))?|credentials?|endpoints?|requests?|servers?|base\s+urls?|mcp(?:\s+endpoints?)?)\b/i;
+const discoveryAvailabilitySignal = /\b(?:access|accept(?:s|ed|ing)?|activ(?:e|ated|ation)|availab(?:le|ility)|call(?:s|ed|able|ing)?|deploy(?:ed|ment)?|enabled?|exists?|live|made|none|not\s+applicable|obtainable|online|operational|process(?:ed|es|ing)?|reachable|ready|required|requests?|registration|resolv(?:e|es|ed|ing)|respond(?:s|ed|ing)?|runtime|support(?:s|ed|ing)?|traffic|use|usable|using|working)\b/i;
+const approvedGenericDiscoveryStatements = new Set([
+  'no public api is callable today',
+  'the api is not live',
+  'the oauth endpoint cannot be called',
+  'the server does not accept requests',
+  'the mcp endpoint does not support requests',
+  'neither the api nor the mcp endpoint is available',
+  'no credentials are required',
+  'the credentials are not required',
+  'requests are not accepted by the api',
+  'no requests are accepted by the mcp endpoint',
+  'api none',
+  'api not applicable',
+]);
+const networkPathReference = /(^|[^A-Za-z0-9+.\-:/])\/\/(?:(?:[A-Za-z0-9._~!$&'()*+,;=:]|%[0-9A-Fa-f]{2})*@)?(?:\[[^\]\s]+\]|(?:[A-Za-z0-9._~!$&'()*+,;=-]|%[0-9A-Fa-f]{2})*)(?::\d*)?(?:\/[^\s"'<>?#]*)*(?:\?[^\s"'<>#]*)?(?:#[^\s"'<>]*)?(?=$|[\s"'<>])/im;
+const absoluteUriToken = /[A-Za-z][A-Za-z0-9+.-]*:(?=\S)/i;
+const absoluteAuthorityReference = /\b[A-Za-z][A-Za-z0-9+.-]*:\/\/[^\s"'<>`)}\]]+/ig;
+const specialNetworkScheme = /^(?:https?|wss?|ftp):/i;
+const anyUriScheme = /^[A-Za-z][A-Za-z0-9+.-]*:/;
+const markdownInlineTarget = /!?\[[^\]]*\]\(\s*(?:<([^>]+)>|([^\s)]+))/ig;
+const markdownReferenceTarget = /^[ \t]*\[[^\]]+\]:[ \t]*(?:<([^>]+)>|([^\s]+))/igm;
+const cssUrlTarget = /url\(\s*(?:"([^"]*)"|'([^']*)'|([^\s)'"<>]+))/ig;
+const cssImportTarget = /@import\s+(?:"([^"]*)"|'([^']*)')/ig;
+const reviewedUrlMetaIdentifiers = new Set([
+  'og:url',
+  'og:image', 'og:image:url', 'og:image:secure_url',
+  'og:video', 'og:video:url', 'og:video:secure_url',
+  'og:audio', 'og:audio:url', 'og:audio:secure_url',
+  'twitter:url', 'twitter:image', 'twitter:image:src', 'twitter:player', 'twitter:player:stream',
+  'msapplication-tileimage',
+  'url', 'image', 'thumbnailurl', 'contenturl', 'embedurl', 'sameas', 'logo',
+]);
+const htmlUrlAttributes = new Set([
+  'href', 'src', 'action', 'poster', 'formaction', 'data', 'cite', 'manifest',
+  'background', 'longdesc', 'xlink:href',
+]);
+const svgCssUrlAttributes = new Set([
+  'fill', 'stroke', 'filter', 'clip-path', 'mask', 'marker', 'marker-start',
+  'marker-mid', 'marker-end', 'cursor',
+]);
+const reviewedGeneratedAssetTags = [
+  {
+    pattern: /<link rel=stylesheet href=\/assets\/css\/styles\.[a-f0-9]{8}\.css \/>/g,
+    replacement: '<link rel=stylesheet href=/assets/css/styles.<digest>.css />',
+  },
+  {
+    pattern: /<script src=\/assets\/js\/runtime~main\.[a-f0-9]{8}\.js defer><\/script>/g,
+    replacement: '<script src=/assets/js/runtime~main.<digest>.js defer></script>',
+  },
+  {
+    pattern: /<script src=\/assets\/js\/main\.[a-f0-9]{8}\.js defer><\/script>/g,
+    replacement: '<script src=/assets/js/main.<digest>.js defer></script>',
+  },
+];
+const publicAppNamePattern = /^[A-Za-z0-9]+(?:[ .+'-][A-Za-z0-9]+)*$/;
+const reviewedSemanticDocumentFingerprints = new Map([
+  ['api-source', '2effce187b4da6780f2c7f88ddbf5953d61b1ddbec94ceb753f855f06c1d40ad'],
+  ['api-rendered', '297965261dd5671649df9c2a061fbc82e95282cd07c4b23ca369245b5c3e0393'],
+  ['llms', 'e43269607b667b81416d023ee2d4fd7f1c9fa1eebc3fe38c10a5386bffb166b5'],
+  ['llms-full', 'adc4283a21a2cf26d2e529717f457a9c203ab2bbf8d428314260ed8a38e67a78'],
+]);
+const reviewedPublicMachinePaths = new Set([
+  '/api/connectives/v1/openapi.json',
+  '/api/connectives/v1/discord-connected-group-membership.json',
+  '/api/connectives/v1/luma-vibe-candidate.json',
+]);
+const reviewedProductReferences = new Set([
+  'https://mains.world',
+  'https://mains.world/space',
+  'https://mains.world/how-it-works/safety-alerts',
+]);
+const reviewedNonHttpDiscoveryReferences = new Set([
+  'mailto:hello@mains.world',
+]);
+const reviewedReservedDiscoveryReferences = new Map([
+  ['docs/developers/api.md', new Set([
+    'https://example.invalid',
+  ])],
+  ['build/developers/api/index.html', new Set([
+    'https://example.invalid',
+  ])],
+  ['build/api/connectives/v1/openapi.json', new Set([
+    'https://example.invalid',
+    'https://example.invalid/oauth/token',
+  ])],
+  ['build/api/connectives/v1/discord-connected-group-membership.json', new Set([
+    'https://cdn.example.test/icon.png',
+  ])],
+]);
+const reviewedPublicSitePaths = new Set([
+  '/', '/connect-your-app', '/contribute', '/country-availability', '/developers',
+  '/developers/api', '/developers/apps', '/developers/submit-an-app', '/faq', '/glossary',
+  '/how-it-works/crews', '/how-it-works/getting-started', '/how-it-works/moments',
+  '/how-it-works/safety-alerts', '/how-it-works/signing-in', '/how-it-works/the-worlds',
+  '/how-it-works/vibes', '/manifesto', '/privacy', '/roadmap', '/terms', '/the-economy',
+  '/what-is-ship', '/whitepaper', '/your-main-on-chain', '/apps.json', '/llms.txt',
+  '/llms-full.txt', '/robots.txt', '/sitemap.xml',
+]);
 
 function isSafeCatalogSourcePath(value) {
   return (
@@ -217,26 +434,44 @@ function isValidDnsHostname(hostname) {
   );
 }
 
+function normalizedHostname(hostname) {
+  return hostname.toLowerCase().replace(/^\[|\]$/g, '').replace(/\.$/, '');
+}
+
+function isNonPublicHostname(hostname) {
+  const normalized = normalizedHostname(hostname);
+  return (
+    !normalized ||
+    Boolean(isIP(normalized)) ||
+    !normalized.includes('.') ||
+    !isValidDnsHostname(normalized) ||
+    reservedDnsSuffixes.some(
+      (suffix) => normalized === suffix || normalized.endsWith(`.${suffix}`),
+    )
+  );
+}
+
+function isCanonicalRawNetworkUrl(value, schemes) {
+  if (typeof value !== 'string' || value.includes('\\')) return false;
+  const authority = value.match(new RegExp(`^(?:${schemes}):\\/\\/([^/?#]+)(?:[/?#]|$)`, 'i'))?.[1];
+  return Boolean(authority && !authority.includes('@'));
+}
+
+function isCanonicalRawHttpsUrl(value) {
+  return isCanonicalRawNetworkUrl(value, 'https');
+}
+
 function isPublicHttpsUrl(value) {
+  if (!isCanonicalRawHttpsUrl(value)) return false;
   try {
     const url = new URL(value);
-    const parsedHostname = url.hostname.toLowerCase().replace(/^\[|\]$/g, '');
-    const hostname = parsedHostname.endsWith('.') ? parsedHostname.slice(0, -1) : parsedHostname;
+    const hostname = normalizedHostname(url.hostname);
 
     if (url.protocol !== 'https:' || url.username || url.password || !hostname) {
       return false;
     }
 
-    if (isIP(hostname) || !hostname.includes('.') || !isValidDnsHostname(hostname)) {
-      return false;
-    }
-    if (
-      reservedDnsSuffixes.some(
-        (suffix) => hostname === suffix || hostname.endsWith(`.${suffix}`),
-      )
-    ) {
-      return false;
-    }
+    if (isNonPublicHostname(url.hostname)) return false;
 
     return true;
   } catch {
@@ -290,6 +525,10 @@ export async function validateRegistry(records) {
 
     if (!validator(record)) {
       throw new Error(`Schema validation failed: ${formatSchemaErrors(validator.errors)}`);
+    }
+
+    if (!isApprovedPublicAppName(record.name)) {
+      throw new Error(`Public app name must use reviewed plain text without availability claims: ${record.name}.`);
     }
 
     const nonPublicUrl = findNonPublicUrl(record);
@@ -367,31 +606,45 @@ function compactSnapshotKey(key) {
   return key.replace(/[^a-z0-9]/gi, '').toLowerCase();
 }
 
-function isUnsafeSnapshotUrl(value) {
-  try {
-    const url = new URL(value);
-    const hostname = url.hostname.toLowerCase().replace(/^\[|\]$/g, '');
-    if (url.protocol !== 'https:' && url.protocol !== 'http:') return false;
-    if (hostname === 'cdn.example.test') return false;
-    return (
-      isIP(hostname) !== 0 ||
-      hostname === 'localhost' ||
-      ['internal', 'local', 'lan', 'corp', 'home', 'onion', 'invalid', 'arpa', 'alt'].some(
-        (suffix) => hostname === suffix || hostname.endsWith(`.${suffix}`),
-      ) ||
-      hostname.endsWith('.test')
-    );
-  } catch {
-    return false;
-  }
-}
-
 function pathEquals(actual, expected) {
   return actual.length === expected.length && actual.every((segment, index) => segment === expected[index]);
 }
 
-function pathIsAllowed(pathSegments, allowedPaths) {
-  return allowedPaths.some((allowedPath) => pathEquals(pathSegments, allowedPath));
+function isReviewedSnapshotUriValue(pathSegments, value, reviewedUriValues) {
+  return reviewedUriValues.some(
+    (reviewed) => reviewed.value === value && pathEquals(pathSegments, reviewed.path),
+  );
+}
+
+function findUnsafeSnapshotKey(key, location, pathSegments, reviewedUnsafeKeys) {
+  const keyPath = [...pathSegments, key];
+  if (isReviewedSnapshotUriValue(keyPath, key, reviewedUnsafeKeys)) return null;
+  if (snapshotCredentialPatterns.some((pattern) => pattern.test(key))) {
+    return `${location}.${key} contains concrete credential material in an object key`;
+  }
+  const compactKey = compactSnapshotKey(key);
+  if (
+    snapshotConcreteCredentialKeys.has(compactKey) ||
+    snapshotConcreteUrlKeys.has(compactKey) ||
+    snapshotConcreteIdentifierKeys.has(compactKey)
+  ) {
+    return `${location}.${key} contains an unsafe object key`;
+  }
+  if (networkPathReference.test(key)) {
+    return `${location}.${key} contains a protocol-relative network-path URI in an object key`;
+  }
+  if (containsAbsoluteUriToken(key)) {
+    return `${location}.${key} contains an unreviewed absolute URI in an object key`;
+  }
+  return null;
+}
+
+function containsAbsoluteUriToken(value) {
+  const withoutIsoTimestamps = value.replace(
+    /\b\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?Z\b/g,
+    '',
+  );
+  return absoluteUriToken.test(withoutIsoTimestamps);
 }
 
 function findUnsafeSnapshotValue(
@@ -399,7 +652,8 @@ function findUnsafeSnapshotValue(
   location = '$',
   parentKey = '',
   pathSegments = [],
-  allowedUnsafeUrlPaths = [],
+  reviewedUriValues = [],
+  reviewedUnsafeKeys = [],
 ) {
   if (typeof value === 'string') {
     if (snapshotCredentialPatterns.some((pattern) => pattern.test(value))) {
@@ -414,8 +668,11 @@ function findUnsafeSnapshotValue(
     if (snapshotConcreteIdentifierKeys.has(compactSnapshotKey(parentKey)) && value.length >= 6) {
       return `${location} contains a concrete provider identifier`;
     }
-    if (!pathIsAllowed(pathSegments, allowedUnsafeUrlPaths) && isUnsafeSnapshotUrl(value)) {
-      return `${location} contains a private or internal URL`;
+    if (networkPathReference.test(value)) {
+      return `${location} contains a protocol-relative network-path URI reference`;
+    }
+    if (containsAbsoluteUriToken(value) && !isReviewedSnapshotUriValue(pathSegments, value, reviewedUriValues)) {
+      return `${location} contains an unreviewed absolute URI`;
     }
     return null;
   }
@@ -427,7 +684,8 @@ function findUnsafeSnapshotValue(
         `${location}[${index}]`,
         parentKey,
         [...pathSegments, index],
-        allowedUnsafeUrlPaths,
+        reviewedUriValues,
+        reviewedUnsafeKeys,
       );
       if (found) return found;
     }
@@ -436,6 +694,8 @@ function findUnsafeSnapshotValue(
 
   if (value && typeof value === 'object') {
     for (const [key, child] of Object.entries(value)) {
+      const unsafeKey = findUnsafeSnapshotKey(key, location, pathSegments, reviewedUnsafeKeys);
+      if (unsafeKey) return unsafeKey;
       if (key === 'x-mains-world-callable' && child === true) {
         return `${location}.${key} makes the snapshot callable`;
       }
@@ -444,12 +704,523 @@ function findUnsafeSnapshotValue(
         `${location}.${key}`,
         key,
         [...pathSegments, key],
-        allowedUnsafeUrlPaths,
+        reviewedUriValues,
+        reviewedUnsafeKeys,
       );
       if (found) return found;
     }
   }
   return null;
+}
+
+function findDisallowedOpenApiInstanceData(value, location = '$') {
+  if (Array.isArray(value)) {
+    for (const [index, item] of value.entries()) {
+      const found = findDisallowedOpenApiInstanceData(item, `${location}[${index}]`);
+      if (found) return found;
+    }
+    return null;
+  }
+  if (!value || typeof value !== 'object') return null;
+
+  for (const [key, child] of Object.entries(value)) {
+    if (key === 'example' || key === 'examples' || key === 'default') return `${location}.${key}`;
+    const found = findDisallowedOpenApiInstanceData(child, `${location}.${key}`);
+    if (found) return found;
+  }
+  return null;
+}
+
+function findDisallowedOpenApiReference(value, location = '$') {
+  if (Array.isArray(value)) {
+    for (const [index, item] of value.entries()) {
+      const found = findDisallowedOpenApiReference(item, `${location}[${index}]`);
+      if (found) return found;
+    }
+    return null;
+  }
+  if (!value || typeof value !== 'object') return null;
+
+  for (const [key, child] of Object.entries(value)) {
+    if (key === '$ref' && (typeof child !== 'string' || !child.startsWith('#/'))) {
+      return `${location}.${key}`;
+    }
+    const found = findDisallowedOpenApiReference(child, `${location}.${key}`);
+    if (found) return found;
+  }
+  return null;
+}
+
+function normalizeDiscoveryStatement(statement) {
+  const normalized = statement
+    .normalize('NFKC')
+    .replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F\u007F-\u009F\u200B-\u200F\u202A-\u202E\u2060-\u206F\uFEFF]/g, '')
+    .replace(/&#(?:39|x27);|&apos;|[\u2018\u2019']/gi, '')
+    .replace(/&[A-Za-z0-9#]+;/g, ' ')
+    .replace(/[^A-Za-z0-9/]+/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim()
+    .toLowerCase();
+  return normalized.replace(
+    /\b(?:[a-z]\s+)+[a-z]\b/g,
+    (letterRun) => letterRun.replaceAll(' ', ''),
+  );
+}
+
+function hasUnapprovedDiscoveryAvailability(statement, approvedStatements) {
+  const normalized = normalizeDiscoveryStatement(statement);
+  if (approvedStatements.has(normalized)) return false;
+  return discoverySubjectSignal.test(normalized) && discoveryAvailabilitySignal.test(normalized);
+}
+
+function isApprovedPublicAppName(name) {
+  return (
+    publicAppNamePattern.test(name) &&
+    !hasUnapprovedDiscoveryAvailability(name, new Set())
+  );
+}
+
+function semanticDocumentKind(documentPath) {
+  if (/(?:^|\/)docs\/developers\/api\.md$/.test(documentPath)) return 'api-source';
+  if (/(?:^|\/)build\/developers\/api\/index\.html$/.test(documentPath)) return 'api-rendered';
+  if (/(?:^|\/)(?:(?:static|build)\/)?llms-full\.txt$/.test(documentPath)) return 'llms-full';
+  if (/(?:^|\/)(?:(?:static|build)\/)?llms\.txt$/.test(documentPath)) return 'llms';
+  return null;
+}
+
+function semanticVisibleText(content, { lineBreaksAsStatements = false } = {}) {
+  let visible = decodedDiscoveryContent(content);
+  visible = visible
+    .replace(/<(script|style)\b[^>]*>[\s\S]*?<\/\1>/gi, ' ')
+    .replace(/<\/?(?:article|aside|div|footer|h[1-6]|header|li|main|nav|ol|p|section|table|tbody|thead|tr|ul)\b[^>]*>/gi, '.')
+    .replace(/<\/?(?:td|th)\b[^>]*>/gi, ' ')
+    .replace(/<[^>]*>/g, '');
+  if (lineBreaksAsStatements) visible = visible.replace(/\r?\n+/g, '.');
+  return visible
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+function semanticDocumentFingerprint(documentPath, content) {
+  const kind = semanticDocumentKind(documentPath);
+  if (!kind) return null;
+  if (kind === 'api-rendered') {
+    let reviewedContent = content;
+    for (const { pattern, replacement } of reviewedGeneratedAssetTags) {
+      if ([...reviewedContent.matchAll(pattern)].length !== 1) return '';
+      reviewedContent = reviewedContent.replace(pattern, replacement);
+    }
+    return createHash('sha256').update(reviewedContent).digest('hex');
+  }
+  if (kind === 'llms-full') {
+    const markers = [...content.matchAll(/^## SPACE catalog \((\d{4}-\d{2}-\d{2})\)$/gm)];
+    if (markers.length !== 1) return '';
+    const marker = markers[0];
+    const rows = content.slice(marker.index + marker[0].length).trim().split(/\r?\n/).filter(Boolean);
+    const rowPattern = /^- (.+) \([a-z0-9](?:[a-z0-9-]*[a-z0-9])?\): (?:Connected|First Party|Coming Soon|Proposed|Wishlist); API: (?:None|Not Applicable); SPACE: [a-z]+(?:, [a-z]+)*; https:\/\/\S+$/;
+    if (
+      rows.length === 0 ||
+      rows.some((row) => {
+        const match = row.match(rowPattern);
+        return (
+          !match ||
+          !isApprovedPublicAppName(match[1])
+        );
+      })
+    ) return '';
+    const reviewedPrefix = `${content.slice(0, marker.index)}## SPACE catalog`;
+    return createHash('sha256').update(reviewedPrefix).digest('hex');
+  }
+  return createHash('sha256').update(content).digest('hex');
+}
+
+function validateDiscoveryDocumentMap(documents) {
+  if (!documents || typeof documents !== 'object' || Array.isArray(documents)) {
+    throw new TypeError('Discovery documents must be an object keyed by path.');
+  }
+  for (const [documentPath, content] of Object.entries(documents)) {
+    if (typeof content !== 'string') {
+      throw new TypeError(`Discovery document ${documentPath} must contain text.`);
+    }
+  }
+}
+
+function normalizedDiscoveryPath(reference) {
+  let pathname = new URL(reference, 'https://mainsworld.org').pathname.normalize('NFKC');
+  for (let attempts = 0; attempts < 4; attempts += 1) {
+    try {
+      const decoded = decodeURIComponent(pathname);
+      if (decoded === pathname) break;
+      pathname = decoded;
+    } catch {
+      break;
+    }
+  }
+  return pathname;
+}
+
+function canonicalPublicPath(pathname) {
+  return pathname !== '/' ? pathname.replace(/\/+$/, '') : pathname;
+}
+
+function decodedDiscoveryContent(content) {
+  const namedEntities = {
+    colon: ':', sol: '/', quest: '?', num: '#', amp: '&',
+    lt: '<', gt: '>', quot: '"', apos: "'", equals: '=',
+  };
+  let decoded = content.normalize('NFKC');
+  for (let pass = 0; pass < 4; pass += 1) {
+    const previous = decoded;
+    const next = decoded.replace(
+      /&(?:#x([0-9a-f]+);?|#(\d+);?|(colon|sol|quest|num|amp|lt|gt|quot|apos|equals);)/gi,
+      (match, hex, decimal, name) => {
+        if (name) return namedEntities[name.toLowerCase()];
+        const codePoint = Number.parseInt(hex ?? decimal, hex ? 16 : 10);
+        try {
+          return String.fromCodePoint(codePoint);
+        } catch {
+          return match;
+        }
+      },
+    );
+    decoded = next.normalize('NFKC');
+    if (decoded === previous) break;
+  }
+  return decoded.replace(
+    /[\u0000-\u0008\u000B\u000C\u000E-\u001F\u007F-\u009F\u200B-\u200F\u202A-\u202E\u2060-\u206F\uFEFF]/g,
+    '',
+  );
+}
+
+function isPrivateDiscoveryHostname(hostname) {
+  const normalized = normalizedHostname(hostname);
+  const labels = normalized.split('.');
+  return (
+    isNonPublicHostname(hostname) ||
+    normalized === 'supabase.co' ||
+    normalized.endsWith('.supabase.co') ||
+    normalized === 'workers.dev' ||
+    normalized.endsWith('.workers.dev') ||
+    labels.some((label) => ['internal', 'private', 'staging', 'dev'].includes(label))
+  );
+}
+
+function isReviewedLocalPreview(documentPath, reference) {
+  return (
+    reference === 'http://localhost:3000' &&
+    /(?:^|\/)(?:docs\/contribute\.md|build\/contribute\/index\.html)$/.test(documentPath)
+  );
+}
+
+function normalizedPublicPaths(publicPaths) {
+  if (!publicPaths || typeof publicPaths[Symbol.iterator] !== 'function') {
+    throw new TypeError('Public discovery paths must be iterable.');
+  }
+  return new Set([...publicPaths].map((publicPath) => canonicalPublicPath(normalizedDiscoveryPath(publicPath))));
+}
+
+function isAllowedRootReference(reference, allowedBuildPaths) {
+  let target;
+  try {
+    target = new URL(reference, 'https://mainsworld.org');
+  } catch {
+    return false;
+  }
+  if (target.search) return false;
+  const pathname = canonicalPublicPath(normalizedDiscoveryPath(target.href));
+  if (reviewedPublicMachinePaths.has(pathname)) return !target.hash;
+  if (target.hash) {
+    return new Set([
+      '/contribute#what-belongs-here',
+      '/the-economy#reading-the-community-numbers',
+    ]).has(`${pathname}${target.hash}`);
+  }
+  if (reviewedPublicSitePaths.has(pathname)) return true;
+  return (
+    (pathname.startsWith('/assets/') || pathname.startsWith('/img/')) &&
+    allowedBuildPaths.has(pathname)
+  );
+}
+
+function firstCapturedValue(match, start = 1) {
+  return match.slice(start).find((value) => value !== undefined);
+}
+
+function trimBareUrlPunctuation(reference) {
+  return reference.trim().replace(/[`.,;!?]+$/g, '');
+}
+
+function parseSrcsetCandidates(value) {
+  const candidates = [];
+  let position = 0;
+  while (position < value.length) {
+    while (position < value.length && /[\s,]/.test(value[position])) position += 1;
+    if (position >= value.length) break;
+
+    const start = position;
+    while (position < value.length && !/\s/.test(value[position])) position += 1;
+    let candidate = value.slice(start, position);
+    const trailingCommas = candidate.match(/,+$/)?.[0].length ?? 0;
+    if (trailingCommas) candidate = candidate.slice(0, -trailingCommas);
+    if (candidate) candidates.push(candidate);
+    if (trailingCommas) continue;
+
+    let parentheses = 0;
+    while (position < value.length) {
+      const character = value[position];
+      if (character === '(') parentheses += 1;
+      if (character === ')' && parentheses > 0) parentheses -= 1;
+      position += 1;
+      if (character === ',' && parentheses === 0) break;
+    }
+  }
+  return candidates;
+}
+
+function collectJsonUrlCandidates(value, candidates) {
+  if (Array.isArray(value)) {
+    for (const item of value) collectJsonUrlCandidates(item, candidates);
+    return;
+  }
+  if (value && typeof value === 'object') {
+    for (const child of Object.values(value)) collectJsonUrlCandidates(child, candidates);
+    return;
+  }
+  if (
+    typeof value === 'string' &&
+    /^(?:[/#]|(?:https?|wss?|ftp|javascript|data):)/i.test(value.trim())
+  ) {
+    candidates.push({ reference: value.trim(), bare: false });
+  }
+}
+
+function normalizedHtmlAttributeName(attribute) {
+  return `${attribute.prefix ? `${attribute.prefix}:` : ''}${attribute.name}`.toLowerCase();
+}
+
+function htmlAttributeValue(node, name) {
+  const attribute = node.attrs?.find(
+    (candidate) => normalizedHtmlAttributeName(candidate) === name,
+  );
+  return attribute?.value;
+}
+
+function htmlNodeText(node) {
+  if (node.nodeName === '#text') return node.value ?? '';
+  return (node.childNodes ?? []).map(htmlNodeText).join('');
+}
+
+function collectCssUrlCandidates(css, candidates) {
+  if (
+    css.includes('\\') ||
+    /(?:^|[^-])(?:-webkit-)?image-set\s*\(|\b(?:cross-fade|element)\s*\(/i.test(css)
+  ) {
+    candidates.push({ reference: 'unsupported CSS URL syntax', bare: false, invalid: true });
+    return;
+  }
+  for (const match of css.matchAll(cssUrlTarget)) {
+    candidates.push({ reference: firstCapturedValue(match), bare: false, css: true });
+  }
+  for (const match of css.matchAll(cssImportTarget)) {
+    candidates.push({ reference: firstCapturedValue(match), bare: false, css: true });
+  }
+}
+
+function collectHtmlUrlCandidates(content, candidates, depth = 0) {
+  const fragment = parseFragment(content);
+
+  function visit(node) {
+    const tagName = node.tagName?.toLowerCase();
+    if (tagName) {
+      for (const attribute of node.attrs ?? []) {
+        const name = normalizedHtmlAttributeName(attribute);
+        if (htmlUrlAttributes.has(name)) {
+          candidates.push({ reference: attribute.value, bare: false });
+        } else if (name === 'srcset' || name === 'imagesrcset') {
+          for (const reference of parseSrcsetCandidates(attribute.value)) {
+            candidates.push({ reference, bare: false });
+          }
+        } else if (name === 'ping') {
+          for (const reference of attribute.value.trim().split(/\s+/).filter(Boolean)) {
+            candidates.push({ reference, bare: false });
+          }
+        } else if (name === 'style' || svgCssUrlAttributes.has(name)) {
+          collectCssUrlCandidates(attribute.value, candidates);
+        }
+      }
+
+      if (tagName === 'style') collectCssUrlCandidates(htmlNodeText(node), candidates);
+
+      if (tagName === 'meta') {
+        const identifiers = ['property', 'name', 'itemprop']
+          .map((name) => htmlAttributeValue(node, name)?.toLowerCase())
+          .filter(Boolean);
+        const contentValue = htmlAttributeValue(node, 'content');
+        if (
+          contentValue !== undefined &&
+          identifiers.some((identifier) => reviewedUrlMetaIdentifiers.has(identifier))
+        ) {
+          candidates.push({ reference: contentValue, bare: false });
+        }
+        if (htmlAttributeValue(node, 'http-equiv')?.toLowerCase() === 'refresh') {
+          const refreshTarget = contentValue?.match(/(?:^|;)\s*url\s*=\s*(.+)$/i)?.[1];
+          if (refreshTarget) candidates.push({ reference: refreshTarget.trim(), bare: false });
+        }
+      }
+
+      const srcdoc = htmlAttributeValue(node, 'srcdoc');
+      if (srcdoc !== undefined) {
+        if (depth >= 4) {
+          candidates.push({ reference: 'unsupported nested srcdoc', bare: false, invalid: true });
+        } else {
+          collectHtmlUrlCandidates(decodedDiscoveryContent(srcdoc), candidates, depth + 1);
+        }
+      }
+    }
+
+    for (const child of node.childNodes ?? []) visit(child);
+  }
+
+  visit(fragment);
+}
+
+function discoveryUrlCandidates(content) {
+  const decodedContent = decodedDiscoveryContent(content);
+  const candidates = [];
+
+  collectHtmlUrlCandidates(content, candidates);
+  if (decodedContent !== content) collectHtmlUrlCandidates(decodedContent, candidates);
+  for (const pattern of [markdownInlineTarget, markdownReferenceTarget]) {
+    for (const match of decodedContent.matchAll(pattern)) {
+      candidates.push({
+        reference: firstCapturedValue(match),
+        bare: false,
+      });
+    }
+  }
+
+  const trimmedContent = decodedContent.trim();
+  if (trimmedContent.startsWith('{') || trimmedContent.startsWith('[')) {
+    try {
+      collectJsonUrlCandidates(JSON.parse(trimmedContent), candidates);
+    } catch {
+      // Non-JSON documents are handled by their native URL grammars.
+    }
+  }
+
+  for (const match of decodedContent.matchAll(absoluteAuthorityReference)) {
+    candidates.push({ reference: match[0], bare: true });
+  }
+  return candidates;
+}
+
+function isReviewedReservedDiscoveryReference(documentPath, reference) {
+  for (const [reviewedPath, references] of reviewedReservedDiscoveryReferences) {
+    if (
+      (documentPath === reviewedPath || documentPath.endsWith(`/${reviewedPath}`)) &&
+      references.has(reference)
+    ) return true;
+  }
+  return false;
+}
+
+function findDisallowedUrlCandidate(candidate, documentPath, allowedBuildPaths) {
+  if (candidate.invalid) return candidate.reference;
+  const rawReference = candidate.bare
+    ? trimBareUrlPunctuation(candidate.reference)
+    : candidate.reference.trim();
+  if (!rawReference || rawReference.startsWith('#')) return null;
+  if (reviewedNonHttpDiscoveryReferences.has(rawReference)) return null;
+  if (isReviewedLocalPreview(documentPath, rawReference)) return null;
+  if (candidate.css && rawReference.includes('\\')) return rawReference;
+  if (rawReference.includes('\\')) return rawReference;
+  if (rawReference.startsWith('//')) return rawReference;
+  if (specialNetworkScheme.test(rawReference) && !isCanonicalRawNetworkUrl(rawReference, 'https?|wss?|ftp')) {
+    return rawReference;
+  }
+  if (!anyUriScheme.test(rawReference)) {
+    if (rawReference.startsWith('/')) {
+      return isAllowedRootReference(rawReference, allowedBuildPaths) ? null : rawReference;
+    }
+    return rawReference;
+  }
+  if (!isCanonicalRawNetworkUrl(rawReference, 'https?')) return rawReference;
+
+  let target;
+  try {
+    target = new URL(rawReference);
+  } catch {
+    return rawReference;
+  }
+  if (target.username || target.password) return rawReference;
+  const hostname = normalizedHostname(target.hostname);
+  const pathname = normalizedDiscoveryPath(target.href);
+  if (isReviewedReservedDiscoveryReference(documentPath, rawReference)) return null;
+  if (isPrivateDiscoveryHostname(target.hostname)) {
+    return isReviewedLocalPreview(documentPath, rawReference) ? null : rawReference;
+  }
+  if (hostname === 'mains.world') {
+    return reviewedProductReferences.has(rawReference) ? null : rawReference;
+  }
+  if (hostname.endsWith('.mains.world') || hostname.endsWith('.mainsworld.org')) return rawReference;
+  if (hostname === 'mainsworld.org') {
+    if (
+      target.protocol !== 'https:' || target.username || target.password || target.port ||
+      !isAllowedRootReference(`${pathname}${target.search}${target.hash}`, allowedBuildPaths)
+    ) return rawReference;
+  }
+  return null;
+}
+
+function findDisallowedDiscoveryReference(content, documentPath, allowedBuildPaths) {
+  for (const candidate of discoveryUrlCandidates(content)) {
+    const disallowed = findDisallowedUrlCandidate(candidate, documentPath, allowedBuildPaths);
+    if (disallowed) return disallowed;
+  }
+  return null;
+}
+
+export function validateNetworkPathReferences(documents) {
+  validateDiscoveryDocumentMap(documents);
+  for (const [documentPath, content] of Object.entries(documents)) {
+    if (networkPathReference.test(decodedDiscoveryContent(content))) {
+      throw new Error(`Discovery document ${documentPath} contains a protocol-relative network-path URI reference.`);
+    }
+  }
+  return documents;
+}
+
+export function validateDiscoveryReferences(documents, { publicPaths = [] } = {}) {
+  validateNetworkPathReferences(documents);
+  const allowedBuildPaths = normalizedPublicPaths(publicPaths);
+  for (const [documentPath, content] of Object.entries(documents)) {
+    const disallowedReference = findDisallowedDiscoveryReference(content, documentPath, allowedBuildPaths);
+    if (disallowedReference) {
+      throw new Error(`Discovery document ${documentPath} contains an unreviewed private target or route: ${disallowedReference}`);
+    }
+  }
+  return documents;
+}
+
+export function validateDiscoveryDocuments(documents, options) {
+  validateDiscoveryReferences(documents, options);
+  for (const [documentPath, content] of Object.entries(documents)) {
+    const documentKind = semanticDocumentKind(documentPath);
+    if (documentKind) {
+      const expectedFingerprint = reviewedSemanticDocumentFingerprints.get(documentKind);
+      if (semanticDocumentFingerprint(documentPath, content) !== expectedFingerprint) {
+        throw new Error(`Discovery document ${documentPath} contains an unreviewed availability claim or semantic change.`);
+      }
+      continue;
+    }
+    const contradictoryClaim = semanticVisibleText(content, { lineBreaksAsStatements: true })
+      .split(/[.!?;]+/)
+      .find((statement) => hasUnapprovedDiscoveryAvailability(statement, approvedGenericDiscoveryStatements));
+    if (contradictoryClaim) {
+      throw new Error(`Discovery document ${documentPath} contains a contradictory availability claim: ${normalizeDiscoveryStatement(contradictoryClaim)}.`);
+    }
+  }
+  return documents;
 }
 
 function contractOperations(contract) {
@@ -460,27 +1231,14 @@ function contractOperations(contract) {
   );
 }
 
-function hasExactNonRoutablePreviewServer(servers) {
-  return (
-    Array.isArray(servers) &&
-    servers.length === 1 &&
-    servers[0] &&
-    typeof servers[0] === 'object' &&
-    !Array.isArray(servers[0]) &&
-    Object.keys(servers[0]).sort().join(',') === 'description,url' &&
-    servers[0].url === nonRoutablePreviewServer.url &&
-    servers[0].description === nonRoutablePreviewServer.description
-  );
+function hasExactDocumentationServer(servers) {
+  return JSON.stringify(servers) === JSON.stringify([documentationServer]);
 }
 
-function openApiTokenUrl(contract) {
-  return contract.components?.securitySchemes?.PartnerOAuth?.flows?.clientCredentials?.tokenUrl;
-}
-
-function findDisallowedServerPath(value, pathSegments = [], allowRootServer = false) {
+function findDisallowedServerPath(value, pathSegments = []) {
   if (Array.isArray(value)) {
     for (const [index, item] of value.entries()) {
-      const found = findDisallowedServerPath(item, [...pathSegments, index], allowRootServer);
+      const found = findDisallowedServerPath(item, [...pathSegments, index]);
       if (found) return found;
     }
     return null;
@@ -490,10 +1248,8 @@ function findDisallowedServerPath(value, pathSegments = [], allowRootServer = fa
 
   for (const [key, child] of Object.entries(value)) {
     const childPath = [...pathSegments, key];
-    if (key === 'servers' && !(allowRootServer && pathEquals(childPath, ['servers']))) {
-      return childPath;
-    }
-    const found = findDisallowedServerPath(child, childPath, allowRootServer);
+    if (key === 'servers' && !pathEquals(childPath, ['servers'])) return childPath;
+    const found = findDisallowedServerPath(child, childPath);
     if (found) return found;
   }
   return null;
@@ -547,37 +1303,49 @@ export async function validatePlatform(platform, root = repositoryRoot) {
     const digest = createHash('sha256').update(bytes).digest('hex');
     if (digest !== artifact.sha256) throw new Error(`Snapshot hash mismatch for ${name}.`);
     const snapshot = JSON.parse(bytes.toString('utf8'));
-    const isExactNonRoutableTransition =
-      name === 'openapi' &&
-      hasExactNonRoutablePreviewServer(snapshot.servers) &&
-      openApiTokenUrl(snapshot) === nonRoutablePreviewTokenUrl;
-    const allowedUnsafeUrlPaths = isExactNonRoutableTransition
-      ? [
-        ['servers', 0, 'url'],
-        ['components', 'securitySchemes', 'PartnerOAuth', 'flows', 'clientCredentials', 'tokenUrl'],
-      ]
-      : [];
-    const unsafeValue = findUnsafeSnapshotValue(snapshot, '$', '', [], allowedUnsafeUrlPaths);
+    const unsafeValue = findUnsafeSnapshotValue(
+      snapshot,
+      '$',
+      '',
+      [],
+      reviewedSnapshotUriValues[name] ?? [],
+      reviewedSnapshotUnsafeKeys[name] ?? [],
+    );
     if (unsafeValue) throw new Error(`Snapshot ${name} is unsafe: ${unsafeValue}.`);
     snapshots[name] = snapshot;
   }
 
+  for (const [name, reviewedSnapshot] of Object.entries(reviewedSyntheticSnapshots)) {
+    if (!isDeepStrictEqual(snapshots[name], reviewedSnapshot)) {
+      throw new Error(`Snapshot ${name} must match the reviewed synthetic fixture.`);
+    }
+  }
+
   const openapi = snapshots.openapi;
-  const hasRootServer = 'servers' in openapi;
-  const isExactNonRoutableTransition =
-    hasExactNonRoutablePreviewServer(openapi.servers) &&
-    openApiTokenUrl(openapi) === nonRoutablePreviewTokenUrl;
-  if (openapi['x-mains-world-status'] !== 'non-deployed-starter') {
-    throw new Error('OpenAPI snapshot must remain non-deployed.');
+  if (
+    !hasExactDocumentationServer(openapi.servers) ||
+    openapi['x-mains-world-status'] !== 'non-deployed-starter'
+  ) {
+    throw new Error('OpenAPI snapshot must use exactly the reserved non-routable documentation server.');
+  }
+  if (findDisallowedServerPath(openapi)) {
+    throw new Error('OpenAPI snapshot must not override the reserved documentation server.');
   }
   if (
-    (hasRootServer && !isExactNonRoutableTransition) ||
-    (!hasRootServer && openApiTokenUrl(openapi) !== legacyPreviewTokenUrl)
+    Object.hasOwn(openapi, 'webhooks') ||
+    Object.hasOwn(openapi, 'security') ||
+    Object.hasOwn(openapi.components ?? {}, 'pathItems') ||
+    Object.hasOwn(openapi.components ?? {}, 'callbacks')
   ) {
-    throw new Error('OpenAPI snapshot has an unsafe server or OAuth token URL.');
+    throw new Error('OpenAPI snapshot must not contain root security, webhooks, component callbacks, or component Path Items.');
   }
-  if (findDisallowedServerPath(openapi, [], isExactNonRoutableTransition)) {
-    throw new Error('OpenAPI snapshot must not define server overrides outside its approved root location.');
+  const externalReference = findDisallowedOpenApiReference(openapi);
+  if (externalReference) {
+    throw new Error(`OpenAPI snapshot references must remain local at ${externalReference}.`);
+  }
+  const inlineInstanceData = findDisallowedOpenApiInstanceData(openapi);
+  if (inlineInstanceData) {
+    throw new Error(`OpenAPI snapshot must not contain inline instance data at ${inlineInstanceData}.`);
   }
   const parsedOperations = contractOperations(openapi);
   const expectedPaths = [...new Set(requiredOperations.map(([, operationPath]) => operationPath))].sort();
@@ -586,15 +1354,22 @@ export async function validatePlatform(platform, root = repositoryRoot) {
     JSON.stringify(actualPaths) !== JSON.stringify(expectedPaths) ||
     JSON.stringify(parsedOperations.map(({ method, path: operationPath }) => [method, operationPath])) !==
     JSON.stringify(requiredOperations) ||
-    parsedOperations.some(({ operation }) => operation['x-mains-world-callable'] !== false)
+    parsedOperations.some(({ operation }) => operation['x-mains-world-callable'] !== false) ||
+    parsedOperations.some(({ operation }) => Object.hasOwn(operation, 'callbacks')) ||
+    parsedOperations.some(({ operation }, index) => {
+      const requiredSecurity = requiredOperationSecurity[index];
+      return requiredSecurity === undefined
+        ? Object.hasOwn(operation, 'security')
+        : !isDeepStrictEqual(operation.security, requiredSecurity);
+    })
   ) {
     throw new Error('OpenAPI snapshot does not match non-callable platform operations.');
   }
-  const contractScopes = Object.keys(
-    openapi.components?.securitySchemes?.PartnerOAuth?.flows?.clientCredentials?.scopes ?? {},
-  );
-  if (JSON.stringify(contractScopes.sort()) !== JSON.stringify([...requiredScopes].sort())) {
-    throw new Error('OpenAPI snapshot scopes do not match platform metadata.');
+  if (
+    Object.keys(openapi.components?.securitySchemes ?? {}).length !== 1 ||
+    !isDeepStrictEqual(openapi.components?.securitySchemes?.PartnerOAuth, reviewedPartnerOAuth)
+  ) {
+    throw new Error('OpenAPI snapshot must define exactly the complete reviewed PartnerOAuth security scheme.');
   }
   return structuredClone(platform);
 }
@@ -816,6 +1591,22 @@ async function runCli() {
   const { mode, root: requestedRoot, base, allowMaintenance } = parseCliArguments(process.argv.slice(2));
   const root = requestedRoot ?? repositoryRoot;
   const rendered = await renderAll(root);
+  const discoveryDocuments = mode === 'generate'
+    ? {
+      'static/llms.txt': await readFile(path.join(root, 'static', 'llms.txt'), 'utf8'),
+      'static/llms-full.txt': rendered[generatedOutputs.llmsFull],
+    }
+    : Object.fromEntries(await Promise.all(
+      ['static/llms.txt', 'static/llms-full.txt'].map(async (relativePath) => [
+        relativePath,
+        await readFile(path.join(root, relativePath), 'utf8'),
+      ]),
+    ));
+  discoveryDocuments['docs/developers/api.md'] = await readFile(
+    path.join(root, 'docs', 'developers', 'api.md'),
+    'utf8',
+  );
+  validateDiscoveryDocuments(discoveryDocuments);
   if (mode === 'generate') {
     await Promise.all(Object.entries(rendered).map(async ([relativePath, content]) => {
       const outputPath = path.join(root, relativePath);

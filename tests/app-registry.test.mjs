@@ -51,6 +51,10 @@ const expectedOperations = [
   ['POST', '/connectives/v1/grants/{grant_id}/vibe-candidates'],
   ['GET', '/connectives/v1/grants/{grant_id}/candidates/{candidate_id}'],
 ];
+const documentationServer = {
+  url: 'https://example.invalid',
+  description: 'Non-callable documentation preview. No network endpoint exists.',
+};
 
 const validApp = {
   schema_version: 'v1',
@@ -110,17 +114,25 @@ async function withCatalog(catalog, run) {
 }
 
 async function withMutatedOpenApi(mutate, run) {
+  return withMutatedSnapshot('openapi', mutate, run);
+}
+
+async function withMutatedSnapshot(name, mutate, run) {
   const root = await mkdtemp(path.join(tmpdir(), 'mainsworld-platform-'));
   try {
     await cp(path.join(repositoryRoot, 'registry'), path.join(root, 'registry'), { recursive: true });
     await cp(path.join(repositoryRoot, 'static', 'api'), path.join(root, 'static', 'api'), { recursive: true });
     const platform = await loadPlatform(root);
-    const openapiPath = path.join(root, 'static', 'api', 'connectives', 'v1', 'openapi.json');
-    const contract = JSON.parse(await readFile(openapiPath, 'utf8'));
-    mutate(contract);
-    await writeFile(openapiPath, `${JSON.stringify(contract, null, 2)}\n`);
-    platform.artifacts.openapi.sha256 = createHash('sha256')
-      .update(await readFile(openapiPath))
+    const snapshotPath = path.join(
+      root,
+      'static',
+      platform.artifacts[name].public_snapshot_path.replace(/^\//, ''),
+    );
+    const snapshot = JSON.parse(await readFile(snapshotPath, 'utf8'));
+    mutate(snapshot);
+    await writeFile(snapshotPath, `${JSON.stringify(snapshot, null, 2)}\n`);
+    platform.artifacts[name].sha256 = createHash('sha256')
+      .update(await readFile(snapshotPath))
       .digest('hex');
     await run(platform, root);
   } finally {
@@ -187,7 +199,9 @@ async function withProposedCheckout(mutate, run) {
     ]);
     await Promise.all([
       cp(path.join(repositoryRoot, 'docs', 'developers', 'apps.md'), path.join(root, 'docs', 'developers', 'apps.md')),
+      cp(path.join(repositoryRoot, 'docs', 'developers', 'api.md'), path.join(root, 'docs', 'developers', 'api.md')),
       cp(path.join(repositoryRoot, 'static', 'apps.json'), path.join(root, 'static', 'apps.json')),
+      cp(path.join(repositoryRoot, 'static', 'llms.txt'), path.join(root, 'static', 'llms.txt')),
       cp(path.join(repositoryRoot, 'static', 'llms-full.txt'), path.join(root, 'static', 'llms-full.txt')),
       writeFile(path.join(root, 'scripts', 'app-registry.mjs'), 'process.exit(0);\n'),
       writeFile(path.join(root, 'package.json'), JSON.stringify({ scripts: { 'apps:check': 'exit 0' } }, null, 2)),
@@ -603,6 +617,36 @@ test('rejects HTTP and malformed public URLs', async () => {
   }
 });
 
+for (const value of [
+  'https://@www.iana.org/',
+  'https://:@www.iana.org/',
+]) {
+  test(`rejects an empty raw userinfo authority delimiter in a registry URL: ${value}`, async () => {
+    const app = { ...clone(validApp), website: value };
+    await assert.rejects(validateRegistry([app]), /public HTTPS URL/i);
+  });
+}
+
+for (const name of [
+  'A&#80;I is live',
+  'A**P**I is live',
+  'A<b>P</b>I is live',
+  'A.P.I is live',
+  'A P I is live',
+  'A-P-I is live',
+  'AΡI is live',
+  'AРI is live',
+  'M.C.P is live',
+  'OAuth server is live',
+  'Endpoint is available',
+  'Credentials are obtainable',
+]) {
+  test(`rejects a non-plain public app name: ${name}`, async () => {
+    const app = { ...clone(validApp), name };
+    await assert.rejects(validateRegistry([app]), /plain|public app name|name/i);
+  });
+}
+
 test('rejects credentialed, raw-IP, and special-use public URLs', async () => {
   for (const [name, field, value] of [
     ['credentials', 'website', 'https://user:secret@www.iana.org/'],
@@ -805,7 +849,7 @@ test('validates the pinned non-callable preview platform and its exact snapshot 
   const platform = await loadPlatform(repositoryRoot);
   assert.equal(platform.callable, false);
   assert.equal(platform.source_repository_access, 'restricted');
-  assert.equal(platform.source_revision, '3da5ce3fb92dc63910a6b59dabd817f15097d35f');
+  assert.equal(platform.source_revision, 'ce8df37f26781edf6901344e0905c0f6286f3eb6');
   assert.deepEqual(platform.scopes, [
     'candidate-status:read',
     'link-sessions:create',
@@ -820,167 +864,140 @@ test('validates the pinned non-callable preview platform and its exact snapshot 
       ]),
     ),
     {
-      openapi: ['openapi/connectives-v1.json', '/api/connectives/v1/openapi.json', 'ca58c4f5166f09ff59fa5009a172d29536bc6c3b2552ad239b7193fce061380e'],
+      openapi: ['openapi/connectives-v1.json', '/api/connectives/v1/openapi.json', 'fea7f6ec8a49625b5baab5c681a675edc06ba59a6207a149893011862fe8c4f4'],
       discord_example: ['openapi/examples/discord-connected-group-membership.json', '/api/connectives/v1/discord-connected-group-membership.json', '4043b1ef41de71271352145f6a8fbb3e400e3d34e9d09d070d6b5791e78ca1db'],
       luma_example: ['openapi/examples/luma-vibe-candidate.json', '/api/connectives/v1/luma-vibe-candidate.json', '499d12a33183ce6fed9335fa3021d79ba2da30205d1d80d2e8c4017d3f6358a9'],
     },
   );
-  const contract = JSON.parse(
+  const openapi = JSON.parse(
     await readFile(path.join(repositoryRoot, 'static', 'api', 'connectives', 'v1', 'openapi.json'), 'utf8'),
   );
-  assert.equal('servers' in contract, false);
-  assert.equal(contract.components.securitySchemes.PartnerOAuth.flows.clientCredentials.tokenUrl, '/oauth/token');
+  assert.deepEqual(openapi.servers, [documentationServer]);
+  assert.equal(
+    openapi.components.securitySchemes.PartnerOAuth.flows.clientCredentials.tokenUrl,
+    'https://example.invalid/oauth/token',
+  );
   await assert.doesNotReject(validatePlatform(platform, repositoryRoot));
 });
 
-test('allows only the exact non-routable OpenAPI transition while preserving the legacy preview', async () => {
-  const exactServer = {
-    url: 'https://example.invalid',
-    description: 'Non-callable documentation preview. No network endpoint exists.',
-  };
-  const setTransition = (contract) => {
-    contract.servers = [structuredClone(exactServer)];
-    contract.components.securitySchemes.PartnerOAuth.flows.clientCredentials.tokenUrl =
-      'https://example.invalid/oauth/token';
-  };
-
-  await withMutatedOpenApi(setTransition, async (platform, root) => {
-    await assert.doesNotReject(validatePlatform(platform, root));
-  });
-
-  const invalidTransitions = [
-    ['server without the matching token URL', (contract) => {
-      contract.servers = [structuredClone(exactServer)];
-    }],
-    ['token URL without the matching server', (contract) => {
-      contract.components.securitySchemes.PartnerOAuth.flows.clientCredentials.tokenUrl =
-        'https://example.invalid/oauth/token';
-    }],
-    ['an empty server list', (contract) => {
-      setTransition(contract);
-      contract.servers = [];
-    }],
-    ['an extra server', (contract) => {
-      setTransition(contract);
-      contract.servers.push(structuredClone(exactServer));
-    }],
-    ['a different invalid server URL', (contract) => {
-      setTransition(contract);
-      contract.servers[0].url = 'https://preview.example.invalid';
-    }],
-    ['a routable server URL', (contract) => {
-      setTransition(contract);
-      contract.servers[0].url = 'https://api.mains.world';
-    }],
-    ['a private server URL', (contract) => {
-      setTransition(contract);
-      contract.servers[0].url = 'https://127.0.0.1';
-    }],
-    ['a wrong server description', (contract) => {
-      setTransition(contract);
-      contract.servers[0].description = 'Preview endpoint.';
-    }],
-    ['a wrong transition token URL', (contract) => {
-      setTransition(contract);
-      contract.components.securitySchemes.PartnerOAuth.flows.clientCredentials.tokenUrl =
-        'https://example.invalid/token';
-    }],
-    ['a path-level server override', (contract) => {
-      setTransition(contract);
-      contract.paths['/oauth/token'].servers = [];
-    }],
-    ['an operation-level server override', (contract) => {
-      setTransition(contract);
-      contract.paths['/oauth/token'].post.servers = [];
-    }],
-    ['an otherwise allowed URL outside the approved locations', (contract) => {
-      setTransition(contract);
-      contract.documentation_url = 'https://example.invalid';
-    }],
+test('rejects non-reserved, missing, empty, extra, and nested OpenAPI servers even when the snapshot hash is recomputed', async () => {
+  const mutations = [
+    (contract) => { contract.servers = [{ url: 'https://mainsworld.org' }]; },
+    (contract) => { contract.components.securitySchemes.PartnerOAuth.flows.clientCredentials.tokenUrl = '/oauth/token'; },
+    (contract) => { contract.servers = []; },
+    (contract) => { delete contract.servers; },
+    (contract) => { contract.servers.push(structuredClone(documentationServer)); },
+    (contract) => { contract.paths['/oauth/token'].servers = [documentationServer]; },
+    (contract) => { contract.paths['/oauth/token'].post.servers = [documentationServer]; },
+    (contract) => {
+      contract.components.pathItems = { callbackTarget: { servers: [documentationServer] } };
+    },
+    (contract) => {
+      contract.paths['/oauth/token'].post.callbacks = {
+        candidateReady: { '{$request.body#/callback}': { post: { servers: [documentationServer] } } },
+      };
+    },
   ];
 
-  for (const [label, mutate] of invalidTransitions) {
+  for (const mutate of mutations) {
     await withMutatedOpenApi(mutate, async (platform, root) => {
-      await assert.rejects(validatePlatform(platform, root), /server|token|unsafe|url|operation|path/i, label);
+      await assert.rejects(validatePlatform(platform, root), /server|token|OpenAPI/i);
     });
   }
 });
 
-test('rejects reserved URL location collisions and nested server overrides', async () => {
-  const exactServer = {
-    url: 'https://example.invalid',
-    description: 'Non-callable documentation preview. No network endpoint exists.',
-  };
-  const setTransition = (contract) => {
-    contract.servers = [structuredClone(exactServer)];
-    contract.components.securitySchemes.PartnerOAuth.flows.clientCredentials.tokenUrl =
-      'https://example.invalid/oauth/token';
-  };
-
-  for (const [label, mutate] of [
-    ['a dotted token path key', (contract) => {
-      setTransition(contract);
+test('allows reserved non-routable URLs only at their structural OpenAPI paths', async () => {
+  for (const mutate of [
+    (contract) => {
+      contract['servers[0].url'] = 'https://example.invalid';
+    },
+    (contract) => {
       contract['components.securitySchemes.PartnerOAuth.flows.clientCredentials.tokenUrl'] =
         'https://example.invalid/oauth/token';
-    }],
-    ['a bracketed server path key', (contract) => {
-      setTransition(contract);
-      contract['servers[0].url'] = 'https://example.invalid';
-    }],
-    ['a legacy component Path Item server', (contract) => {
-      contract.components.pathItems = {
-        callbackTarget: { servers: [{ url: 'https://api.mains.world' }] },
-      };
-    }],
-    ['a transition callback Path Item server', (contract) => {
-      setTransition(contract);
-      contract.paths['/oauth/token'].post.callbacks = {
-        candidateReady: {
-          '{$request.body#/callback}': {
-            post: { servers: [{ url: 'https://api.mains.world' }] },
-          },
-        },
-      };
-    }],
+    },
+    (contract) => {
+      contract.documentation_url = 'https://example.invalid';
+    },
   ]) {
     await withMutatedOpenApi(mutate, async (platform, root) => {
-      await assert.rejects(validatePlatform(platform, root), /server|unsafe|url/i, label);
+      await assert.rejects(validatePlatform(platform, root), /server|token|unsafe|url/i);
     });
   }
 });
 
-test('rejects direct path and operation servers in legacy and transition modes', async () => {
-  const exactServer = {
-    url: 'https://example.invalid',
-    description: 'Non-callable documentation preview. No network endpoint exists.',
-  };
-  const setTransition = (contract) => {
-    contract.servers = [structuredClone(exactServer)];
-    contract.components.securitySchemes.PartnerOAuth.flows.clientCredentials.tokenUrl =
-      'https://example.invalid/oauth/token';
-  };
-
-  for (const [label, mutate] of [
-    ['a legacy path server', (contract) => {
-      contract.paths['/oauth/token'].servers = [];
-    }],
-    ['a legacy operation server', (contract) => {
-      contract.paths['/oauth/token'].post.servers = [];
-    }],
-    ['a transition path server', (contract) => {
-      setTransition(contract);
-      contract.paths['/oauth/token'].servers = [];
-    }],
-    ['a transition operation server', (contract) => {
-      setTransition(contract);
-      contract.paths['/oauth/token'].post.servers = [];
-    }],
-  ]) {
-    await withMutatedOpenApi(mutate, async (platform, root) => {
-      await assert.rejects(validatePlatform(platform, root), /server|override/i, label);
-    });
-  }
+test('rejects an HTTP URL embedded anywhere in a snapshot string after recomputing its hash', async () => {
+  await withMutatedOpenApi((contract) => {
+    contract.info.description = 'Docs: https://api.mains.world';
+  }, async (platform, root) => {
+    await assert.rejects(validatePlatform(platform, root), /OpenAPI|HTTP|URL|unsafe/i);
+  });
 });
+
+for (const scheme of ['wss', 'ws', 'ftp']) {
+  test(`rejects an unreviewed ${scheme} network URI after recomputing the OpenAPI hash`, async () => {
+    await withMutatedOpenApi((contract) => {
+      contract.externalDocs = { url: `${scheme}://api.mains.world/connectives/v1` };
+    }, async (platform, root) => {
+      await assert.rejects(validatePlatform(platform, root), /OpenAPI|URI|URL|unsafe/i);
+    });
+  });
+}
+
+for (const [name, value, mutate] of [
+  ['scheme without slashes in a URL field', 'https:api.mains.world/oauth/token', (contract, uri) => {
+    contract.externalDocs = { url: uri };
+  }],
+  ['scheme with one slash in an ordinary string', 'https:/api.mains.world/oauth/token', (contract, uri) => {
+    contract.info.description = `Endpoint: ${uri}`;
+  }],
+  ['data URI in a URL field', 'data:text/plain,public-api', (contract, uri) => {
+    contract.externalDocs = { url: uri };
+  }],
+  ['JavaScript URI in an ordinary string', 'javascript:alert(1)', (contract, uri) => {
+    contract.info.description = `Example ${uri}`;
+  }],
+  ['other absolute URI scheme in an ordinary string', 'mailto:api@mains.world', (contract, uri) => {
+    contract.info.description = `Contact ${uri}`;
+  }],
+]) {
+  test(`rejects ${name} after recomputing the OpenAPI hash`, async () => {
+    await withMutatedOpenApi((contract) => mutate(contract, value), async (platform, root) => {
+      await assert.rejects(validatePlatform(platform, root), /OpenAPI|URI|URL|unsafe/i);
+    });
+  });
+}
+
+for (const [name, value] of [
+  ['bracket-delimited malformed HTTPS URI', 'Docs=[https:api.mains.world/oauth/token]'],
+  ['comma-delimited malformed HTTPS URI', 'Docs,https:api.mains.world/oauth/token'],
+  ['equals-delimited JavaScript URI', 'Endpoint=javascript:alert(1)'],
+  ['brace-delimited data URI', 'Docs {data:text/plain,public-api}'],
+  ['em-dash-delimited malformed HTTPS URI', 'Docs—https:api.mains.world/oauth/token'],
+]) {
+  test(`rejects ${name} anywhere in a snapshot string after recomputing its hash`, async () => {
+    await withMutatedOpenApi((contract) => {
+      contract.info.description = value;
+    }, async (platform, root) => {
+      await assert.rejects(validatePlatform(platform, root), /OpenAPI|URI|URL|unsafe/i);
+    });
+  });
+}
+
+for (const [name, key, child] of [
+  ['JavaScript URI object key', 'javascript:alert(1)', 'metadata'],
+  ['data URI object key', 'data:text/plain,public-api', 'metadata'],
+  ['malformed HTTPS object key', 'https:api.mains.world/oauth/token', 'metadata'],
+  ['network-path object key', '//evil.example/endpoint', 'metadata'],
+  ['credential-like object key', 'client_secret', {}],
+]) {
+  test(`rejects ${name} after recomputing the OpenAPI hash`, async () => {
+    await withMutatedOpenApi((contract) => {
+      contract.info[key] = child;
+    }, async (platform, root) => {
+      await assert.rejects(validatePlatform(platform, root), /OpenAPI|URI|URL|credential|unsafe/i);
+    });
+  });
+}
 
 test('rejects altered snapshot bytes and contract deployment claims', async () => {
   const root = await mkdtemp(path.join(tmpdir(), 'mainsworld-platform-'));
@@ -1059,6 +1076,252 @@ test('rejects an undeclared standard HTTP operation even when it is marked non-c
     await assert.rejects(validatePlatform(platform, root), /operation|path/i);
   });
 });
+
+for (const [name, mutate] of [
+  ['an extra OAuth security scheme', (contract) => {
+    contract.components.securitySchemes.SecondOAuth = { type: 'oauth2', flows: {} };
+  }],
+  ['an OAuth authorization URL', (contract) => {
+    contract.components.securitySchemes.PartnerOAuth.flows.authorizationCode = {
+      authorizationUrl: 'https://auth.example.com/authorize',
+      tokenUrl: 'https://auth.example.com/token',
+      scopes: {},
+    };
+  }],
+  ['an external reference URL', (contract) => {
+    contract.components.schemas.ExternalRecord = { $ref: 'https://schemas.example.com/record.json' };
+  }],
+  ['an external documentation URL', (contract) => {
+    contract.externalDocs = { url: 'https://docs.example.com/connectives' };
+  }],
+  ['a Main\'s World API URL in an ordinary OpenAPI field', (contract) => {
+    contract.info.termsOfService = 'https://api.mains.world';
+  }],
+]) {
+  test(`rejects ${name} even when the OpenAPI hash is recomputed`, async () => {
+    await withMutatedOpenApi(mutate, async (platform, root) => {
+      await assert.rejects(validatePlatform(platform, root), /OpenAPI|security|HTTP|URL|unsafe/i);
+    });
+  });
+}
+
+for (const [name, mutate] of [
+  ['a protocol-relative external reference', (contract) => {
+    contract.components.schemas.ExternalRecord = { $ref: '//mains.world/api/record.json' };
+  }],
+  ['a relative external reference', (contract) => {
+    contract.components.schemas.ExternalRecord = { $ref: 'schemas/record.json' };
+  }],
+  ['a protocol-relative OAuth authorization URL', (contract) => {
+    contract.components.securitySchemes.PartnerOAuth.flows.clientCredentials.authorizationUrl =
+      '//mains.world/api/authorize';
+  }],
+  ['a protocol-relative reviewed OAuth token URL', (contract) => {
+    contract.components.securitySchemes.PartnerOAuth.flows.clientCredentials.tokenUrl =
+      '//mains.world/api/token';
+  }],
+  ['a single-label protocol-relative host', (contract) => {
+    contract.info.authorizationUrl = '//localhost/authorize';
+  }],
+  ['a protocol-relative authority with userinfo', (contract) => {
+    contract.info.authorizationUrl = '//user@example.com/api';
+  }],
+  ['a protocol-relative percent-encoded reg-name', (contract) => {
+    contract.info.authorizationUrl = '//%65xample.com/api';
+  }],
+  ['a protocol-relative authority with empty userinfo', (contract) => {
+    contract.info.authorizationUrl = '//@example.com/api';
+  }],
+  ['a protocol-relative authority with an empty port', (contract) => {
+    contract.info.authorizationUrl = '//example.com:/api';
+  }],
+  ['a protocol-relative reference with an empty host', (contract) => {
+    contract.info.authorizationUrl = '///path';
+  }],
+]) {
+  test(`rejects ${name} even when the OpenAPI hash is recomputed`, async () => {
+    await withMutatedOpenApi(mutate, async (platform, root) => {
+      await assert.rejects(validatePlatform(platform, root), /OpenAPI|reference|security|URL|unsafe/i);
+    });
+  });
+}
+
+for (const [name, mutate] of [
+  ['OAuth scheme type', (scheme) => { scheme.type = 'openIdConnect'; }],
+  ['OAuth scheme shape', (scheme) => { scheme.description = 'Partner access.'; }],
+  ['OAuth scope description', (scheme) => {
+    scheme.flows.clientCredentials.scopes['candidate-status:read'] = 'Read any candidate status.';
+  }],
+]) {
+  test(`pins the complete reviewed PartnerOAuth ${name}`, async () => {
+    await withMutatedOpenApi((contract) => {
+      mutate(contract.components.securitySchemes.PartnerOAuth);
+    }, async (platform, root) => {
+      await assert.rejects(validatePlatform(platform, root), /PartnerOAuth|security|reviewed/i);
+    });
+  });
+}
+
+for (const [name, mutate] of [
+  ['root-level security', (contract) => {
+    contract.security = [{ PartnerOAuth: ['link-sessions:create'] }];
+  }],
+  ['component callbacks', (contract) => {
+    contract.components.callbacks = {
+      candidateReady: {
+        '{$request.body#/callback}': {
+          post: { responses: { 200: { description: 'Accepted.' } } },
+        },
+      },
+    };
+  }],
+]) {
+  test(`rejects ${name} without relying on callability or servers`, async () => {
+    await withMutatedOpenApi(mutate, async (platform, root) => {
+      await assert.rejects(validatePlatform(platform, root), /OpenAPI|operation|security|callback/i);
+    });
+  });
+}
+
+test('hidden-surface diagnostics name every prohibited OpenAPI surface', async () => {
+  for (const mutate of [
+    (contract) => { contract.security = []; },
+    (contract) => { contract.webhooks = {}; },
+    (contract) => { contract.components.callbacks = {}; },
+    (contract) => { contract.components.pathItems = {}; },
+  ]) {
+    await withMutatedOpenApi(mutate, async (platform, root) => {
+      await assert.rejects(
+        validatePlatform(platform, root),
+        /root security.*webhooks.*component callbacks.*component Path Items/i,
+      );
+    });
+  }
+});
+
+for (const [name, operationPath, method, security] of [
+  ['logical token operation', '/oauth/token', 'post', []],
+  ['link-session creation', '/connectives/v1/link-sessions', 'post', []],
+  ['link-session polling', '/connectives/v1/link-sessions/{session_id}', 'get', []],
+  ['candidate submission', '/connectives/v1/grants/{grant_id}/vibe-candidates', 'post', []],
+  ['candidate status', '/connectives/v1/grants/{grant_id}/candidates/{candidate_id}', 'get', []],
+]) {
+  test(`pins the reviewed security requirement for ${name}`, async () => {
+    await withMutatedOpenApi((contract) => {
+      contract.paths[operationPath][method].security = security;
+    }, async (platform, root) => {
+      await assert.rejects(validatePlatform(platform, root), /OpenAPI|operation|security/i);
+    });
+  });
+}
+
+for (const [name, mutate] of [
+  ['OpenAPI webhooks', (contract) => {
+    contract.webhooks = {
+      candidateReady: { post: { responses: { 200: { description: 'Accepted.' } } } },
+    };
+  }],
+  ['operation callbacks', (contract) => {
+    contract.paths['/connectives/v1/link-sessions'].post.callbacks = {
+      candidateReady: { '{$request.body#/callback}': { post: { responses: { 200: { description: 'Accepted.' } } } } },
+    };
+  }],
+  ['component Path Items', (contract) => {
+    contract.components.pathItems = {
+      HiddenItem: { post: { responses: { 200: { description: 'Accepted.' } } } },
+    };
+  }],
+]) {
+  test(`rejects hidden operation inventory in ${name} without relying on callability or servers`, async () => {
+    await withMutatedOpenApi(mutate, async (platform, root) => {
+      await assert.rejects(validatePlatform(platform, root), /OpenAPI|operation|webhook|callback|Path Item/i);
+    });
+  });
+}
+
+for (const [name, snapshotName, mutate] of [
+  ['Discord provider', 'discord_example', (snapshot) => { snapshot.provider = 'discord-production'; }],
+  ['Discord group identifier', 'discord_example', (snapshot) => { snapshot.group_key = 'real-group-123'; }],
+  ['Discord grant identifier', 'discord_example', (snapshot) => { snapshot.connection_grant_id = 'real-grant-123'; }],
+  ['Discord CDN fixture', 'discord_example', (snapshot) => { snapshot.display.icon_url = 'https://cdn.example.com/icon.png'; }],
+  ['Discord observation timestamp', 'discord_example', (snapshot) => { snapshot.observed_at = '2026-08-30T18:00:00.000Z'; }],
+  ['Discord expiry timestamp', 'discord_example', (snapshot) => { snapshot.valid_until = '2026-08-30T18:10:00.000Z'; }],
+  ['Luma event identifier', 'luma_example', (snapshot) => { snapshot.external_id = 'real-luma-event'; }],
+  ['Luma event label', 'luma_example', (snapshot) => { snapshot.payload.label = 'Private gathering'; }],
+  ['Luma coordinates', 'luma_example', (snapshot) => {
+    snapshot.payload.latitude = 41.8781;
+    snapshot.payload.longitude = -87.6298;
+  }],
+  ['Luma place', 'luma_example', (snapshot) => { snapshot.payload.place_name = 'Private venue'; }],
+  ['Luma address', 'luma_example', (snapshot) => { snapshot.payload.place_address = '123 Real Street'; }],
+  ['Luma start timestamp', 'luma_example', (snapshot) => { snapshot.payload.scheduled_for = '2026-09-20T22:00:00.000Z'; }],
+  ['Luma end timestamp', 'luma_example', (snapshot) => { snapshot.payload.scheduled_until = '2026-09-21T01:00:00.000Z'; }],
+]) {
+  test(`rejects drift in the reviewed synthetic ${name} after recomputing its hash`, async () => {
+    await withMutatedSnapshot(snapshotName, mutate, async (platform, root) => {
+      await assert.rejects(validatePlatform(platform, root), /snapshot|synthetic|reviewed/i);
+    });
+  });
+}
+
+for (const instanceKey of ['example', 'examples', 'default']) {
+  test(`rejects inline OpenAPI ${instanceKey} instance data after recomputing the hash`, async () => {
+    await withMutatedOpenApi((contract) => {
+      contract.paths['/oauth/token'].post.requestBody.content['application/x-www-form-urlencoded'].schema[instanceKey] = {
+        scope: 'candidate-status:read',
+      };
+    }, async (platform, root) => {
+      await assert.rejects(validatePlatform(platform, root), /OpenAPI|instance|example|default/i);
+    });
+  });
+}
+
+test('catalog policy rejects contradictory availability claims in either AI discovery document', async () => {
+  for (const [relativePath, claim] of [
+    ['static/llms.txt', 'A public MCP endpoint is available.'],
+    ['static/llms-full.txt', 'The API is live.'],
+  ]) {
+    await withProposedCheckout(async (root) => {
+      const filename = path.join(root, relativePath);
+      await writeFile(filename, `${await readFile(filename, 'utf8')}\n${claim}\n`);
+    }, async (root) => {
+      await assert.rejects(
+        runTrustedPolicy(['check', '--root', root], { cwd: repositoryRoot }),
+        /contradictory|availability claim/i,
+      );
+    });
+  }
+});
+
+test('catalog policy rejects contradictory availability claims in the human API source', async () => {
+  await withProposedCheckout(async (root) => {
+    const filename = path.join(root, 'docs', 'developers', 'api.md');
+    await writeFile(filename, `${await readFile(filename, 'utf8')}\nThe MCP endpoint supports requests.\n`);
+  }, async (root) => {
+    await assert.rejects(
+      runTrustedPolicy(['check', '--root', root], { cwd: repositoryRoot }),
+      /contradictory|availability claim/i,
+    );
+  });
+});
+
+for (const target of [
+  'https://api.mains.world/oauth/token',
+  'https://mains.world/oauth/token',
+  '[Private session](/connectives/v1/link-sessions)',
+]) {
+  test(`catalog policy rejects a private machine target in human API source: ${target}`, async () => {
+    await withProposedCheckout(async (root) => {
+      const filename = path.join(root, 'docs', 'developers', 'api.md');
+      await writeFile(filename, `${await readFile(filename, 'utf8')}\n${target}\n`);
+    }, async (root) => {
+      await assert.rejects(
+        runTrustedPolicy(['check', '--root', root], { cwd: repositoryRoot }),
+        /private|machine|endpoint|target|reference|URL/i,
+      );
+    });
+  });
+}
 
 test('renders deterministic public catalog outputs from validated inputs', async () => {
   const apps = await loadRegistry(repositoryRoot);

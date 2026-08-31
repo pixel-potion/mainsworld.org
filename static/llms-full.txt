@@ -3,11 +3,11 @@
 There are no public, self-service Main's World API endpoints to call today.
 No base URL, credential, sandbox, public endpoint, or MCP endpoint exists.
 
-The Connectives preview is read-only release documentation from the restricted normative source revision 3da5ce3fb92dc63910a6b59dabd817f15097d35f. It is not a runtime API and provides neither activation nor access.
+The Connectives preview is read-only release documentation from the restricted normative source revision ce8df37f26781edf6901344e0905c0f6286f3eb6. It is not a runtime API and provides neither activation nor access.
 
 ## Local preview snapshots
 
-- /api/connectives/v1/openapi.json (SHA-256: ca58c4f5166f09ff59fa5009a172d29536bc6c3b2552ad239b7193fce061380e)
+- /api/connectives/v1/openapi.json (SHA-256: fea7f6ec8a49625b5baab5c681a675edc06ba59a6207a149893011862fe8c4f4)
 - /api/connectives/v1/discord-connected-group-membership.json (SHA-256: 4043b1ef41de71271352145f6a8fbb3e400e3d34e9d09d070d6b5791e78ca1db)
 - /api/connectives/v1/luma-vibe-candidate.json (SHA-256: 499d12a33183ce6fed9335fa3021d79ba2da30205d1d80d2e8c4017d3f6358a9)
 

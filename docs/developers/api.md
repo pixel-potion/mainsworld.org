@@ -5,19 +5,21 @@ title: API preview
 # API preview
 
 **No public Main's World API endpoint is callable today.** There is no server or
-base URL. There is no sandbox. There is no self-service key issuance. There is
+base URL to call. The OpenAPI preview uses the reserved, non-routable
+`https://example.invalid` documentation target so its default `/` cannot resolve
+to this site. There is no sandbox. There is no self-service key issuance. There is
 no public OAuth registration. There is no public write API, SDK, or MCP
 endpoint. Do not treat this page or its snapshots as a runtime interface.
 
 The Connectives preview is reviewed release documentation from the
 access-restricted normative provenance in Main's World at revision
-`3da5ce3fb92dc63910a6b59dabd817f15097d35f`. The public snapshots below are
+`ce8df37f26781edf6901344e0905c0f6286f3eb6`. The public snapshots below are
 hash-pinned review material. They provide neither runtime access nor credentials.
 
 ## Reviewed snapshots
 
 - <a href="/api/connectives/v1/openapi.json">OpenAPI contract</a> — SHA-256
-  `ca58c4f5166f09ff59fa5009a172d29536bc6c3b2552ad239b7193fce061380e`
+  `fea7f6ec8a49625b5baab5c681a675edc06ba59a6207a149893011862fe8c4f4`
 - <a href="/api/connectives/v1/discord-connected-group-membership.json">Discord connected-group membership example</a>
   — SHA-256 `4043b1ef41de71271352145f6a8fbb3e400e3d34e9d09d070d6b5791e78ca1db`
 - <a href="/api/connectives/v1/luma-vibe-candidate.json">Luma Vibe candidate example</a>

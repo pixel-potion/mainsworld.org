@@ -1,7 +1,6 @@
 import {themes as prismThemes} from 'prism-react-renderer';
 import type {Config} from '@docusaurus/types';
 import type * as Preset from '@docusaurus/preset-classic';
-import {GlobExcludeDefault} from '@docusaurus/utils';
 
 // This runs in Node.js - Don't use client-side code here (browser APIs, JSX...)
 
@@ -64,7 +63,6 @@ const config: Config = {
         docs: {
           routeBasePath: '/', // docs are the site — no /docs/ prefix
           sidebarPath: './sidebars.ts',
-          exclude: [...GlobExcludeDefault, 'superpowers/**'],
           // "Edit this page" sends contributors straight to the GitHub editor.
           editUrl: 'https://github.com/pixel-potion/mainsworld.org/edit/main/',
         },
