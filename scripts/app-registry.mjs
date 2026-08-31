@@ -152,7 +152,7 @@ const expectedArtifactPaths = {
     '/api/connectives/v1/luma-vibe-candidate.json',
   ],
 };
-const reviewedSnapshotHttpValues = {
+const reviewedSnapshotUriValues = {
   openapi: [
     { path: ['servers', 0, 'url'], value: 'https://example.invalid' },
     {
@@ -200,7 +200,8 @@ const reviewedSyntheticSnapshots = {
   },
 };
 const discoverySubject = '(?:public\\s+)?(?:api(?:\\s+endpoints?)?|oauth(?:\\s+(?:registration|endpoints?))?|credentials?|servers?|base\\s+urls?|mcp(?:\\s+endpoints?)?)';
-const discoveryAvailabilityPredicate = '(?:live|callable|available|enabled|active|ready|required|deployed|exists?|can\\s+be\\s+called|accepts?\\s+requests?|supports?\\s+requests?)';
+const boundedCallModifiers = '(?:\\s+[A-Za-z][A-Za-z\'-]*){0,3}';
+const discoveryAvailabilityPredicate = `(?:live|callable|available|enabled|active|ready|required|deployed|exists?|can${boundedCallModifiers}\\s+be\\s+called|accepts?\\s+requests?|supports?\\s+requests?)`;
 const discoverySubjectBoundary = `\\b${discoverySubject}\\b`;
 const positiveDiscoveryAvailability = new RegExp(
   `${discoverySubjectBoundary}(?:(?!${discoverySubjectBoundary})[^.!?;\\n]){0,80}?\\b${discoveryAvailabilityPredicate}\\b`,
@@ -221,7 +222,24 @@ const approvedCoordinatedDiscoveryDenial = new RegExp([
   `^${discoveryFormatting}neither\\s+(?:the\\s+)?${discoverySubject}\\s+nor\\s+(?:the\\s+)?${discoverySubject}\\s+(?:is|are)\\s+${discoveryAvailabilityPredicate}[.!?]*${discoveryFormatting}$`,
   `^${discoveryFormatting}no\\s+base\\s+url\\s*,\\s*credential\\s*,\\s*sandbox\\s*,\\s*public\\s+endpoint\\s*,\\s*(?:or\\s+)?mcp\\s+endpoint\\s+exists?[.!?]*${discoveryFormatting}$`,
 ].join('|'), 'i');
+const passiveDiscoveryAvailability = new RegExp(
+  `\\b(?:requests?|calls?)\\b(?:(?!${discoverySubjectBoundary})[^.!?;\\n]){0,60}?\\b(?:accepted|supported|handled|served|made)\\b(?:(?!${discoverySubjectBoundary})[^.!?;\\n]){0,40}?\\b(?:by|to)\\s+(?:the\\s+)?${discoverySubjectBoundary}`,
+  'i',
+);
+const approvedPassiveDiscoveryDenial = new RegExp([
+  `^${discoveryFormatting}no\\s+(?:requests?|calls?)\\b[^.!?;\\n]{0,40}\\b(?:accepted|supported|handled|served|made)\\b[^.!?;\\n]{0,30}\\b(?:by|to)\\s+(?:the\\s+)?${discoverySubjectBoundary}[.!?]*${discoveryFormatting}$`,
+  `^${discoveryFormatting}(?:requests?|calls?)\\b[^.!?;\\n]{0,30}\\b(?:not|never)\\s+(?:accepted|supported|handled|served|made)\\b[^.!?;\\n]{0,30}\\b(?:by|to)\\s+(?:the\\s+)?${discoverySubjectBoundary}[.!?]*${discoveryFormatting}$`,
+].join('|'), 'i');
 const networkPathReference = /(^|[^A-Za-z0-9+.\-:/])\/\/(?:(?:[A-Za-z0-9._~!$&'()*+,;=:]|%[0-9A-Fa-f]{2})*@)?(?:\[[^\]\s]+\]|(?:[A-Za-z0-9._~!$&'()*+,;=-]|%[0-9A-Fa-f]{2})*)(?::\d*)?(?:\/[^\s"'<>?#]*)*(?:\?[^\s"'<>#]*)?(?:#[^\s"'<>]*)?(?=$|[\s"'<>])/im;
+const absoluteAuthorityUri = /\b[A-Za-z][A-Za-z0-9+.-]*:\/\/[^\s"'<>]+/i;
+const absoluteHttpReference = /\bhttps?:\/\/[^\s"'<>)}\]]+/ig;
+const rootRelativeTargetReference = /(?:\]\(\s*|(?:href|src|action)\s*=\s*["']?|["'][A-Za-z0-9_.-]+["']\s*:\s*["'])(\/(?!\/)[^\s"'<>)]*)/ig;
+const reviewedPublicMachinePaths = new Set([
+  '/api/connectives/v1/openapi.json',
+  '/api/connectives/v1/discord-connected-group-membership.json',
+  '/api/connectives/v1/luma-vibe-candidate.json',
+]);
+const privateMachinePath = /^\/(?:api|oauth|mcp|connectives)(?:[/?#]|$)/i;
 
 function isSafeCatalogSourcePath(value) {
   return (
@@ -460,8 +478,8 @@ function pathEquals(actual, expected) {
   return actual.length === expected.length && actual.every((segment, index) => segment === expected[index]);
 }
 
-function isReviewedSnapshotHttpValue(pathSegments, value, reviewedHttpValues) {
-  return reviewedHttpValues.some(
+function isReviewedSnapshotUriValue(pathSegments, value, reviewedUriValues) {
+  return reviewedUriValues.some(
     (reviewed) => reviewed.value === value && pathEquals(pathSegments, reviewed.path),
   );
 }
@@ -471,7 +489,7 @@ function findUnsafeSnapshotValue(
   location = '$',
   parentKey = '',
   pathSegments = [],
-  reviewedHttpValues = [],
+  reviewedUriValues = [],
 ) {
   if (typeof value === 'string') {
     if (snapshotCredentialPatterns.some((pattern) => pattern.test(value))) {
@@ -489,8 +507,8 @@ function findUnsafeSnapshotValue(
     if (networkPathReference.test(value)) {
       return `${location} contains a protocol-relative network-path URI reference`;
     }
-    if (/https?:\/\/[^\s"'<>]+/i.test(value) && !isReviewedSnapshotHttpValue(pathSegments, value, reviewedHttpValues)) {
-      return `${location} contains an unreviewed HTTP URL`;
+    if (absoluteAuthorityUri.test(value) && !isReviewedSnapshotUriValue(pathSegments, value, reviewedUriValues)) {
+      return `${location} contains an unreviewed absolute network URI`;
     }
     return null;
   }
@@ -502,7 +520,7 @@ function findUnsafeSnapshotValue(
         `${location}[${index}]`,
         parentKey,
         [...pathSegments, index],
-        reviewedHttpValues,
+        reviewedUriValues,
       );
       if (found) return found;
     }
@@ -519,7 +537,7 @@ function findUnsafeSnapshotValue(
         `${location}.${key}`,
         key,
         [...pathSegments, key],
-        reviewedHttpValues,
+        reviewedUriValues,
       );
       if (found) return found;
     }
@@ -566,7 +584,11 @@ function findDisallowedOpenApiReference(value, location = '$') {
 }
 
 function hasContradictoryDiscoveryClaim(statement) {
-  if (approvedCoordinatedDiscoveryDenial.test(statement)) return false;
+  if (
+    approvedCoordinatedDiscoveryDenial.test(statement) ||
+    approvedPassiveDiscoveryDenial.test(statement)
+  ) return false;
+  if (passiveDiscoveryAvailability.test(statement)) return true;
   let previousPositiveEnd = 0;
   for (const match of statement.matchAll(positiveDiscoveryAvailability)) {
     const predicatePrefix = statement.slice(previousPositiveEnd, match.index);
@@ -582,7 +604,7 @@ function hasContradictoryDiscoveryClaim(statement) {
   return false;
 }
 
-export function validateNetworkPathReferences(documents) {
+function validateDiscoveryDocumentMap(documents) {
   if (!documents || typeof documents !== 'object' || Array.isArray(documents)) {
     throw new TypeError('Discovery documents must be an object keyed by path.');
   }
@@ -590,6 +612,52 @@ export function validateNetworkPathReferences(documents) {
     if (typeof content !== 'string') {
       throw new TypeError(`Discovery document ${documentPath} must contain text.`);
     }
+  }
+}
+
+function normalizedDiscoveryPath(reference) {
+  const pathname = new URL(reference, 'https://mainsworld.org').pathname;
+  try {
+    return decodeURIComponent(pathname);
+  } catch {
+    return pathname;
+  }
+}
+
+function findPrivateMachineReference(content) {
+  for (const match of content.matchAll(absoluteHttpReference)) {
+    let target;
+    try {
+      target = new URL(match[0]);
+    } catch {
+      continue;
+    }
+    const hostname = target.hostname.toLowerCase().replace(/\.$/, '');
+    const pathname = normalizedDiscoveryPath(target.href);
+    if (
+      hostname.endsWith('.mains.world') ||
+      (hostname === 'mains.world' && privateMachinePath.test(pathname)) ||
+      hostname.endsWith('.mainsworld.org') ||
+      (
+        hostname === 'mainsworld.org' &&
+        (target.protocol !== 'https:' ||
+          (privateMachinePath.test(pathname) && !reviewedPublicMachinePaths.has(pathname)))
+      )
+    ) return match[0];
+  }
+
+  for (const match of content.matchAll(rootRelativeTargetReference)) {
+    const pathname = normalizedDiscoveryPath(match[1]);
+    if (privateMachinePath.test(pathname) && !reviewedPublicMachinePaths.has(pathname)) {
+      return match[1];
+    }
+  }
+  return null;
+}
+
+export function validateNetworkPathReferences(documents) {
+  validateDiscoveryDocumentMap(documents);
+  for (const [documentPath, content] of Object.entries(documents)) {
     if (networkPathReference.test(content)) {
       throw new Error(`Discovery document ${documentPath} contains a protocol-relative network-path URI reference.`);
     }
@@ -597,8 +665,19 @@ export function validateNetworkPathReferences(documents) {
   return documents;
 }
 
-export function validateDiscoveryDocuments(documents) {
+export function validateDiscoveryReferences(documents) {
   validateNetworkPathReferences(documents);
+  for (const [documentPath, content] of Object.entries(documents)) {
+    const privateReference = findPrivateMachineReference(content);
+    if (privateReference) {
+      throw new Error(`Discovery document ${documentPath} contains a private machine target: ${privateReference}`);
+    }
+  }
+  return documents;
+}
+
+export function validateDiscoveryDocuments(documents) {
+  validateDiscoveryReferences(documents);
   for (const [documentPath, content] of Object.entries(documents)) {
     const contradictoryClaim = content
       .replace(/<[^>]*>/g, ' ')
@@ -696,7 +775,7 @@ export async function validatePlatform(platform, root = repositoryRoot) {
       '$',
       '',
       [],
-      reviewedSnapshotHttpValues[name] ?? [],
+      reviewedSnapshotUriValues[name] ?? [],
     );
     if (unsafeValue) throw new Error(`Snapshot ${name} is unsafe: ${unsafeValue}.`);
     snapshots[name] = snapshot;

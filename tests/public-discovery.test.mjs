@@ -31,7 +31,7 @@ const semanticDiscoveryDocuments = () => ({
 const allDiscoveryArtifactDocuments = () => Object.fromEntries(
   discoveryArtifacts().map((path) => [path, read(path)]),
 );
-const discoveryArtifacts = () => [
+const coreDiscoveryArtifacts = () => [
   'build/robots.txt',
   'build/sitemap.xml',
   'build/llms.txt',
@@ -40,6 +40,10 @@ const discoveryArtifacts = () => [
   ...['developers', 'developers/apps', 'developers/api', 'developers/submit-an-app'].map((route) => `build/${route}/index.html`),
   ...walk('build/api/connectives/v1').filter((path) => path.endsWith('.json')),
 ];
+const discoveryArtifacts = () => [...new Set([
+  ...coreDiscoveryArtifacts(),
+  ...renderedSitemapPages(),
+])];
 
 test('ships crawlable robots and a public-only sitemap', () => {
   assert.equal(read('static/robots.txt'), 'User-agent: *\nAllow: /\nSitemap: https://mainsworld.org/sitemap.xml\n');
@@ -131,6 +135,10 @@ for (const claim of [
   'No API documentation is planned because the MCP endpoint is live.',
   'No OAuth endpoint documentation will be published even though the server accepts requests.',
   'No server documentation is scheduled for release while the base URL is active.',
+  'The public API can now be called.',
+  'The MCP endpoint can safely be called.',
+  'Requests are accepted by the API.',
+  'Requests are currently accepted by the MCP endpoint.',
   'The server accepts requests.',
   'The MCP endpoint supports requests.',
 ]) {
@@ -156,6 +164,8 @@ test('keeps approved exact denials and neutral discovery text valid', () => {
       'Neither the API nor the MCP endpoint is available.',
       'No credentials are required.',
       'The credentials are not required.',
+      'Requests are not accepted by the API.',
+      'No requests are accepted by the MCP endpoint.',
       'API: None',
       'API: Not Applicable',
       'Use an API or MCP endpoint.',
@@ -215,6 +225,77 @@ test('rejects a generic network-path URI across the complete generated discovery
   );
 });
 
+test('scans every rendered sitemap page and every machine discovery artifact', () => {
+  const pages = renderedSitemapPages();
+  const artifacts = discoveryArtifacts();
+  assert.ok(pages.length > 4, 'the sitemap must exercise more than the original four developer pages');
+  assert.deepEqual(
+    pages.filter((path) => artifacts.includes(path)).sort(),
+    pages.slice().sort(),
+    'every rendered sitemap page must be covered by the discovery artifact gate',
+  );
+  for (const path of [
+    'build/robots.txt',
+    'build/sitemap.xml',
+    'build/llms.txt',
+    'build/llms-full.txt',
+    'build/apps.json',
+    ...walk('build/api/connectives/v1').filter((path) => path.endsWith('.json')),
+  ]) {
+    assert.ok(artifacts.includes(path), `machine discovery artifact is not covered: ${path}`);
+  }
+});
+
+test('rejects private machine targets while preserving reviewed public and human links', () => {
+  assert.equal(
+    typeof registryPolicy.validateDiscoveryReferences,
+    'function',
+    'the registry policy must expose its complete discovery-reference validator',
+  );
+  assert.doesNotThrow(() => registryPolicy.validateDiscoveryReferences({
+    'approved.md': [
+      '[Open Main\'s World](https://mains.world)',
+      '[Safety](https://mains.world/how-it-works/safety-alerts)',
+      '[Developer guide](https://mainsworld.org/developers/api)',
+      '[OpenAPI](/api/connectives/v1/openapi.json)',
+      '[Discord example](/api/connectives/v1/discord-connected-group-membership.json)',
+      '[Luma example](https://mainsworld.org/api/connectives/v1/luma-vibe-candidate.json)',
+    ].join('\n'),
+  }));
+  assert.doesNotThrow(() => registryPolicy.validateDiscoveryReferences(allDiscoveryArtifactDocuments()));
+
+  for (const target of [
+    'https://api.mains.world/oauth/token',
+    'https://mains.world/oauth/token',
+    'https://mains.world/connectives/v1/link-sessions',
+    'https://edge.mains.world/mcp/session',
+    'https://mainsworld.org/api/unreviewed.json',
+    '/connectives/v1/link-sessions',
+  ]) {
+    assert.throws(
+      () => registryPolicy.validateDiscoveryReferences({
+        'unsafe.md': `[Machine target](${target})`,
+      }),
+      /private|machine|endpoint|target|reference|URL/i,
+      `must reject private machine target: ${target}`,
+    );
+  }
+});
+
+test('rejects a private endpoint injected into an arbitrary non-developer sitemap page', () => {
+  assert.equal(typeof registryPolicy.validateDiscoveryReferences, 'function');
+  const page = renderedSitemapPages().find((path) => !path.includes('/developers/'));
+  assert.ok(page, 'expected a non-developer sitemap page');
+  const artifacts = allDiscoveryArtifactDocuments();
+  assert.throws(
+    () => registryPolicy.validateDiscoveryReferences({
+      ...artifacts,
+      [page]: `${artifacts[page]}\n<a href="https://api.mains.world/oauth/token">Private API</a>\n`,
+    }),
+    /private|machine|endpoint|target|reference|URL/i,
+  );
+});
+
 test('the public artifact guard recognizes protocol-relative product API references', () => {
   assert.match('//mains.world/api/token', privateProductApi);
 });
@@ -228,9 +309,12 @@ test('excludes internal plans and private discovery origins from the built site'
   }
 
   const privateOrigin = /https?:\/\/[^\s"'<]*(?:supabase(?:\.co)?|workers\.dev|localhost|127\.0\.0\.1|0\.0\.0\.0|(?:internal|private|staging|dev)\.)[^\s"'<]*/i;
-  for (const path of discoveryArtifacts()) {
+  for (const path of coreDiscoveryArtifacts()) {
     const content = read(path);
     assert.doesNotMatch(content, privateOrigin, `private backend origin leaked in ${path}`);
+  }
+  for (const path of discoveryArtifacts()) {
+    const content = read(path);
     assert.doesNotMatch(content, privateProductApi, `private product API or MCP URL leaked in ${path}`);
   }
 });

@@ -903,6 +903,16 @@ test('rejects an HTTP URL embedded anywhere in a snapshot string after recomputi
   });
 });
 
+for (const scheme of ['wss', 'ws', 'ftp']) {
+  test(`rejects an unreviewed ${scheme} network URI after recomputing the OpenAPI hash`, async () => {
+    await withMutatedOpenApi((contract) => {
+      contract.externalDocs = { url: `${scheme}://api.mains.world/connectives/v1` };
+    }, async (platform, root) => {
+      await assert.rejects(validatePlatform(platform, root), /OpenAPI|URI|URL|unsafe/i);
+    });
+  });
+}
+
 test('rejects altered snapshot bytes and contract deployment claims', async () => {
   const root = await mkdtemp(path.join(tmpdir(), 'mainsworld-platform-'));
   try {
@@ -1208,6 +1218,24 @@ test('catalog policy rejects contradictory availability claims in the human API 
     );
   });
 });
+
+for (const target of [
+  'https://api.mains.world/oauth/token',
+  'https://mains.world/oauth/token',
+  '[Private session](/connectives/v1/link-sessions)',
+]) {
+  test(`catalog policy rejects a private machine target in human API source: ${target}`, async () => {
+    await withProposedCheckout(async (root) => {
+      const filename = path.join(root, 'docs', 'developers', 'api.md');
+      await writeFile(filename, `${await readFile(filename, 'utf8')}\n${target}\n`);
+    }, async (root) => {
+      await assert.rejects(
+        runTrustedPolicy(['check', '--root', root], { cwd: repositoryRoot }),
+        /private|machine|endpoint|target|reference|URL/i,
+      );
+    });
+  });
+}
 
 test('renders deterministic public catalog outputs from validated inputs', async () => {
   const apps = await loadRegistry(repositoryRoot);
