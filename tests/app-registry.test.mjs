@@ -199,6 +199,7 @@ async function withProposedCheckout(mutate, run) {
     ]);
     await Promise.all([
       cp(path.join(repositoryRoot, 'docs', 'developers', 'apps.md'), path.join(root, 'docs', 'developers', 'apps.md')),
+      cp(path.join(repositoryRoot, 'docs', 'developers', 'api.md'), path.join(root, 'docs', 'developers', 'api.md')),
       cp(path.join(repositoryRoot, 'static', 'apps.json'), path.join(root, 'static', 'apps.json')),
       cp(path.join(repositoryRoot, 'static', 'llms.txt'), path.join(root, 'static', 'llms.txt')),
       cp(path.join(repositoryRoot, 'static', 'llms-full.txt'), path.join(root, 'static', 'llms-full.txt')),
@@ -1009,6 +1010,47 @@ for (const [name, mutate] of [
 }
 
 for (const [name, mutate] of [
+  ['a protocol-relative external reference', (contract) => {
+    contract.components.schemas.ExternalRecord = { $ref: '//mains.world/api/record.json' };
+  }],
+  ['a relative external reference', (contract) => {
+    contract.components.schemas.ExternalRecord = { $ref: 'schemas/record.json' };
+  }],
+  ['a protocol-relative OAuth authorization URL', (contract) => {
+    contract.components.securitySchemes.PartnerOAuth.flows.clientCredentials.authorizationUrl =
+      '//mains.world/api/authorize';
+  }],
+  ['a protocol-relative OAuth token URL outside the reviewed scheme', (contract) => {
+    contract.info.tokenUrl = '//mains.world/api/token';
+  }],
+  ['a single-label protocol-relative host', (contract) => {
+    contract.info.authorizationUrl = '//localhost/authorize';
+  }],
+]) {
+  test(`rejects ${name} even when the OpenAPI hash is recomputed`, async () => {
+    await withMutatedOpenApi(mutate, async (platform, root) => {
+      await assert.rejects(validatePlatform(platform, root), /OpenAPI|reference|security|URL|unsafe/i);
+    });
+  });
+}
+
+for (const [name, mutate] of [
+  ['OAuth scheme type', (scheme) => { scheme.type = 'openIdConnect'; }],
+  ['OAuth scheme shape', (scheme) => { scheme.description = 'Partner access.'; }],
+  ['OAuth scope description', (scheme) => {
+    scheme.flows.clientCredentials.scopes['candidate-status:read'] = 'Read any candidate status.';
+  }],
+]) {
+  test(`pins the complete reviewed PartnerOAuth ${name}`, async () => {
+    await withMutatedOpenApi((contract) => {
+      mutate(contract.components.securitySchemes.PartnerOAuth);
+    }, async (platform, root) => {
+      await assert.rejects(validatePlatform(platform, root), /PartnerOAuth|security|reviewed/i);
+    });
+  });
+}
+
+for (const [name, mutate] of [
   ['root-level security', (contract) => {
     contract.security = [{ PartnerOAuth: ['link-sessions:create'] }];
   }],
@@ -1028,6 +1070,22 @@ for (const [name, mutate] of [
     });
   });
 }
+
+test('hidden-surface diagnostics name every prohibited OpenAPI surface', async () => {
+  for (const mutate of [
+    (contract) => { contract.security = []; },
+    (contract) => { contract.webhooks = {}; },
+    (contract) => { contract.components.callbacks = {}; },
+    (contract) => { contract.components.pathItems = {}; },
+  ]) {
+    await withMutatedOpenApi(mutate, async (platform, root) => {
+      await assert.rejects(
+        validatePlatform(platform, root),
+        /root security.*webhooks.*component callbacks.*component Path Items/i,
+      );
+    });
+  }
+});
 
 for (const [name, operationPath, method, security] of [
   ['logical token operation', '/oauth/token', 'post', []],
@@ -1121,6 +1179,18 @@ test('catalog policy rejects contradictory availability claims in either AI disc
       );
     });
   }
+});
+
+test('catalog policy rejects contradictory availability claims in the human API source', async () => {
+  await withProposedCheckout(async (root) => {
+    const filename = path.join(root, 'docs', 'developers', 'api.md');
+    await writeFile(filename, `${await readFile(filename, 'utf8')}\nThe MCP endpoint supports requests.\n`);
+  }, async (root) => {
+    await assert.rejects(
+      runTrustedPolicy(['check', '--root', root], { cwd: repositoryRoot }),
+      /contradictory|availability claim/i,
+    );
+  });
 });
 
 test('renders deterministic public catalog outputs from validated inputs', async () => {

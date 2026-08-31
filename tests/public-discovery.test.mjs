@@ -21,6 +21,13 @@ const renderedSitemapPages = () => sitemapLocations().map((location) => {
 const canonical = (html) => html.match(/<link\s+[^>]*rel=(?:["'])?canonical(?:["'])?[^>]*href=(?:["'])?([^\s"'>]+)/i)?.[1]
   ?? html.match(/<link\s+[^>]*href=(?:["'])?([^\s"'>]+)[^>]*rel=(?:["'])?canonical(?:["'])?[^>]*>/i)?.[1];
 const mcpNonCallable = /(?:no\s+[^.]*MCP endpoint|MCP endpoint(?:\s+is)?\s+(?:not callable|does not exist|is unavailable))/i;
+const privateProductApi = /(?:https?:)?\/\/mains\.world\/(?:api|mcp)(?:[/?#]|$)/i;
+const semanticDiscoveryDocuments = () => ({
+  'docs/developers/api.md': read('docs/developers/api.md'),
+  'build/developers/api/index.html': read('build/developers/api/index.html'),
+  'build/llms.txt': read('build/llms.txt'),
+  'build/llms-full.txt': read('build/llms-full.txt'),
+});
 const discoveryArtifacts = () => [
   'build/robots.txt',
   'build/sitemap.xml',
@@ -67,6 +74,7 @@ test('keeps AI discovery documents explicitly non-callable', () => {
     assert.match(content, mcpNonCallable, `${path} must deny public MCP endpoints`);
     assert.doesNotThrow(() => registryPolicy.validateDiscoveryDocuments({ [path]: content }));
   }
+  assert.doesNotThrow(() => registryPolicy.validateDiscoveryDocuments(semanticDiscoveryDocuments()));
   assert.doesNotMatch('Use an API or MCP endpoint.', mcpNonCallable, 'a positive MCP phrase must not satisfy the denial check');
 });
 
@@ -109,6 +117,63 @@ test('rejects availability claims that share a sentence with denial language', (
   }
 });
 
+for (const claim of [
+  'No public API is callable and a public MCP endpoint is available.',
+  'No public API is callable, but its OAuth endpoint can be called.',
+  'No public API is callable while the MCP endpoint supports requests.',
+  'No public API is callable, the MCP endpoint is available.',
+  'The server accepts requests.',
+  'The MCP endpoint supports requests.',
+]) {
+  test(`rejects semantic discovery bypass: ${claim}`, () => {
+    for (const [path, content] of Object.entries(semanticDiscoveryDocuments())) {
+      assert.throws(
+        () => registryPolicy.validateDiscoveryDocuments({ [path]: `${content}\n${claim}\n` }),
+        /contradictory|availability claim/i,
+        `${path} must reject: ${claim}`,
+      );
+    }
+  });
+}
+
+test('keeps approved exact denials and neutral discovery text valid', () => {
+  assert.doesNotThrow(() => registryPolicy.validateDiscoveryDocuments({
+    'discovery.txt': [
+      'No public API is callable today.',
+      'The API is not live.',
+      'The OAuth endpoint cannot be called.',
+      'The server does not accept requests.',
+      'The MCP endpoint does not support requests.',
+      'Neither the API nor the MCP endpoint is available.',
+      'API: None',
+      'API: Not Applicable',
+      'Use an API or MCP endpoint.',
+    ].join('\n'),
+  }));
+});
+
+test('rejects a protocol-relative product API reference in rendered discovery text', () => {
+  assert.throws(
+    () => registryPolicy.validateDiscoveryDocuments({
+      'build/developers/api/index.html': '<a href="//mains.world/api/token">Token endpoint</a>',
+    }),
+    /network-path|protocol-relative|URI|URL/i,
+  );
+});
+
+test('rejects a single-label protocol-relative host in rendered discovery text', () => {
+  assert.throws(
+    () => registryPolicy.validateDiscoveryDocuments({
+      'build/developers/api/index.html': '<a href="//localhost/api/token">Token endpoint</a>',
+    }),
+    /network-path|protocol-relative|URI|URL/i,
+  );
+});
+
+test('the public artifact guard recognizes protocol-relative product API references', () => {
+  assert.match('//mains.world/api/token', privateProductApi);
+});
+
 test('excludes internal plans and private discovery origins from the built site', () => {
   assert.equal(execFileSync('git', ['ls-files', '--', 'docs/superpowers'], {encoding: 'utf8'}), '');
 
@@ -118,7 +183,6 @@ test('excludes internal plans and private discovery origins from the built site'
   }
 
   const privateOrigin = /https?:\/\/[^\s"'<]*(?:supabase(?:\.co)?|workers\.dev|localhost|127\.0\.0\.1|0\.0\.0\.0|(?:internal|private|staging|dev)\.)[^\s"'<]*/i;
-  const privateProductApi = /https:\/\/mains\.world\/(?:api|mcp)(?:[/?#]|$)/i;
   for (const path of discoveryArtifacts()) {
     const content = read(path);
     assert.doesNotMatch(content, privateOrigin, `private backend origin leaked in ${path}`);

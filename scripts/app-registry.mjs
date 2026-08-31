@@ -107,6 +107,19 @@ const documentationServer = {
   description: 'Non-callable documentation preview. No network endpoint exists.',
 };
 const documentationTokenUrl = 'https://example.invalid/oauth/token';
+const reviewedPartnerOAuth = {
+  type: 'oauth2',
+  flows: {
+    clientCredentials: {
+      tokenUrl: documentationTokenUrl,
+      scopes: {
+        'candidate-status:read': 'Read candidate status within an approved grant.',
+        'link-sessions:create': 'Create and poll application consent sessions.',
+        'vibe-candidates:write': 'Submit Vibe candidates within an approved grant.',
+      },
+    },
+  },
+};
 const standardHttpMethods = new Set([
   'get', 'put', 'post', 'delete', 'options', 'head', 'patch', 'trace',
 ]);
@@ -186,8 +199,21 @@ const reviewedSyntheticSnapshots = {
     },
   },
 };
-const positiveDiscoveryAvailability = /\b(?:public\s+)?(?:api(?:\s+endpoints?)?|oauth(?:\s+registration)?|credentials?|servers?|base\s+urls?|mcp(?:\s+endpoints?)?)\b[^.!?\n]{0,80}\b(?:(?:is|are|remains?|becomes?|now|currently)\s+)?(?:live|callable|available|enabled|active|ready|deployed|exists?)\b/i;
-const negativeDiscoveryAvailability = /\b(?:no|not|neither|without|none|unavailable|non-callable|does\s+not\s+exist|not\s+applicable)\b/i;
+const discoverySubject = '(?:public\\s+)?(?:api(?:\\s+endpoints?)?|oauth(?:\\s+(?:registration|endpoints?))?|credentials?|servers?|base\\s+urls?|mcp(?:\\s+endpoints?)?)';
+const positiveDiscoveryAvailability = new RegExp(
+  `\\b${discoverySubject}\\b[^.!?;\\n]{0,80}?\\b(?:live|callable|available|enabled|active|ready|deployed|exists?|can\\s+be\\s+called|accepts?\\s+requests?|supports?\\s+requests?)\\b`,
+  'ig',
+);
+const predicateBoundDiscoveryDenial = new RegExp([
+  `\\b${discoverySubject}\\b[^.!?;\\n]{0,40}\\b(?:is|are)\\s+(?:not|never)\\s+(?:live|callable|available|enabled|active|ready|deployed)\\b`,
+  `\\b${discoverySubject}\\b[^.!?;\\n]{0,40}\\b(?:cannot|can\\s+not|can't)\\s+be\\s+called\\b`,
+  `\\b${discoverySubject}\\b[^.!?;\\n]{0,40}\\bdoes\\s+not\\s+(?:accept|support)\\s+requests?\\b`,
+  `\\b${discoverySubject}\\b[^.!?;\\n]{0,40}\\bdoes\\s+not\\s+exist\\b`,
+  `\\b${discoverySubject}\\b[^.!?;\\n]{0,40}\\bnot\\s+callable\\b`,
+  `\\b${discoverySubject}\\b[^.!?;\\n]{0,40}\\b(?:is|are)\\s+(?:unavailable|non-callable)\\b`,
+  `\\b${discoverySubject}\\b\\s*:\\s*(?:none|not\\s+applicable)\\b`,
+].join('|'), 'i');
+const networkPathReference = /(^|[^A-Za-z0-9+.-:])\/\/(?:\[[^\]\s]+\]|[A-Za-z0-9._~-]+)(?::\d+)?(?:[/?#][^\s"'<>]*)?(?=$|[\s"'<>])/im;
 
 function isSafeCatalogSourcePath(value) {
   return (
@@ -452,6 +478,9 @@ function findUnsafeSnapshotValue(
     if (snapshotConcreteIdentifierKeys.has(compactSnapshotKey(parentKey)) && value.length >= 6) {
       return `${location} contains a concrete provider identifier`;
     }
+    if (networkPathReference.test(value)) {
+      return `${location} contains a protocol-relative network-path URI reference`;
+    }
     if (/https?:\/\/[^\s"'<>]+/i.test(value) && !isReviewedSnapshotHttpValue(pathSegments, value, reviewedHttpValues)) {
       return `${location} contains an unreviewed HTTP URL`;
     }
@@ -508,6 +537,43 @@ function findDisallowedOpenApiInstanceData(value, location = '$') {
   return null;
 }
 
+function findDisallowedOpenApiReference(value, location = '$') {
+  if (Array.isArray(value)) {
+    for (const [index, item] of value.entries()) {
+      const found = findDisallowedOpenApiReference(item, `${location}[${index}]`);
+      if (found) return found;
+    }
+    return null;
+  }
+  if (!value || typeof value !== 'object') return null;
+
+  for (const [key, child] of Object.entries(value)) {
+    if (key === '$ref' && (typeof child !== 'string' || !child.startsWith('#/'))) {
+      return `${location}.${key}`;
+    }
+    const found = findDisallowedOpenApiReference(child, `${location}.${key}`);
+    if (found) return found;
+  }
+  return null;
+}
+
+function hasContradictoryDiscoveryClaim(statement) {
+  for (const match of statement.matchAll(positiveDiscoveryAvailability)) {
+    const prefix = statement.slice(0, match.index);
+    const predicatePrefix = prefix
+      .split(/[,;]|\b(?:and|but|however|yet|while|whereas|although|though)\b/i)
+      .at(-1);
+    if (
+      /\b(?:no|neither)\b[^.!?\n]{0,50}$/i.test(predicatePrefix) ||
+      predicateBoundDiscoveryDenial.test(match[0])
+    ) {
+      continue;
+    }
+    return true;
+  }
+  return false;
+}
+
 export function validateDiscoveryDocuments(documents) {
   if (!documents || typeof documents !== 'object' || Array.isArray(documents)) {
     throw new TypeError('Discovery documents must be an object keyed by path.');
@@ -516,12 +582,13 @@ export function validateDiscoveryDocuments(documents) {
     if (typeof content !== 'string') {
       throw new TypeError(`Discovery document ${documentPath} must contain text.`);
     }
+    if (networkPathReference.test(content)) {
+      throw new Error(`Discovery document ${documentPath} contains a protocol-relative network-path URI reference.`);
+    }
     const contradictoryClaim = content
-      .split(/(?<=[.!?;])(?:\s+|$)|\n+/)
-      .find((statement) =>
-        positiveDiscoveryAvailability.test(statement) &&
-        !negativeDiscoveryAvailability.test(statement),
-      );
+      .replace(/<[^>]*>/g, ' ')
+      .split(/(?<=[.!?;])(?:\s+|$)|\n+|\s+(?:and|but|however|yet)\s+/i)
+      .find(hasContradictoryDiscoveryClaim);
     if (contradictoryClaim) {
       throw new Error(`Discovery document ${documentPath} contains a contradictory availability claim.`);
     }
@@ -642,7 +709,11 @@ export async function validatePlatform(platform, root = repositoryRoot) {
     Object.hasOwn(openapi.components ?? {}, 'pathItems') ||
     Object.hasOwn(openapi.components ?? {}, 'callbacks')
   ) {
-    throw new Error('OpenAPI snapshot must not contain webhooks or component Path Items.');
+    throw new Error('OpenAPI snapshot must not contain root security, webhooks, component callbacks, or component Path Items.');
+  }
+  const externalReference = findDisallowedOpenApiReference(openapi);
+  if (externalReference) {
+    throw new Error(`OpenAPI snapshot references must remain local at ${externalReference}.`);
   }
   const inlineInstanceData = findDisallowedOpenApiInstanceData(openapi);
   if (inlineInstanceData) {
@@ -668,18 +739,9 @@ export async function validatePlatform(platform, root = repositoryRoot) {
   }
   if (
     Object.keys(openapi.components?.securitySchemes ?? {}).length !== 1 ||
-    !Object.hasOwn(openapi.components?.securitySchemes ?? {}, 'PartnerOAuth')
+    !isDeepStrictEqual(openapi.components?.securitySchemes?.PartnerOAuth, reviewedPartnerOAuth)
   ) {
-    throw new Error('OpenAPI snapshot must define exactly the reviewed PartnerOAuth security scheme.');
-  }
-  const contractScopes = Object.keys(
-    openapi.components?.securitySchemes?.PartnerOAuth?.flows?.clientCredentials?.scopes ?? {},
-  );
-  if (JSON.stringify(contractScopes.sort()) !== JSON.stringify([...requiredScopes].sort())) {
-    throw new Error('OpenAPI snapshot scopes do not match platform metadata.');
-  }
-  if (openapi.components?.securitySchemes?.PartnerOAuth?.flows?.clientCredentials?.tokenUrl !== documentationTokenUrl) {
-    throw new Error('OpenAPI snapshot OAuth token URL must use the reserved non-routable documentation server.');
+    throw new Error('OpenAPI snapshot must define exactly the complete reviewed PartnerOAuth security scheme.');
   }
   return structuredClone(platform);
 }
@@ -912,6 +974,10 @@ async function runCli() {
         await readFile(path.join(root, relativePath), 'utf8'),
       ]),
     ));
+  discoveryDocuments['docs/developers/api.md'] = await readFile(
+    path.join(root, 'docs', 'developers', 'api.md'),
+    'utf8',
+  );
   validateDiscoveryDocuments(discoveryDocuments);
   if (mode === 'generate') {
     await Promise.all(Object.entries(rendered).map(async ([relativePath, content]) => {
