@@ -201,8 +201,9 @@ const reviewedSyntheticSnapshots = {
 };
 const discoverySubject = '(?:public\\s+)?(?:api(?:\\s+endpoints?)?|oauth(?:\\s+(?:registration|endpoints?))?|credentials?|servers?|base\\s+urls?|mcp(?:\\s+endpoints?)?)';
 const discoveryAvailabilityPredicate = '(?:live|callable|available|enabled|active|ready|required|deployed|exists?|can\\s+be\\s+called|accepts?\\s+requests?|supports?\\s+requests?)';
+const discoverySubjectBoundary = `\\b${discoverySubject}\\b`;
 const positiveDiscoveryAvailability = new RegExp(
-  `\\b${discoverySubject}\\b[^.!?;\\n]{0,80}?\\b${discoveryAvailabilityPredicate}\\b`,
+  `${discoverySubjectBoundary}(?:(?!${discoverySubjectBoundary})[^.!?;\\n]){0,80}?\\b${discoveryAvailabilityPredicate}\\b`,
   'ig',
 );
 const predicateBoundDiscoveryDenial = new RegExp([
@@ -215,7 +216,12 @@ const predicateBoundDiscoveryDenial = new RegExp([
   `\\b${discoverySubject}\\b\\s*:\\s*(?:none|not\\s+applicable)\\b`,
 ].join('|'), 'i');
 const freshDiscoveryDenialPrefix = /^(?:\s|,|[*_~`>])*(?:(?:and|or|nor|but|because|while|although|though|yet)\s+)?(?:(?:there\s+(?:is|are)\s+)?no|neither)(?:\s+(?:a|an|any|the|public|self-service|currently|main(?:'s)?|world))*\s*$/i;
-const networkPathReference = /(^|[^A-Za-z0-9+.-:])\/\/(?:(?:[A-Za-z0-9._~!$&'()*+,;=:]|%[0-9A-Fa-f]{2})+@)?(?:\[[^\]\s]+\]|(?:[A-Za-z0-9._~!$&'()*+,;=-]|%[0-9A-Fa-f]{2})+)(?::\d+)?(?:[/?#][^\s"'<>]*)?(?=$|[\s"'<>])/im;
+const discoveryFormatting = '[\\s*_~`>]*';
+const approvedCoordinatedDiscoveryDenial = new RegExp([
+  `^${discoveryFormatting}neither\\s+(?:the\\s+)?${discoverySubject}\\s+nor\\s+(?:the\\s+)?${discoverySubject}\\s+(?:is|are)\\s+${discoveryAvailabilityPredicate}[.!?]*${discoveryFormatting}$`,
+  `^${discoveryFormatting}no\\s+base\\s+url\\s*,\\s*credential\\s*,\\s*sandbox\\s*,\\s*public\\s+endpoint\\s*,\\s*(?:or\\s+)?mcp\\s+endpoint\\s+exists?[.!?]*${discoveryFormatting}$`,
+].join('|'), 'i');
+const networkPathReference = /(^|[^A-Za-z0-9+.\-:/])\/\/(?:(?:[A-Za-z0-9._~!$&'()*+,;=:]|%[0-9A-Fa-f]{2})*@)?(?:\[[^\]\s]+\]|(?:[A-Za-z0-9._~!$&'()*+,;=-]|%[0-9A-Fa-f]{2})*)(?::\d*)?(?:\/[^\s"'<>?#]*)*(?:\?[^\s"'<>#]*)?(?:#[^\s"'<>]*)?(?=$|[\s"'<>])/im;
 
 function isSafeCatalogSourcePath(value) {
   return (
@@ -560,6 +566,7 @@ function findDisallowedOpenApiReference(value, location = '$') {
 }
 
 function hasContradictoryDiscoveryClaim(statement) {
+  if (approvedCoordinatedDiscoveryDenial.test(statement)) return false;
   let previousPositiveEnd = 0;
   for (const match of statement.matchAll(positiveDiscoveryAvailability)) {
     const predicatePrefix = statement.slice(previousPositiveEnd, match.index);

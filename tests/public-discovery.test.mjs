@@ -127,6 +127,10 @@ for (const claim of [
   'No public API is callable, the MCP endpoint is available.',
   'No public API is callable or the MCP endpoint is available.',
   'No credentials are required because the API is live.',
+  'No credentials are needed because the API is live.',
+  'No API documentation is planned because the MCP endpoint is live.',
+  'No OAuth endpoint documentation will be published even though the server accepts requests.',
+  'No server documentation is scheduled for release while the base URL is active.',
   'The server accepts requests.',
   'The MCP endpoint supports requests.',
 ]) {
@@ -180,6 +184,9 @@ test('rejects a single-label protocol-relative host in rendered discovery text',
 for (const reference of [
   '//user@example.com/api',
   '//%65xample.com/api',
+  '//@example.com/api',
+  '//example.com:/api',
+  '///path',
 ]) {
   test(`rejects protocol-relative authority form in discovery text: ${reference}`, () => {
     assert.throws(

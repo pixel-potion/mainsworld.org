@@ -1033,6 +1033,15 @@ for (const [name, mutate] of [
   ['a protocol-relative percent-encoded reg-name', (contract) => {
     contract.info.authorizationUrl = '//%65xample.com/api';
   }],
+  ['a protocol-relative authority with empty userinfo', (contract) => {
+    contract.info.authorizationUrl = '//@example.com/api';
+  }],
+  ['a protocol-relative authority with an empty port', (contract) => {
+    contract.info.authorizationUrl = '//example.com:/api';
+  }],
+  ['a protocol-relative reference with an empty host', (contract) => {
+    contract.info.authorizationUrl = '///path';
+  }],
 ]) {
   test(`rejects ${name} even when the OpenAPI hash is recomputed`, async () => {
     await withMutatedOpenApi(mutate, async (platform, root) => {
