@@ -627,6 +627,17 @@ for (const value of [
   });
 }
 
+for (const name of [
+  'A&#80;I is live',
+  'A**P**I is live',
+  'A<b>P</b>I is live',
+]) {
+  test(`rejects a non-plain public app name: ${name}`, async () => {
+    const app = { ...clone(validApp), name };
+    await assert.rejects(validateRegistry([app]), /plain|public app name|name/i);
+  });
+}
+
 test('rejects credentialed, raw-IP, and special-use public URLs', async () => {
   for (const [name, field, value] of [
     ['credentials', 'website', 'https://user:secret@www.iana.org/'],

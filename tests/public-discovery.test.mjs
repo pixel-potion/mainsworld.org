@@ -200,6 +200,22 @@ test('rejects availability prose transplanted into a structured llms-full catalo
   );
 });
 
+for (const name of [
+  'A&#80;I is live',
+  'A**P**I is live',
+  'A<b>P</b>I is live',
+]) {
+  test(`rejects a non-plain dynamic app name in llms-full: ${name}`, () => {
+    const current = read('build/llms-full.txt');
+    const mutated = current.replace('- RunPal (runpal):', `- ${name} (runpal):`);
+    assert.notEqual(mutated, current, 'catalog-row mutation must apply');
+    assert.throws(
+      () => validateDiscoveryDocuments({ 'build/llms-full.txt': mutated }),
+      /unreviewed|availability claim|semantic change/i,
+    );
+  });
+}
+
 for (const [name, path, mutate] of [
   ['source HTML comment', 'docs/developers/api.md', (content) => `${content}\n<!-- The public API is live. -->\n`],
   ['source HTML metadata', 'docs/developers/api.md', (content) => `${content}\n<meta name="description" content="The public API is live.">\n`],
@@ -225,6 +241,21 @@ for (const [name, path, mutate] of [
     );
   });
 }
+
+test('accepts the exact rendered API document across generated runtime digest variants', () => {
+  const path = 'build/developers/api/index.html';
+  const current = read(path);
+  const match = current.match(/\/assets\/js\/runtime~main\.([a-f0-9]{8})\.js/);
+  assert.ok(match, 'rendered API document must contain one generated runtime asset');
+  const alternateDigest = match[1] === '00000000' ? '11111111' : '00000000';
+  const alternatePath = `/assets/js/runtime~main.${alternateDigest}.js`;
+  const alternate = current.replace(match[0], alternatePath);
+  assert.notEqual(alternate, current, 'runtime digest mutation must apply');
+  assert.doesNotThrow(() => registryPolicy.validateDiscoveryDocuments(
+    { [path]: alternate },
+    { publicPaths: [...publicBuildPaths(), alternatePath] },
+  ));
+});
 
 test('rejects a protocol-relative product API reference in rendered discovery text', () => {
   assert.throws(
@@ -429,6 +460,10 @@ for (const [name, content] of [
     'nested semicolon-less numeric character references',
     '<iframe srcdoc="&amp;#60a &amp;#104ref=&amp;#34&amp;#47vault&amp;#34&amp;#62Vault&amp;#60/a&amp;#62"></iframe>',
   ],
+  ['escaped CSS url function', String.raw`<style>.card { background: u\72l(/vault); }</style>`],
+  ['escaped CSS import keyword', String.raw`<style>@im\70ort "/vault";</style>`],
+  ['CSS image-set', '<style>.card { background: image-set("/vault" 1x); }</style>'],
+  ['CSS webkit image-set', '<style>.card { background: -webkit-image-set("/vault" 1x); }</style>'],
   ['CSS escape syntax', String.raw`<style>.card { background: url(\contribute); }</style>`],
 ]) {
   test(`parses ${name} before applying the default-private allowlist`, () => {
@@ -439,6 +474,38 @@ for (const [name, content] of [
     );
   });
 }
+
+test('keeps reviewed literal CSS url and import targets valid', () => {
+  assert.doesNotThrow(() => validateDiscoveryReferences({
+    'approved.html': '<style>@import "/developers/api"; .card { background: url("/img/og.png"); }</style>',
+  }));
+});
+
+for (const [property, content] of [
+  ['property="og:url"', '/vault'],
+  ['property="og:image"', '/vault'],
+  ['name="twitter:image"', '/vault'],
+  ['property="description" name="twitter:image"', '/vault'],
+]) {
+  test(`routes URL-bearing meta content through the discovery allowlist: ${property}`, () => {
+    assert.throws(
+      () => validateDiscoveryReferences({
+        'unsafe.html': `<meta ${property} content="${content}">`,
+      }),
+      /private|product|route|target|reference|URL/i,
+    );
+  });
+}
+
+test('keeps reviewed URL-bearing meta content valid', () => {
+  assert.doesNotThrow(() => validateDiscoveryReferences({
+    'approved.html': [
+      '<meta property="og:url" content="/developers/api">',
+      '<meta property="og:image" content="/img/og.png">',
+      '<meta name="twitter:image" content="https://mainsworld.org/img/og.png">',
+    ].join(''),
+  }));
+});
 
 for (const target of [
   'https://public:secret@www.iana.org/',
@@ -464,6 +531,26 @@ for (const target of [
     );
   });
 }
+
+for (const target of [
+  'https:////@www.iana.org/',
+  'https:////:@www.iana.org/',
+  String.raw`https:\\\@www.iana.org/`,
+  'https:////www.iana.org/',
+]) {
+  test(`rejects a parser-repaired non-canonical HTTPS reference: ${target}`, () => {
+    assert.throws(
+      () => validateDiscoveryReferences({ 'unsafe.md': `[External](${target})` }),
+      /private|credential|userinfo|target|reference|URL/i,
+    );
+  });
+}
+
+test('allows at-signs outside a canonical HTTPS authority', () => {
+  assert.doesNotThrow(() => validateDiscoveryReferences({
+    'approved.md': '[Profile](https://www.iana.org/users/@alice?email=alice@example.org)',
+  }));
+});
 
 test('rejects IP literals and reserved local DNS origins in discovery references', () => {
   for (const target of [

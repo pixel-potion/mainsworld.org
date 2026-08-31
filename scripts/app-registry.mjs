@@ -276,9 +276,20 @@ const markdownInlineTarget = /!?\[[^\]]*\]\(\s*(?:<([^>]+)>|([^\s)]+))/ig;
 const markdownReferenceTarget = /^[ \t]*\[[^\]]+\]:[ \t]*(?:<([^>]+)>|([^\s]+))/igm;
 const cssUrlTarget = /url\(\s*(?:"([^"]*)"|'([^']*)'|([^\s)'"<>]+))/ig;
 const cssImportTarget = /@import\s+(?:"([^"]*)"|'([^']*)')/ig;
+const htmlStyleElement = /<style\b[^>]*>([\s\S]*?)<\/style>/ig;
+const htmlStyleAttribute = /\bstyle\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s"'=<>`]+))/ig;
+const htmlMetaElement = /<meta\b[^>]*>/ig;
+const htmlAttribute = /([A-Za-z_:][A-Za-z0-9:._-]*)\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s"'=<>`]+))/g;
+const reviewedUrlMetaIdentifiers = new Set([
+  'og:url', 'og:image', 'og:image:url', 'og:image:secure_url',
+  'twitter:url', 'twitter:image', 'twitter:image:src', 'msapplication-tileimage',
+  'url', 'image', 'thumbnailurl', 'contenturl',
+]);
+const reviewedRuntimeScript = /<script src=\/assets\/js\/runtime~main\.[a-f0-9]{8}\.js defer><\/script>/g;
+const publicAppNamePattern = /^[\p{L}\p{N}]+(?:[ .'+’\-][\p{L}\p{N}]+)*$/u;
 const reviewedSemanticDocumentFingerprints = new Map([
   ['api-source', '2effce187b4da6780f2c7f88ddbf5953d61b1ddbec94ceb753f855f06c1d40ad'],
-  ['api-rendered', 'd372c6d0119492e0d5b8a4b7822930ffbf8cba2addcaaa8f4ba1fcf3c5b76a5b'],
+  ['api-rendered', '6d3a91672bac6bac87ec37673ee769cb6a6551df87c78f531174d725bd9d3410'],
   ['llms', 'e43269607b667b81416d023ee2d4fd7f1c9fa1eebc3fe38c10a5386bffb166b5'],
   ['llms-full', 'adc4283a21a2cf26d2e529717f457a9c203ab2bbf8d428314260ed8a38e67a78'],
 ]);
@@ -420,15 +431,18 @@ function isNonPublicHostname(hostname) {
   );
 }
 
-function hasRawAuthorityUserinfoDelimiter(value) {
-  return (
-    typeof value === 'string' &&
-    /^[A-Za-z][A-Za-z0-9+.-]*:\/\/[^/?#]*@/.test(value.replaceAll('\\', '/'))
-  );
+function isCanonicalRawNetworkUrl(value, schemes) {
+  if (typeof value !== 'string' || value.includes('\\')) return false;
+  const authority = value.match(new RegExp(`^(?:${schemes}):\\/\\/([^/?#]+)(?:[/?#]|$)`, 'i'))?.[1];
+  return Boolean(authority && !authority.includes('@'));
+}
+
+function isCanonicalRawHttpsUrl(value) {
+  return isCanonicalRawNetworkUrl(value, 'https');
 }
 
 function isPublicHttpsUrl(value) {
-  if (hasRawAuthorityUserinfoDelimiter(value)) return false;
+  if (!isCanonicalRawHttpsUrl(value)) return false;
   try {
     const url = new URL(value);
     const hostname = normalizedHostname(url.hostname);
@@ -491,6 +505,10 @@ export async function validateRegistry(records) {
 
     if (!validator(record)) {
       throw new Error(`Schema validation failed: ${formatSchemaErrors(validator.errors)}`);
+    }
+
+    if (!publicAppNamePattern.test(record.name)) {
+      throw new Error(`Public app name must use plain text: ${record.name}.`);
     }
 
     const nonPublicUrl = findNonPublicUrl(record);
@@ -755,6 +773,15 @@ function semanticVisibleText(content, { lineBreaksAsStatements = false } = {}) {
 function semanticDocumentFingerprint(documentPath, content) {
   const kind = semanticDocumentKind(documentPath);
   if (!kind) return null;
+  if (kind === 'api-rendered') {
+    const runtimeScripts = [...content.matchAll(reviewedRuntimeScript)];
+    if (runtimeScripts.length !== 1) return '';
+    const reviewedContent = content.replace(
+      reviewedRuntimeScript,
+      '<script src=/assets/js/runtime~main.<digest>.js defer></script>',
+    );
+    return createHash('sha256').update(reviewedContent).digest('hex');
+  }
   if (kind === 'llms-full') {
     const markers = [...content.matchAll(/^## SPACE catalog \((\d{4}-\d{2}-\d{2})\)$/gm)];
     if (markers.length !== 1) return '';
@@ -765,7 +792,11 @@ function semanticDocumentFingerprint(documentPath, content) {
       rows.length === 0 ||
       rows.some((row) => {
         const match = row.match(rowPattern);
-        return !match || hasUnapprovedDiscoveryAvailability(match[1], new Set());
+        return (
+          !match ||
+          !publicAppNamePattern.test(match[1]) ||
+          hasUnapprovedDiscoveryAvailability(match[1], new Set())
+        );
       })
     ) return '';
     const reviewedPrefix = `${content.slice(0, marker.index)}## SPACE catalog`;
@@ -934,6 +965,25 @@ function collectJsonUrlCandidates(value, candidates) {
   }
 }
 
+function parsedHtmlAttributes(tag) {
+  const attributes = new Map();
+  for (const match of tag.matchAll(htmlAttribute)) {
+    attributes.set(match[1].toLowerCase(), firstCapturedValue(match, 2) ?? '');
+  }
+  return attributes;
+}
+
+function hasUnsupportedCssUrlSyntax(content) {
+  const contexts = [];
+  for (const match of content.matchAll(htmlStyleElement)) contexts.push(match[1]);
+  for (const match of content.matchAll(htmlStyleAttribute)) {
+    contexts.push(firstCapturedValue(match));
+  }
+  return contexts.some(
+    (context) => context.includes('\\') || /(?:^|[^-])(?:-webkit-)?image-set\s*\(/i.test(context),
+  );
+}
+
 function discoveryUrlCandidates(content) {
   const decodedContent = decodedDiscoveryContent(content);
   const candidates = [];
@@ -952,6 +1002,15 @@ function discoveryUrlCandidates(content) {
     const contentValue = firstCapturedValue(match);
     const refreshTarget = contentValue?.match(/(?:^|;)\s*url\s*=\s*(.+)$/i)?.[1];
     if (refreshTarget) candidates.push({ reference: refreshTarget.trim(), bare: false });
+  }
+  for (const match of decodedContent.matchAll(htmlMetaElement)) {
+    const attributes = parsedHtmlAttributes(match[0]);
+    const identifiers = ['property', 'name', 'itemprop']
+      .map((attribute) => attributes.get(attribute)?.toLowerCase())
+      .filter(Boolean);
+    if (identifiers.some((identifier) => reviewedUrlMetaIdentifiers.has(identifier)) && attributes.has('content')) {
+      candidates.push({ reference: attributes.get('content'), bare: false });
+    }
   }
   for (const pattern of [markdownInlineTarget, markdownReferenceTarget, cssUrlTarget]) {
     for (const match of decodedContent.matchAll(pattern)) {
@@ -997,24 +1056,24 @@ function findDisallowedUrlCandidate(candidate, documentPath, allowedBuildPaths) 
     : candidate.reference.trim();
   if (!rawReference || rawReference.startsWith('#')) return null;
   if (reviewedNonHttpDiscoveryReferences.has(rawReference)) return null;
+  if (isReviewedLocalPreview(documentPath, rawReference)) return null;
   if (candidate.css && rawReference.includes('\\')) return rawReference;
-  const reference = rawReference.replaceAll('\\', '/');
-  if (hasRawAuthorityUserinfoDelimiter(reference)) return rawReference;
-  if (reference.startsWith('//')) return rawReference;
-  if (specialNetworkScheme.test(reference) && !/^(?:https?|wss?|ftp):\/\//i.test(reference)) {
+  if (rawReference.includes('\\')) return rawReference;
+  if (rawReference.startsWith('//')) return rawReference;
+  if (specialNetworkScheme.test(rawReference) && !isCanonicalRawNetworkUrl(rawReference, 'https?|wss?|ftp')) {
     return rawReference;
   }
-  if (!anyUriScheme.test(reference)) {
-    if (reference.startsWith('/')) {
-      return isAllowedRootReference(reference, allowedBuildPaths) ? null : rawReference;
+  if (!anyUriScheme.test(rawReference)) {
+    if (rawReference.startsWith('/')) {
+      return isAllowedRootReference(rawReference, allowedBuildPaths) ? null : rawReference;
     }
     return rawReference;
   }
-  if (!/^https?:\/\//i.test(reference)) return rawReference;
+  if (!isCanonicalRawNetworkUrl(rawReference, 'https?')) return rawReference;
 
   let target;
   try {
-    target = new URL(reference);
+    target = new URL(rawReference);
   } catch {
     return rawReference;
   }
@@ -1039,6 +1098,8 @@ function findDisallowedUrlCandidate(candidate, documentPath, allowedBuildPaths) 
 }
 
 function findDisallowedDiscoveryReference(content, documentPath, allowedBuildPaths) {
+  const decodedContent = decodedDiscoveryContent(content);
+  if (hasUnsupportedCssUrlSyntax(decodedContent)) return 'unsupported CSS URL syntax';
   for (const candidate of discoveryUrlCandidates(content)) {
     const disallowed = findDisallowedUrlCandidate(candidate, documentPath, allowedBuildPaths);
     if (disallowed) return disallowed;
