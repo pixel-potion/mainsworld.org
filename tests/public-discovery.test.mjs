@@ -200,6 +200,32 @@ test('rejects availability prose transplanted into a structured llms-full catalo
   );
 });
 
+for (const [name, path, mutate] of [
+  ['source HTML comment', 'docs/developers/api.md', (content) => `${content}\n<!-- The public API is live. -->\n`],
+  ['source HTML metadata', 'docs/developers/api.md', (content) => `${content}\n<meta name="description" content="The public API is live.">\n`],
+  [
+    'rendered metadata',
+    'build/developers/api/index.html',
+    (content) => content.replace('</head>', '<meta name="description" content="The public API is live."></head>'),
+  ],
+  [
+    'rendered JSON-LD',
+    'build/developers/api/index.html',
+    (content) => content.replace('</head>', '<script type="application/ld+json">{"description":"The public API is live."}</script></head>'),
+  ],
+]) {
+  test(`protects semantic discovery documents against ${name}`, () => {
+    const current = read(path);
+    const content = mutate(current);
+    assert.notEqual(content, current, 'semantic mutation must apply');
+    assert.throws(
+      () => validateDiscoveryDocuments({ [path]: content }),
+      /unreviewed|availability claim|semantic change/i,
+      `${path} must reject hidden availability metadata`,
+    );
+  });
+}
+
 test('rejects a protocol-relative product API reference in rendered discovery text', () => {
   assert.throws(
     () => validateDiscoveryDocuments({
@@ -368,6 +394,51 @@ test('parses every browser URL candidate before applying the default-private all
     );
   }
 });
+
+for (const content of [
+  '[SPACE](https://mains.world/space.)',
+  '[Contribute](/contribute.)',
+  '<style>.card { background-image: url(https://mains.world/space.); }</style>',
+]) {
+  test(`retains punctuation on structured URL target: ${content}`, () => {
+    assert.throws(
+      () => validateDiscoveryReferences({ 'unsafe.html': content }),
+      /private|product|route|target|reference|URL/i,
+      `must reject punctuated structured target: ${content}`,
+    );
+  });
+}
+
+for (const [name, content] of [
+  ['CSS imports', '<style>@import "/vault";</style>'],
+  ['ping lists', '<a href="/" ping="/ /vault">Home</a>'],
+  ['image source sets', '<link rel="preload" imagesrcset="/ 1x, /vault 2x">'],
+  [
+    'iteratively entity-encoded embedded markup',
+    '<iframe srcdoc="&amp;lt;a &amp;#104;&amp;#114;&amp;#101;&amp;#102;=&amp;quot;/vault&amp;quot;&amp;gt;Vault&amp;lt;/a&amp;gt;"></iframe>',
+  ],
+  ['CSS escape syntax', String.raw`<style>.card { background: url(\contribute); }</style>`],
+]) {
+  test(`parses ${name} before applying the default-private allowlist`, () => {
+    assert.throws(
+      () => validateDiscoveryReferences({ 'unsafe.html': content }),
+      /private|product|route|target|reference|URL/i,
+      `must reject URL-bearing syntax: ${content}`,
+    );
+  });
+}
+
+for (const target of [
+  'https://public:secret@www.iana.org/',
+  'https://public@www.iana.org/',
+]) {
+  test(`rejects userinfo on absolute discovery URL: ${target}`, () => {
+    assert.throws(
+      () => validateDiscoveryReferences({ 'unsafe.md': `[External](${target})` }),
+      /private|credential|userinfo|target|reference|URL/i,
+    );
+  });
+}
 
 test('rejects IP literals and reserved local DNS origins in discovery references', () => {
   for (const target of [

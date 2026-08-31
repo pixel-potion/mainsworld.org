@@ -953,6 +953,22 @@ for (const [name, value] of [
   });
 }
 
+for (const [name, key, child] of [
+  ['JavaScript URI object key', 'javascript:alert(1)', 'metadata'],
+  ['data URI object key', 'data:text/plain,public-api', 'metadata'],
+  ['malformed HTTPS object key', 'https:api.mains.world/oauth/token', 'metadata'],
+  ['network-path object key', '//evil.example/endpoint', 'metadata'],
+  ['credential-like object key', 'client_secret', {}],
+]) {
+  test(`rejects ${name} after recomputing the OpenAPI hash`, async () => {
+    await withMutatedOpenApi((contract) => {
+      contract.info[key] = child;
+    }, async (platform, root) => {
+      await assert.rejects(validatePlatform(platform, root), /OpenAPI|URI|URL|credential|unsafe/i);
+    });
+  });
+}
+
 test('rejects altered snapshot bytes and contract deployment claims', async () => {
   const root = await mkdtemp(path.join(tmpdir(), 'mainsworld-platform-'));
   try {

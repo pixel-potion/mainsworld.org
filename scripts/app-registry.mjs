@@ -193,6 +193,28 @@ const reviewedSnapshotUriValues = {
   ],
   luma_example: [],
 };
+const reviewedSnapshotUnsafeKeys = {
+  openapi: [
+    {
+      path: ['components', 'securitySchemes', 'PartnerOAuth', 'flows', 'clientCredentials', 'scopes', 'candidate-status:read'],
+      value: 'candidate-status:read',
+    },
+    {
+      path: ['components', 'securitySchemes', 'PartnerOAuth', 'flows', 'clientCredentials', 'scopes', 'link-sessions:create'],
+      value: 'link-sessions:create',
+    },
+    {
+      path: ['components', 'securitySchemes', 'PartnerOAuth', 'flows', 'clientCredentials', 'scopes', 'vibe-candidates:write'],
+      value: 'vibe-candidates:write',
+    },
+    {
+      path: ['components', 'schemas', 'TokenResponse', 'properties', 'access_token'],
+      value: 'access_token',
+    },
+  ],
+  discord_example: [],
+  luma_example: [],
+};
 const reviewedSyntheticSnapshots = {
   discord_example: {
     schema_version: '2026-08-29',
@@ -248,16 +270,17 @@ const absoluteUriToken = /[A-Za-z][A-Za-z0-9+.-]*:(?=\S)/i;
 const absoluteAuthorityReference = /\b[A-Za-z][A-Za-z0-9+.-]*:\/\/[^\s"'<>`)}\]]+/ig;
 const specialNetworkScheme = /^(?:https?|wss?|ftp):/i;
 const anyUriScheme = /^[A-Za-z][A-Za-z0-9+.-]*:/;
-const urlBearingHtmlAttribute = /\b(href|src|srcset|action|poster|formaction|data|cite|manifest|xlink:href)\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s"'=<>`]+))/ig;
+const urlBearingHtmlAttribute = /\b(href|src|srcset|imagesrcset|action|poster|formaction|data|cite|manifest|ping|background|longdesc|xlink:href)\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s"'=<>`]+))/ig;
 const htmlContentAttribute = /\bcontent\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s"'=<>`]+))/ig;
 const markdownInlineTarget = /!?\[[^\]]*\]\(\s*(?:<([^>]+)>|([^\s)]+))/ig;
 const markdownReferenceTarget = /^[ \t]*\[[^\]]+\]:[ \t]*(?:<([^>]+)>|([^\s]+))/igm;
 const cssUrlTarget = /url\(\s*(?:"([^"]*)"|'([^']*)'|([^\s)'"<>]+))/ig;
+const cssImportTarget = /@import\s+(?:"([^"]*)"|'([^']*)')/ig;
 const reviewedSemanticDocumentFingerprints = new Map([
-  ['api-source', 'a11ae8b0c8360ace4b8f46300a2716b415d3afe3587d4715d0756279b5a8cdfc'],
-  ['api-rendered', '7d888d156b29c61b5e97542526902ace281f78a8c7391f7472ce48b4e2efd874'],
-  ['llms', '67bac4ede5071efa617f3a354abb18332bedf0dac86ba7eb29f526bbfca5c77b'],
-  ['llms-full', '50fb01c483232de2fcbd22eae08ef173e6f73c1bb0601053c6a49f75a5d3861f'],
+  ['api-source', '2effce187b4da6780f2c7f88ddbf5953d61b1ddbec94ceb753f855f06c1d40ad'],
+  ['api-rendered', 'd372c6d0119492e0d5b8a4b7822930ffbf8cba2addcaaa8f4ba1fcf3c5b76a5b'],
+  ['llms', 'e43269607b667b81416d023ee2d4fd7f1c9fa1eebc3fe38c10a5386bffb166b5'],
+  ['llms-full', 'adc4283a21a2cf26d2e529717f457a9c203ab2bbf8d428314260ed8a38e67a78'],
 ]);
 const reviewedPublicMachinePaths = new Set([
   '/api/connectives/v1/openapi.json',
@@ -547,6 +570,29 @@ function isReviewedSnapshotUriValue(pathSegments, value, reviewedUriValues) {
   );
 }
 
+function findUnsafeSnapshotKey(key, location, pathSegments, reviewedUnsafeKeys) {
+  const keyPath = [...pathSegments, key];
+  if (isReviewedSnapshotUriValue(keyPath, key, reviewedUnsafeKeys)) return null;
+  if (snapshotCredentialPatterns.some((pattern) => pattern.test(key))) {
+    return `${location}.${key} contains concrete credential material in an object key`;
+  }
+  const compactKey = compactSnapshotKey(key);
+  if (
+    snapshotConcreteCredentialKeys.has(compactKey) ||
+    snapshotConcreteUrlKeys.has(compactKey) ||
+    snapshotConcreteIdentifierKeys.has(compactKey)
+  ) {
+    return `${location}.${key} contains an unsafe object key`;
+  }
+  if (networkPathReference.test(key)) {
+    return `${location}.${key} contains a protocol-relative network-path URI in an object key`;
+  }
+  if (containsAbsoluteUriToken(key)) {
+    return `${location}.${key} contains an unreviewed absolute URI in an object key`;
+  }
+  return null;
+}
+
 function containsAbsoluteUriToken(value) {
   const withoutIsoTimestamps = value.replace(
     /\b\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?Z\b/g,
@@ -561,6 +607,7 @@ function findUnsafeSnapshotValue(
   parentKey = '',
   pathSegments = [],
   reviewedUriValues = [],
+  reviewedUnsafeKeys = [],
 ) {
   if (typeof value === 'string') {
     if (snapshotCredentialPatterns.some((pattern) => pattern.test(value))) {
@@ -592,6 +639,7 @@ function findUnsafeSnapshotValue(
         parentKey,
         [...pathSegments, index],
         reviewedUriValues,
+        reviewedUnsafeKeys,
       );
       if (found) return found;
     }
@@ -600,6 +648,8 @@ function findUnsafeSnapshotValue(
 
   if (value && typeof value === 'object') {
     for (const [key, child] of Object.entries(value)) {
+      const unsafeKey = findUnsafeSnapshotKey(key, location, pathSegments, reviewedUnsafeKeys);
+      if (unsafeKey) return unsafeKey;
       if (key === 'x-mains-world-callable' && child === true) {
         return `${location}.${key} makes the snapshot callable`;
       }
@@ -609,6 +659,7 @@ function findUnsafeSnapshotValue(
         key,
         [...pathSegments, key],
         reviewedUriValues,
+        reviewedUnsafeKeys,
       );
       if (found) return found;
     }
@@ -710,11 +761,9 @@ function semanticDocumentFingerprint(documentPath, content) {
       })
     ) return '';
     const reviewedPrefix = `${content.slice(0, marker.index)}## SPACE catalog`;
-    const normalizedPrefix = semanticVisibleText(reviewedPrefix);
-    return createHash('sha256').update(normalizedPrefix.toLowerCase()).digest('hex');
+    return createHash('sha256').update(reviewedPrefix).digest('hex');
   }
-  const visible = semanticVisibleText(content);
-  return createHash('sha256').update(visible.toLowerCase()).digest('hex');
+  return createHash('sha256').update(content).digest('hex');
 }
 
 function validateDiscoveryDocumentMap(documents) {
@@ -747,14 +796,32 @@ function canonicalPublicPath(pathname) {
 }
 
 function decodedDiscoveryContent(content) {
-  return content
-    .normalize('NFKC')
-    .replace(/&#(?:x([0-9a-f]+)|(\d+));/gi, (_, hex, decimal) =>
-      String.fromCodePoint(Number.parseInt(hex ?? decimal, hex ? 16 : 10)))
-    .replace(/&(colon|sol|quest|num|amp);/gi, (_, name) => ({
-      colon: ':', sol: '/', quest: '?', num: '#', amp: '&',
-    })[name.toLowerCase()])
-    .replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F\u007F-\u009F\u200B-\u200F\u202A-\u202E\u2060-\u206F\uFEFF]/g, '');
+  const namedEntities = {
+    colon: ':', sol: '/', quest: '?', num: '#', amp: '&',
+    lt: '<', gt: '>', quot: '"', apos: "'", equals: '=',
+  };
+  let decoded = content.normalize('NFKC');
+  for (let pass = 0; pass < 4; pass += 1) {
+    const previous = decoded;
+    const next = decoded.replace(
+      /&(?:#x([0-9a-f]+)|#(\d+)|(colon|sol|quest|num|amp|lt|gt|quot|apos|equals));/gi,
+      (match, hex, decimal, name) => {
+        if (name) return namedEntities[name.toLowerCase()];
+        const codePoint = Number.parseInt(hex ?? decimal, hex ? 16 : 10);
+        try {
+          return String.fromCodePoint(codePoint);
+        } catch {
+          return match;
+        }
+      },
+    );
+    decoded = next.normalize('NFKC');
+    if (decoded === previous) break;
+  }
+  return decoded.replace(
+    /[\u0000-\u0008\u000B\u000C\u000E-\u001F\u007F-\u009F\u200B-\u200F\u202A-\u202E\u2060-\u206F\uFEFF]/g,
+    '',
+  );
 }
 
 function isPrivateDiscoveryHostname(hostname) {
@@ -866,7 +933,11 @@ function discoveryUrlCandidates(content) {
   for (const match of decodedContent.matchAll(urlBearingHtmlAttribute)) {
     const attribute = match[1].toLowerCase();
     const value = firstCapturedValue(match, 2) ?? '';
-    const references = attribute === 'srcset' ? parseSrcsetCandidates(value) : [value];
+    const references = attribute === 'srcset' || attribute === 'imagesrcset'
+      ? parseSrcsetCandidates(value)
+      : attribute === 'ping'
+        ? value.trim().split(/\s+/).filter(Boolean)
+        : [value];
     for (const reference of references) candidates.push({ reference, bare: false });
   }
   for (const match of decodedContent.matchAll(htmlContentAttribute)) {
@@ -876,8 +947,15 @@ function discoveryUrlCandidates(content) {
   }
   for (const pattern of [markdownInlineTarget, markdownReferenceTarget, cssUrlTarget]) {
     for (const match of decodedContent.matchAll(pattern)) {
-      candidates.push({ reference: firstCapturedValue(match), bare: true });
+      candidates.push({
+        reference: firstCapturedValue(match),
+        bare: false,
+        css: pattern === cssUrlTarget,
+      });
     }
+  }
+  for (const match of decodedContent.matchAll(cssImportTarget)) {
+    candidates.push({ reference: firstCapturedValue(match), bare: false, css: true });
   }
 
   const trimmedContent = decodedContent.trim();
@@ -911,7 +989,7 @@ function findDisallowedUrlCandidate(candidate, documentPath, allowedBuildPaths) 
     : candidate.reference.trim();
   if (!rawReference || rawReference.startsWith('#')) return null;
   if (reviewedNonHttpDiscoveryReferences.has(rawReference)) return null;
-
+  if (candidate.css && rawReference.includes('\\')) return rawReference;
   const reference = rawReference.replaceAll('\\', '/');
   if (reference.startsWith('//')) return rawReference;
   if (specialNetworkScheme.test(reference) && !/^(?:https?|wss?|ftp):\/\//i.test(reference)) {
@@ -931,6 +1009,7 @@ function findDisallowedUrlCandidate(candidate, documentPath, allowedBuildPaths) 
   } catch {
     return rawReference;
   }
+  if (target.username || target.password) return rawReference;
   const hostname = normalizedHostname(target.hostname);
   const pathname = normalizedDiscoveryPath(target.href);
   if (isReviewedReservedDiscoveryReference(documentPath, rawReference)) return null;
@@ -1087,6 +1166,7 @@ export async function validatePlatform(platform, root = repositoryRoot) {
       '',
       [],
       reviewedSnapshotUriValues[name] ?? [],
+      reviewedSnapshotUnsafeKeys[name] ?? [],
     );
     if (unsafeValue) throw new Error(`Snapshot ${name} is unsafe: ${unsafeValue}.`);
     snapshots[name] = snapshot;
