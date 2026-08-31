@@ -7,6 +7,7 @@ import { isIP } from 'node:net';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { isDeepStrictEqual, promisify } from 'node:util';
+import { parseFragment } from 'parse5';
 
 const moduleDirectory = path.dirname(fileURLToPath(import.meta.url));
 const repositoryRoot = path.resolve(moduleDirectory, '..');
@@ -270,26 +271,45 @@ const absoluteUriToken = /[A-Za-z][A-Za-z0-9+.-]*:(?=\S)/i;
 const absoluteAuthorityReference = /\b[A-Za-z][A-Za-z0-9+.-]*:\/\/[^\s"'<>`)}\]]+/ig;
 const specialNetworkScheme = /^(?:https?|wss?|ftp):/i;
 const anyUriScheme = /^[A-Za-z][A-Za-z0-9+.-]*:/;
-const urlBearingHtmlAttribute = /\b(href|src|srcset|imagesrcset|action|poster|formaction|data|cite|manifest|ping|background|longdesc|xlink:href)\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s"'=<>`]+))/ig;
-const htmlContentAttribute = /\bcontent\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s"'=<>`]+))/ig;
 const markdownInlineTarget = /!?\[[^\]]*\]\(\s*(?:<([^>]+)>|([^\s)]+))/ig;
 const markdownReferenceTarget = /^[ \t]*\[[^\]]+\]:[ \t]*(?:<([^>]+)>|([^\s]+))/igm;
 const cssUrlTarget = /url\(\s*(?:"([^"]*)"|'([^']*)'|([^\s)'"<>]+))/ig;
 const cssImportTarget = /@import\s+(?:"([^"]*)"|'([^']*)')/ig;
-const htmlStyleElement = /<style\b[^>]*>([\s\S]*?)<\/style>/ig;
-const htmlStyleAttribute = /\bstyle\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s"'=<>`]+))/ig;
-const htmlMetaElement = /<meta\b[^>]*>/ig;
-const htmlAttribute = /([A-Za-z_:][A-Za-z0-9:._-]*)\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s"'=<>`]+))/g;
 const reviewedUrlMetaIdentifiers = new Set([
-  'og:url', 'og:image', 'og:image:url', 'og:image:secure_url',
-  'twitter:url', 'twitter:image', 'twitter:image:src', 'msapplication-tileimage',
-  'url', 'image', 'thumbnailurl', 'contenturl',
+  'og:url',
+  'og:image', 'og:image:url', 'og:image:secure_url',
+  'og:video', 'og:video:url', 'og:video:secure_url',
+  'og:audio', 'og:audio:url', 'og:audio:secure_url',
+  'twitter:url', 'twitter:image', 'twitter:image:src', 'twitter:player', 'twitter:player:stream',
+  'msapplication-tileimage',
+  'url', 'image', 'thumbnailurl', 'contenturl', 'embedurl', 'sameas', 'logo',
 ]);
-const reviewedRuntimeScript = /<script src=\/assets\/js\/runtime~main\.[a-f0-9]{8}\.js defer><\/script>/g;
-const publicAppNamePattern = /^[\p{L}\p{N}]+(?:[ .'+’\-][\p{L}\p{N}]+)*$/u;
+const htmlUrlAttributes = new Set([
+  'href', 'src', 'action', 'poster', 'formaction', 'data', 'cite', 'manifest',
+  'background', 'longdesc', 'xlink:href',
+]);
+const svgCssUrlAttributes = new Set([
+  'fill', 'stroke', 'filter', 'clip-path', 'mask', 'marker', 'marker-start',
+  'marker-mid', 'marker-end', 'cursor',
+]);
+const reviewedGeneratedAssetTags = [
+  {
+    pattern: /<link rel=stylesheet href=\/assets\/css\/styles\.[a-f0-9]{8}\.css \/>/g,
+    replacement: '<link rel=stylesheet href=/assets/css/styles.<digest>.css />',
+  },
+  {
+    pattern: /<script src=\/assets\/js\/runtime~main\.[a-f0-9]{8}\.js defer><\/script>/g,
+    replacement: '<script src=/assets/js/runtime~main.<digest>.js defer></script>',
+  },
+  {
+    pattern: /<script src=\/assets\/js\/main\.[a-f0-9]{8}\.js defer><\/script>/g,
+    replacement: '<script src=/assets/js/main.<digest>.js defer></script>',
+  },
+];
+const publicAppNamePattern = /^[A-Za-z0-9]+(?:[ .+'-][A-Za-z0-9]+)*$/;
 const reviewedSemanticDocumentFingerprints = new Map([
   ['api-source', '2effce187b4da6780f2c7f88ddbf5953d61b1ddbec94ceb753f855f06c1d40ad'],
-  ['api-rendered', '6d3a91672bac6bac87ec37673ee769cb6a6551df87c78f531174d725bd9d3410'],
+  ['api-rendered', '297965261dd5671649df9c2a061fbc82e95282cd07c4b23ca369245b5c3e0393'],
   ['llms', 'e43269607b667b81416d023ee2d4fd7f1c9fa1eebc3fe38c10a5386bffb166b5'],
   ['llms-full', 'adc4283a21a2cf26d2e529717f457a9c203ab2bbf8d428314260ed8a38e67a78'],
 ]);
@@ -507,8 +527,8 @@ export async function validateRegistry(records) {
       throw new Error(`Schema validation failed: ${formatSchemaErrors(validator.errors)}`);
     }
 
-    if (!publicAppNamePattern.test(record.name)) {
-      throw new Error(`Public app name must use plain text: ${record.name}.`);
+    if (!isApprovedPublicAppName(record.name)) {
+      throw new Error(`Public app name must use reviewed plain text without availability claims: ${record.name}.`);
     }
 
     const nonPublicUrl = findNonPublicUrl(record);
@@ -732,7 +752,7 @@ function findDisallowedOpenApiReference(value, location = '$') {
 }
 
 function normalizeDiscoveryStatement(statement) {
-  return statement
+  const normalized = statement
     .normalize('NFKC')
     .replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F\u007F-\u009F\u200B-\u200F\u202A-\u202E\u2060-\u206F\uFEFF]/g, '')
     .replace(/&#(?:39|x27);|&apos;|[\u2018\u2019']/gi, '')
@@ -741,12 +761,23 @@ function normalizeDiscoveryStatement(statement) {
     .replace(/\s+/g, ' ')
     .trim()
     .toLowerCase();
+  return normalized.replace(
+    /\b(?:[a-z]\s+)+[a-z]\b/g,
+    (letterRun) => letterRun.replaceAll(' ', ''),
+  );
 }
 
 function hasUnapprovedDiscoveryAvailability(statement, approvedStatements) {
   const normalized = normalizeDiscoveryStatement(statement);
   if (approvedStatements.has(normalized)) return false;
   return discoverySubjectSignal.test(normalized) && discoveryAvailabilitySignal.test(normalized);
+}
+
+function isApprovedPublicAppName(name) {
+  return (
+    publicAppNamePattern.test(name) &&
+    !hasUnapprovedDiscoveryAvailability(name, new Set())
+  );
 }
 
 function semanticDocumentKind(documentPath) {
@@ -774,12 +805,11 @@ function semanticDocumentFingerprint(documentPath, content) {
   const kind = semanticDocumentKind(documentPath);
   if (!kind) return null;
   if (kind === 'api-rendered') {
-    const runtimeScripts = [...content.matchAll(reviewedRuntimeScript)];
-    if (runtimeScripts.length !== 1) return '';
-    const reviewedContent = content.replace(
-      reviewedRuntimeScript,
-      '<script src=/assets/js/runtime~main.<digest>.js defer></script>',
-    );
+    let reviewedContent = content;
+    for (const { pattern, replacement } of reviewedGeneratedAssetTags) {
+      if ([...reviewedContent.matchAll(pattern)].length !== 1) return '';
+      reviewedContent = reviewedContent.replace(pattern, replacement);
+    }
     return createHash('sha256').update(reviewedContent).digest('hex');
   }
   if (kind === 'llms-full') {
@@ -794,8 +824,7 @@ function semanticDocumentFingerprint(documentPath, content) {
         const match = row.match(rowPattern);
         return (
           !match ||
-          !publicAppNamePattern.test(match[1]) ||
-          hasUnapprovedDiscoveryAvailability(match[1], new Set())
+          !isApprovedPublicAppName(match[1])
         );
       })
     ) return '';
@@ -965,64 +994,109 @@ function collectJsonUrlCandidates(value, candidates) {
   }
 }
 
-function parsedHtmlAttributes(tag) {
-  const attributes = new Map();
-  for (const match of tag.matchAll(htmlAttribute)) {
-    attributes.set(match[1].toLowerCase(), firstCapturedValue(match, 2) ?? '');
-  }
-  return attributes;
+function normalizedHtmlAttributeName(attribute) {
+  return `${attribute.prefix ? `${attribute.prefix}:` : ''}${attribute.name}`.toLowerCase();
 }
 
-function hasUnsupportedCssUrlSyntax(content) {
-  const contexts = [];
-  for (const match of content.matchAll(htmlStyleElement)) contexts.push(match[1]);
-  for (const match of content.matchAll(htmlStyleAttribute)) {
-    contexts.push(firstCapturedValue(match));
-  }
-  return contexts.some(
-    (context) => context.includes('\\') || /(?:^|[^-])(?:-webkit-)?image-set\s*\(/i.test(context),
+function htmlAttributeValue(node, name) {
+  const attribute = node.attrs?.find(
+    (candidate) => normalizedHtmlAttributeName(candidate) === name,
   );
+  return attribute?.value;
+}
+
+function htmlNodeText(node) {
+  if (node.nodeName === '#text') return node.value ?? '';
+  return (node.childNodes ?? []).map(htmlNodeText).join('');
+}
+
+function collectCssUrlCandidates(css, candidates) {
+  if (
+    css.includes('\\') ||
+    /(?:^|[^-])(?:-webkit-)?image-set\s*\(|\b(?:cross-fade|element)\s*\(/i.test(css)
+  ) {
+    candidates.push({ reference: 'unsupported CSS URL syntax', bare: false, invalid: true });
+    return;
+  }
+  for (const match of css.matchAll(cssUrlTarget)) {
+    candidates.push({ reference: firstCapturedValue(match), bare: false, css: true });
+  }
+  for (const match of css.matchAll(cssImportTarget)) {
+    candidates.push({ reference: firstCapturedValue(match), bare: false, css: true });
+  }
+}
+
+function collectHtmlUrlCandidates(content, candidates, depth = 0) {
+  const fragment = parseFragment(content);
+
+  function visit(node) {
+    const tagName = node.tagName?.toLowerCase();
+    if (tagName) {
+      for (const attribute of node.attrs ?? []) {
+        const name = normalizedHtmlAttributeName(attribute);
+        if (htmlUrlAttributes.has(name)) {
+          candidates.push({ reference: attribute.value, bare: false });
+        } else if (name === 'srcset' || name === 'imagesrcset') {
+          for (const reference of parseSrcsetCandidates(attribute.value)) {
+            candidates.push({ reference, bare: false });
+          }
+        } else if (name === 'ping') {
+          for (const reference of attribute.value.trim().split(/\s+/).filter(Boolean)) {
+            candidates.push({ reference, bare: false });
+          }
+        } else if (name === 'style' || svgCssUrlAttributes.has(name)) {
+          collectCssUrlCandidates(attribute.value, candidates);
+        }
+      }
+
+      if (tagName === 'style') collectCssUrlCandidates(htmlNodeText(node), candidates);
+
+      if (tagName === 'meta') {
+        const identifiers = ['property', 'name', 'itemprop']
+          .map((name) => htmlAttributeValue(node, name)?.toLowerCase())
+          .filter(Boolean);
+        const contentValue = htmlAttributeValue(node, 'content');
+        if (
+          contentValue !== undefined &&
+          identifiers.some((identifier) => reviewedUrlMetaIdentifiers.has(identifier))
+        ) {
+          candidates.push({ reference: contentValue, bare: false });
+        }
+        if (htmlAttributeValue(node, 'http-equiv')?.toLowerCase() === 'refresh') {
+          const refreshTarget = contentValue?.match(/(?:^|;)\s*url\s*=\s*(.+)$/i)?.[1];
+          if (refreshTarget) candidates.push({ reference: refreshTarget.trim(), bare: false });
+        }
+      }
+
+      const srcdoc = htmlAttributeValue(node, 'srcdoc');
+      if (srcdoc !== undefined) {
+        if (depth >= 4) {
+          candidates.push({ reference: 'unsupported nested srcdoc', bare: false, invalid: true });
+        } else {
+          collectHtmlUrlCandidates(decodedDiscoveryContent(srcdoc), candidates, depth + 1);
+        }
+      }
+    }
+
+    for (const child of node.childNodes ?? []) visit(child);
+  }
+
+  visit(fragment);
 }
 
 function discoveryUrlCandidates(content) {
   const decodedContent = decodedDiscoveryContent(content);
   const candidates = [];
 
-  for (const match of decodedContent.matchAll(urlBearingHtmlAttribute)) {
-    const attribute = match[1].toLowerCase();
-    const value = firstCapturedValue(match, 2) ?? '';
-    const references = attribute === 'srcset' || attribute === 'imagesrcset'
-      ? parseSrcsetCandidates(value)
-      : attribute === 'ping'
-        ? value.trim().split(/\s+/).filter(Boolean)
-        : [value];
-    for (const reference of references) candidates.push({ reference, bare: false });
-  }
-  for (const match of decodedContent.matchAll(htmlContentAttribute)) {
-    const contentValue = firstCapturedValue(match);
-    const refreshTarget = contentValue?.match(/(?:^|;)\s*url\s*=\s*(.+)$/i)?.[1];
-    if (refreshTarget) candidates.push({ reference: refreshTarget.trim(), bare: false });
-  }
-  for (const match of decodedContent.matchAll(htmlMetaElement)) {
-    const attributes = parsedHtmlAttributes(match[0]);
-    const identifiers = ['property', 'name', 'itemprop']
-      .map((attribute) => attributes.get(attribute)?.toLowerCase())
-      .filter(Boolean);
-    if (identifiers.some((identifier) => reviewedUrlMetaIdentifiers.has(identifier)) && attributes.has('content')) {
-      candidates.push({ reference: attributes.get('content'), bare: false });
-    }
-  }
-  for (const pattern of [markdownInlineTarget, markdownReferenceTarget, cssUrlTarget]) {
+  collectHtmlUrlCandidates(content, candidates);
+  if (decodedContent !== content) collectHtmlUrlCandidates(decodedContent, candidates);
+  for (const pattern of [markdownInlineTarget, markdownReferenceTarget]) {
     for (const match of decodedContent.matchAll(pattern)) {
       candidates.push({
         reference: firstCapturedValue(match),
         bare: false,
-        css: pattern === cssUrlTarget,
       });
     }
-  }
-  for (const match of decodedContent.matchAll(cssImportTarget)) {
-    candidates.push({ reference: firstCapturedValue(match), bare: false, css: true });
   }
 
   const trimmedContent = decodedContent.trim();
@@ -1051,6 +1125,7 @@ function isReviewedReservedDiscoveryReference(documentPath, reference) {
 }
 
 function findDisallowedUrlCandidate(candidate, documentPath, allowedBuildPaths) {
+  if (candidate.invalid) return candidate.reference;
   const rawReference = candidate.bare
     ? trimBareUrlPunctuation(candidate.reference)
     : candidate.reference.trim();
@@ -1098,8 +1173,6 @@ function findDisallowedUrlCandidate(candidate, documentPath, allowedBuildPaths) 
 }
 
 function findDisallowedDiscoveryReference(content, documentPath, allowedBuildPaths) {
-  const decodedContent = decodedDiscoveryContent(content);
-  if (hasUnsupportedCssUrlSyntax(decodedContent)) return 'unsupported CSS URL syntax';
   for (const candidate of discoveryUrlCandidates(content)) {
     const disallowed = findDisallowedUrlCandidate(candidate, documentPath, allowedBuildPaths);
     if (disallowed) return disallowed;

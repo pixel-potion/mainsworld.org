@@ -631,6 +631,15 @@ for (const name of [
   'A&#80;I is live',
   'A**P**I is live',
   'A<b>P</b>I is live',
+  'A.P.I is live',
+  'A P I is live',
+  'A-P-I is live',
+  'AΡI is live',
+  'AРI is live',
+  'M.C.P is live',
+  'OAuth server is live',
+  'Endpoint is available',
+  'Credentials are obtainable',
 ]) {
   test(`rejects a non-plain public app name: ${name}`, async () => {
     const app = { ...clone(validApp), name };

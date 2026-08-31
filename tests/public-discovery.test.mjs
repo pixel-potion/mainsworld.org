@@ -204,6 +204,15 @@ for (const name of [
   'A&#80;I is live',
   'A**P**I is live',
   'A<b>P</b>I is live',
+  'A.P.I is live',
+  'A P I is live',
+  'A-P-I is live',
+  'AΡI is live',
+  'AРI is live',
+  'M.C.P is live',
+  'OAuth server is live',
+  'Endpoint is available',
+  'Credentials are obtainable',
 ]) {
   test(`rejects a non-plain dynamic app name in llms-full: ${name}`, () => {
     const current = read('build/llms-full.txt');
@@ -242,19 +251,58 @@ for (const [name, path, mutate] of [
   });
 }
 
-test('accepts the exact rendered API document across generated runtime digest variants', () => {
+test('accepts the exact rendered API document across generated asset digest variants', () => {
   const path = 'build/developers/api/index.html';
   const current = read(path);
-  const match = current.match(/\/assets\/js\/runtime~main\.([a-f0-9]{8})\.js/);
-  assert.ok(match, 'rendered API document must contain one generated runtime asset');
-  const alternateDigest = match[1] === '00000000' ? '11111111' : '00000000';
-  const alternatePath = `/assets/js/runtime~main.${alternateDigest}.js`;
-  const alternate = current.replace(match[0], alternatePath);
+  const assetPatterns = [
+    /\/assets\/css\/styles\.([a-f0-9]{8})\.css/,
+    /\/assets\/js\/runtime~main\.([a-f0-9]{8})\.js/,
+    /\/assets\/js\/main\.([a-f0-9]{8})\.js/,
+  ];
+  const alternatePaths = [];
+  let alternate = current;
+  for (const [index, pattern] of assetPatterns.entries()) {
+    const match = alternate.match(pattern);
+    assert.ok(match, `rendered API document must contain generated asset ${pattern}`);
+    const alternateDigest = `${index + 1}`.repeat(8);
+    const alternatePath = match[0].replace(match[1], alternateDigest);
+    alternatePaths.push(alternatePath);
+    alternate = alternate.replace(match[0], alternatePath);
+  }
   assert.notEqual(alternate, current, 'runtime digest mutation must apply');
   assert.doesNotThrow(() => registryPolicy.validateDiscoveryDocuments(
     { [path]: alternate },
-    { publicPaths: [...publicBuildPaths(), alternatePath] },
+    { publicPaths: [...publicBuildPaths(), ...alternatePaths] },
   ));
+});
+
+for (const assetPattern of [
+  /<link rel=stylesheet href=\/assets\/css\/styles\.[a-f0-9]{8}\.css \/>/,
+  /<script src=\/assets\/js\/runtime~main\.[a-f0-9]{8}\.js defer><\/script>/,
+  /<script src=\/assets\/js\/main\.[a-f0-9]{8}\.js defer><\/script>/,
+]) {
+  test(`rejects duplicate generated asset tag: ${assetPattern}`, () => {
+    const path = 'build/developers/api/index.html';
+    const current = read(path);
+    const match = current.match(assetPattern);
+    assert.ok(match, `rendered API document must contain ${assetPattern}`);
+    const duplicated = current.replace(match[0], `${match[0]}${match[0]}`);
+    assert.throws(
+      () => validateDiscoveryDocuments({ [path]: duplicated }),
+      /unreviewed|availability claim|semantic change/i,
+    );
+  });
+}
+
+test('rejects a generated asset tag whose strict shape changes', () => {
+  const path = 'build/developers/api/index.html';
+  const current = read(path);
+  const mutated = current.replace(' defer></script>', ' async></script>');
+  assert.notEqual(mutated, current, 'strict tag-shape mutation must apply');
+  assert.throws(
+    () => validateDiscoveryDocuments({ [path]: mutated }),
+    /unreviewed|availability claim|semantic change/i,
+  );
 });
 
 test('rejects a protocol-relative product API reference in rendered discovery text', () => {
@@ -465,6 +513,9 @@ for (const [name, content] of [
   ['CSS image-set', '<style>.card { background: image-set("/vault" 1x); }</style>'],
   ['CSS webkit image-set', '<style>.card { background: -webkit-image-set("/vault" 1x); }</style>'],
   ['CSS escape syntax', String.raw`<style>.card { background: url(\contribute); }</style>`],
+  ['escaped SVG fill URL', String.raw`<svg><path fill="u\72l(/vault)"></path></svg>`],
+  ['escaped SVG filter URL', String.raw`<svg><path filter="u\72l(/vault)"></path></svg>`],
+  ['unsupported SVG paint function', '<svg><path fill="image-set(\'/vault\' 1x)"></path></svg>'],
 ]) {
   test(`parses ${name} before applying the default-private allowlist`, () => {
     assert.throws(
@@ -478,6 +529,26 @@ for (const [name, content] of [
 test('keeps reviewed literal CSS url and import targets valid', () => {
   assert.doesNotThrow(() => validateDiscoveryReferences({
     'approved.html': '<style>@import "/developers/api"; .card { background: url("/img/og.png"); }</style>',
+  }));
+});
+
+for (const attribute of [
+  'fill', 'stroke', 'filter', 'clip-path', 'mask', 'marker',
+  'marker-start', 'marker-mid', 'marker-end', 'cursor',
+]) {
+  test(`routes literal SVG ${attribute} URLs through the discovery allowlist`, () => {
+    assert.throws(
+      () => validateDiscoveryReferences({
+        'unsafe.html': `<svg><path ${attribute}="url('/vault')"></path></svg>`,
+      }),
+      /private|product|route|target|reference|URL/i,
+    );
+  });
+}
+
+test('keeps reviewed literal SVG presentation targets and non-URL paint valid', () => {
+  assert.doesNotThrow(() => validateDiscoveryReferences({
+    'approved.html': '<svg><path fill="#fff" filter="url(\'#blur\')" mask="url(\'/img/og.png\')"></path></svg>',
   }));
 });
 
@@ -506,6 +577,41 @@ test('keeps reviewed URL-bearing meta content valid', () => {
     ].join(''),
   }));
 });
+
+for (const [name, content, shouldReject] of [
+  ['first duplicate property is URL-bearing', '<meta property="og:image" property="description" content="/vault">', true],
+  ['first duplicate property is non-URL', '<meta property="description" property="og:image" content="/vault">', false],
+  ['first duplicate content is private', '<meta property="og:image" content="/vault" content="/img/og.png">', true],
+  ['first duplicate content is public', '<meta property="og:image" content="/img/og.png" content="/vault">', false],
+  ['quoted greater-than remains in content', '<meta property="og:image" content="/vault?label=>">', true],
+]) {
+  test(`uses browser first-attribute-wins for meta: ${name}`, () => {
+    const validation = () => validateDiscoveryReferences({ 'meta.html': content });
+    if (shouldReject) {
+      assert.throws(validation, /private|product|route|target|reference|URL/i);
+    } else {
+      assert.doesNotThrow(validation);
+    }
+  });
+}
+
+for (const [identifierAttribute, identifier] of [
+  ['property', 'og:video:secure_url'],
+  ['property', 'og:audio:url'],
+  ['name', 'twitter:player'],
+  ['itemprop', 'embedUrl'],
+  ['itemprop', 'sameAs'],
+  ['itemprop', 'logo'],
+]) {
+  test(`routes ${identifier} meta content through the discovery allowlist`, () => {
+    assert.throws(
+      () => validateDiscoveryReferences({
+        'unsafe.html': `<meta ${identifierAttribute}="${identifier}" content="/vault">`,
+      }),
+      /private|product|route|target|reference|URL/i,
+    );
+  });
+}
 
 for (const target of [
   'https://public:secret@www.iana.org/',
