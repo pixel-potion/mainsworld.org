@@ -44,6 +44,15 @@ const discoveryArtifacts = () => [...new Set([
   ...coreDiscoveryArtifacts(),
   ...renderedSitemapPages(),
 ])];
+const publicBuildPaths = () => walk(buildDir).map((path) => `/${relative(buildDir, path)}`);
+const validateDiscoveryReferences = (documents) => registryPolicy.validateDiscoveryReferences(
+  documents,
+  { publicPaths: publicBuildPaths() },
+);
+const validateDiscoveryDocuments = (documents) => registryPolicy.validateDiscoveryDocuments(
+  documents,
+  { publicPaths: publicBuildPaths() },
+);
 
 test('ships crawlable robots and a public-only sitemap', () => {
   assert.equal(read('static/robots.txt'), 'User-agent: *\nAllow: /\nSitemap: https://mainsworld.org/sitemap.xml\n');
@@ -79,9 +88,9 @@ test('keeps AI discovery documents explicitly non-callable', () => {
     const content = read(path);
     assert.match(content, /no public.*API.*(?:callable|to call)|no .*public API access/i, `${path} must deny public API calls`);
     assert.match(content, mcpNonCallable, `${path} must deny public MCP endpoints`);
-    assert.doesNotThrow(() => registryPolicy.validateDiscoveryDocuments({ [path]: content }));
+    assert.doesNotThrow(() => validateDiscoveryDocuments({ [path]: content }));
   }
-  assert.doesNotThrow(() => registryPolicy.validateDiscoveryDocuments(semanticDiscoveryDocuments()));
+  assert.doesNotThrow(() => validateDiscoveryDocuments(semanticDiscoveryDocuments()));
   assert.doesNotMatch('Use an API or MCP endpoint.', mcpNonCallable, 'a positive MCP phrase must not satisfy the denial check');
 });
 
@@ -95,18 +104,17 @@ test('rejects contradictory API and MCP availability claims in both AI discovery
     const current = read(path);
     for (const claim of ['A public MCP endpoint is available.', 'The API is live.']) {
       assert.throws(
-        () => registryPolicy.validateDiscoveryDocuments({ [path]: `${current}\n${claim}\n` }),
+        () => validateDiscoveryDocuments({ [path]: `${current}\n${claim}\n` }),
         /contradictory|availability claim/i,
         `${path} must reject: ${claim}`,
       );
     }
   }
-  assert.doesNotThrow(() => registryPolicy.validateDiscoveryDocuments({
+  assert.doesNotThrow(() => validateDiscoveryDocuments({
     'llms.txt': [
       read('build/llms.txt'),
       'API: None',
       'API: Not Applicable',
-      'Use an API or MCP endpoint.',
       'Human guide: https://mainsworld.org/developers/',
     ].join('\n'),
   }));
@@ -115,7 +123,7 @@ test('rejects contradictory API and MCP availability claims in both AI discovery
 test('rejects availability claims that share a sentence with denial language', () => {
   for (const path of ['build/llms.txt', 'build/llms-full.txt']) {
     assert.throws(
-      () => registryPolicy.validateDiscoveryDocuments({
+      () => validateDiscoveryDocuments({
         [path]: 'No public API is callable; a public MCP endpoint is available.',
       }),
       /contradictory|availability claim/i,
@@ -139,13 +147,20 @@ for (const claim of [
   'The MCP endpoint can safely be called.',
   'Requests are accepted by the API.',
   'Requests are currently accepted by the MCP endpoint.',
+  'The API is accepting requests.',
+  'API calls are supported.',
+  'Requests are processed by the API.',
+  'The public API can very safely and reliably now be called.',
+  'The OAuth endpoint is operational.',
+  'Use an API or MCP endpoint.',
+  'Call the API.',
   'The server accepts requests.',
   'The MCP endpoint supports requests.',
 ]) {
   test(`rejects semantic discovery bypass: ${claim}`, () => {
     for (const [path, content] of Object.entries(semanticDiscoveryDocuments())) {
       assert.throws(
-        () => registryPolicy.validateDiscoveryDocuments({ [path]: `${content}\n${claim}\n` }),
+        () => validateDiscoveryDocuments({ [path]: `${content}\n${claim}\n` }),
         /contradictory|availability claim/i,
         `${path} must reject: ${claim}`,
       );
@@ -154,7 +169,7 @@ for (const claim of [
 }
 
 test('keeps approved exact denials and neutral discovery text valid', () => {
-  assert.doesNotThrow(() => registryPolicy.validateDiscoveryDocuments({
+  assert.doesNotThrow(() => validateDiscoveryDocuments({
     'discovery.txt': [
       'No public API is callable today.',
       'The API is not live.',
@@ -168,14 +183,13 @@ test('keeps approved exact denials and neutral discovery text valid', () => {
       'No requests are accepted by the MCP endpoint.',
       'API: None',
       'API: Not Applicable',
-      'Use an API or MCP endpoint.',
     ].join('\n'),
   }));
 });
 
 test('rejects a protocol-relative product API reference in rendered discovery text', () => {
   assert.throws(
-    () => registryPolicy.validateDiscoveryDocuments({
+    () => validateDiscoveryDocuments({
       'build/developers/api/index.html': '<a href="//mains.world/api/token">Token endpoint</a>',
     }),
     /network-path|protocol-relative|URI|URL/i,
@@ -184,7 +198,7 @@ test('rejects a protocol-relative product API reference in rendered discovery te
 
 test('rejects a single-label protocol-relative host in rendered discovery text', () => {
   assert.throws(
-    () => registryPolicy.validateDiscoveryDocuments({
+    () => validateDiscoveryDocuments({
       'build/developers/api/index.html': '<a href="//localhost/api/token">Token endpoint</a>',
     }),
     /network-path|protocol-relative|URI|URL/i,
@@ -200,7 +214,7 @@ for (const reference of [
 ]) {
   test(`rejects protocol-relative authority form in discovery text: ${reference}`, () => {
     assert.throws(
-      () => registryPolicy.validateDiscoveryDocuments({
+      () => validateDiscoveryDocuments({
         'build/developers/api/index.html': `<a href="${reference}">Endpoint</a>`,
       }),
       /network-path|protocol-relative|URI|URL/i,
@@ -252,9 +266,10 @@ test('rejects private machine targets while preserving reviewed public and human
     'function',
     'the registry policy must expose its complete discovery-reference validator',
   );
-  assert.doesNotThrow(() => registryPolicy.validateDiscoveryReferences({
+  assert.doesNotThrow(() => validateDiscoveryReferences({
     'approved.md': [
       '[Open Main\'s World](https://mains.world)',
+      '[Open SPACE](https://mains.world/space)',
       '[Safety](https://mains.world/how-it-works/safety-alerts)',
       '[Developer guide](https://mainsworld.org/developers/api)',
       '[OpenAPI](/api/connectives/v1/openapi.json)',
@@ -262,7 +277,7 @@ test('rejects private machine targets while preserving reviewed public and human
       '[Luma example](https://mainsworld.org/api/connectives/v1/luma-vibe-candidate.json)',
     ].join('\n'),
   }));
-  assert.doesNotThrow(() => registryPolicy.validateDiscoveryReferences(allDiscoveryArtifactDocuments()));
+  assert.doesNotThrow(() => validateDiscoveryReferences(allDiscoveryArtifactDocuments()));
 
   for (const target of [
     'https://api.mains.world/oauth/token',
@@ -273,7 +288,7 @@ test('rejects private machine targets while preserving reviewed public and human
     '/connectives/v1/link-sessions',
   ]) {
     assert.throws(
-      () => registryPolicy.validateDiscoveryReferences({
+      () => validateDiscoveryReferences({
         'unsafe.md': `[Machine target](${target})`,
       }),
       /private|machine|endpoint|target|reference|URL/i,
@@ -282,17 +297,68 @@ test('rejects private machine targets while preserving reviewed public and human
   }
 });
 
+test('applies a default-private product and root-relative route allowlist', () => {
+  for (const target of [
+    'https://mains.world/moments/private-id',
+    'https://mains.world/profile/alice',
+    'https://mains.world/vault',
+    'https://mains.world/map?lat=41.88&lng=-87.63',
+    'https://mains.world/?private=1',
+    'https://mains.world/space#today',
+    'https://mains.world/how-it-works/safety-alerts/',
+    'https://mains.world.:443/space',
+    'https://user@mains.world/space',
+    'wss://mains.world/connectives/v1',
+    'https://private.mains.world/',
+    '/moments/private-id',
+    '/profile/alice',
+    '/vault',
+    '/map?lat=41.88&lng=-87.63',
+    '/not-a-public-build-route',
+  ]) {
+    assert.throws(
+      () => validateDiscoveryReferences({ 'unsafe.md': `[Target](${target})` }),
+      /private|product|route|target|reference|URL/i,
+      `must reject unreviewed product or root-relative target: ${target}`,
+    );
+  }
+
+  assert.doesNotThrow(() => validateDiscoveryReferences({
+    'approved.md': [
+      '[Product](https://mains.world)',
+      '[SPACE](https://mains.world/space)',
+      '[Safety](https://mains.world/how-it-works/safety-alerts)',
+      '[Contribute](/contribute#what-belongs-here)',
+      `[Built asset](${publicBuildPaths().find((path) => path.startsWith('/assets/'))})`,
+      '[Snapshot](/api/connectives/v1/openapi.json)',
+    ].join('\n'),
+  }));
+});
+
 test('rejects a private endpoint injected into an arbitrary non-developer sitemap page', () => {
   assert.equal(typeof registryPolicy.validateDiscoveryReferences, 'function');
   const page = renderedSitemapPages().find((path) => !path.includes('/developers/'));
   assert.ok(page, 'expected a non-developer sitemap page');
   const artifacts = allDiscoveryArtifactDocuments();
   assert.throws(
-    () => registryPolicy.validateDiscoveryReferences({
+    () => validateDiscoveryReferences({
       ...artifacts,
       [page]: `${artifacts[page]}\n<a href="https://api.mains.world/oauth/token">Private API</a>\n`,
     }),
     /private|machine|endpoint|target|reference|URL/i,
+  );
+});
+
+test('rejects a private origin injected into an arbitrary non-developer sitemap page', () => {
+  const page = renderedSitemapPages().find((path) => !path.includes('/developers/'));
+  assert.ok(page, 'expected a non-developer sitemap page');
+  const artifacts = allDiscoveryArtifactDocuments();
+  assert.throws(
+    () => validateDiscoveryReferences({
+      ...artifacts,
+      [page]: `${artifacts[page]}\n<a href="https://project.supabase.co/rest/v1/moments">Private data</a>\n`,
+    }),
+    /private|origin|target|reference|URL/i,
   );
 });
 
@@ -309,9 +375,12 @@ test('excludes internal plans and private discovery origins from the built site'
   }
 
   const privateOrigin = /https?:\/\/[^\s"'<]*(?:supabase(?:\.co)?|workers\.dev|localhost|127\.0\.0\.1|0\.0\.0\.0|(?:internal|private|staging|dev)\.)[^\s"'<]*/i;
-  for (const path of coreDiscoveryArtifacts()) {
+  for (const path of discoveryArtifacts()) {
     const content = read(path);
-    assert.doesNotMatch(content, privateOrigin, `private backend origin leaked in ${path}`);
+    const reviewedContent = path === 'build/contribute/index.html'
+      ? content.replaceAll('http://localhost:3000', '')
+      : content;
+    assert.doesNotMatch(reviewedContent, privateOrigin, `private backend origin leaked in ${path}`);
   }
   for (const path of discoveryArtifacts()) {
     const content = read(path);

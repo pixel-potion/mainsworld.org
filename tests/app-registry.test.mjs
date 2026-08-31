@@ -913,6 +913,30 @@ for (const scheme of ['wss', 'ws', 'ftp']) {
   });
 }
 
+for (const [name, value, mutate] of [
+  ['scheme without slashes in a URL field', 'https:api.mains.world/oauth/token', (contract, uri) => {
+    contract.externalDocs = { url: uri };
+  }],
+  ['scheme with one slash in an ordinary string', 'https:/api.mains.world/oauth/token', (contract, uri) => {
+    contract.info.description = `Endpoint: ${uri}`;
+  }],
+  ['data URI in a URL field', 'data:text/plain,public-api', (contract, uri) => {
+    contract.externalDocs = { url: uri };
+  }],
+  ['JavaScript URI in an ordinary string', 'javascript:alert(1)', (contract, uri) => {
+    contract.info.description = `Example ${uri}`;
+  }],
+  ['other absolute URI scheme in an ordinary string', 'mailto:api@mains.world', (contract, uri) => {
+    contract.info.description = `Contact ${uri}`;
+  }],
+]) {
+  test(`rejects ${name} after recomputing the OpenAPI hash`, async () => {
+    await withMutatedOpenApi((contract) => mutate(contract, value), async (platform, root) => {
+      await assert.rejects(validatePlatform(platform, root), /OpenAPI|URI|URL|unsafe/i);
+    });
+  });
+}
+
 test('rejects altered snapshot bytes and contract deployment claims', async () => {
   const root = await mkdtemp(path.join(tmpdir(), 'mainsworld-platform-'));
   try {

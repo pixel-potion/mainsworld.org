@@ -159,6 +159,21 @@ const reviewedSnapshotUriValues = {
       path: ['components', 'securitySchemes', 'PartnerOAuth', 'flows', 'clientCredentials', 'tokenUrl'],
       value: 'https://example.invalid/oauth/token',
     },
+    {
+      path: ['paths', '/oauth/token', 'post', 'requestBody', 'content', 'application/x-www-form-urlencoded', 'schema', 'properties', 'client_assertion_type', 'const'],
+      value: 'urn:ietf:params:oauth:client-assertion-type:jwt-bearer',
+    },
+    { path: ['paths', '/connectives/v1/link-sessions', 'post', 'security', 0, 'PartnerOAuth', 0], value: 'link-sessions:create' },
+    { path: ['paths', '/connectives/v1/link-sessions/{session_id}', 'get', 'security', 0, 'PartnerOAuth', 0], value: 'link-sessions:create' },
+    { path: ['paths', '/connectives/v1/grants/{grant_id}/vibe-candidates', 'post', 'security', 0, 'PartnerOAuth', 0], value: 'vibe-candidates:write' },
+    { path: ['paths', '/connectives/v1/grants/{grant_id}/candidates/{candidate_id}', 'get', 'security', 0, 'PartnerOAuth', 0], value: 'candidate-status:read' },
+    { path: ['components', 'schemas', 'PartnerTokenClaims', 'oneOf', 0, 'properties', 'iss', 'const'], value: 'urn:mains-world:connectives:sandbox' },
+    { path: ['components', 'schemas', 'PartnerTokenClaims', 'oneOf', 1, 'properties', 'iss', 'const'], value: 'urn:mains-world:connectives:production' },
+    { path: ['components', 'schemas', 'PartnerTokenClaims', 'properties', 'iss', 'enum', 0], value: 'urn:mains-world:connectives:sandbox' },
+    { path: ['components', 'schemas', 'PartnerTokenClaims', 'properties', 'iss', 'enum', 1], value: 'urn:mains-world:connectives:production' },
+    { path: ['components', 'schemas', 'PartnerTokenClaims', 'properties', 'aud', 'const'], value: 'urn:mains-world:connectives:v1' },
+    { path: ['components', 'schemas', 'LinkSessionCreateRequest', 'properties', 'requested_scopes', 'items', 'enum', 0], value: 'candidate-status:read' },
+    { path: ['components', 'schemas', 'LinkSessionCreateRequest', 'properties', 'requested_scopes', 'items', 'enum', 1], value: 'vibe-candidates:write' },
   ],
   discord_example: [
     { path: ['display', 'icon_url'], value: 'https://cdn.example.test/icon.png' },
@@ -199,45 +214,83 @@ const reviewedSyntheticSnapshots = {
     },
   },
 };
-const discoverySubject = '(?:public\\s+)?(?:api(?:\\s+endpoints?)?|oauth(?:\\s+(?:registration|endpoints?))?|credentials?|servers?|base\\s+urls?|mcp(?:\\s+endpoints?)?)';
-const boundedCallModifiers = '(?:\\s+[A-Za-z][A-Za-z\'-]*){0,3}';
-const discoveryAvailabilityPredicate = `(?:live|callable|available|enabled|active|ready|required|deployed|exists?|can${boundedCallModifiers}\\s+be\\s+called|accepts?\\s+requests?|supports?\\s+requests?)`;
-const discoverySubjectBoundary = `\\b${discoverySubject}\\b`;
-const positiveDiscoveryAvailability = new RegExp(
-  `${discoverySubjectBoundary}(?:(?!${discoverySubjectBoundary})[^.!?;\\n]){0,80}?\\b${discoveryAvailabilityPredicate}\\b`,
-  'ig',
-);
-const predicateBoundDiscoveryDenial = new RegExp([
-  `\\b${discoverySubject}\\b[^.!?;\\n]{0,40}\\b(?:is|are)\\s+(?:not|never)\\s+(?:live|callable|available|enabled|active|ready|required|deployed)\\b`,
-  `\\b${discoverySubject}\\b[^.!?;\\n]{0,40}\\b(?:cannot|can\\s+not|can't)\\s+be\\s+called\\b`,
-  `\\b${discoverySubject}\\b[^.!?;\\n]{0,40}\\bdoes\\s+not\\s+(?:accept|support)\\s+requests?\\b`,
-  `\\b${discoverySubject}\\b[^.!?;\\n]{0,40}\\bdoes\\s+not\\s+exist\\b`,
-  `\\b${discoverySubject}\\b[^.!?;\\n]{0,40}\\bnot\\s+callable\\b`,
-  `\\b${discoverySubject}\\b[^.!?;\\n]{0,40}\\b(?:is|are)\\s+(?:unavailable|non-callable)\\b`,
-  `\\b${discoverySubject}\\b\\s*:\\s*(?:none|not\\s+applicable)\\b`,
-].join('|'), 'i');
-const freshDiscoveryDenialPrefix = /^(?:\s|,|[*_~`>])*(?:(?:and|or|nor|but|because|while|although|though|yet)\s+)?(?:(?:there\s+(?:is|are)\s+)?no|neither)(?:\s+(?:a|an|any|the|public|self-service|currently|main(?:'s)?|world))*\s*$/i;
-const discoveryFormatting = '[\\s*_~`>]*';
-const approvedCoordinatedDiscoveryDenial = new RegExp([
-  `^${discoveryFormatting}neither\\s+(?:the\\s+)?${discoverySubject}\\s+nor\\s+(?:the\\s+)?${discoverySubject}\\s+(?:is|are)\\s+${discoveryAvailabilityPredicate}[.!?]*${discoveryFormatting}$`,
-  `^${discoveryFormatting}no\\s+base\\s+url\\s*,\\s*credential\\s*,\\s*sandbox\\s*,\\s*public\\s+endpoint\\s*,\\s*(?:or\\s+)?mcp\\s+endpoint\\s+exists?[.!?]*${discoveryFormatting}$`,
-].join('|'), 'i');
-const passiveDiscoveryAvailability = new RegExp(
-  `\\b(?:requests?|calls?)\\b(?:(?!${discoverySubjectBoundary})[^.!?;\\n]){0,60}?\\b(?:accepted|supported|handled|served|made)\\b(?:(?!${discoverySubjectBoundary})[^.!?;\\n]){0,40}?\\b(?:by|to)\\s+(?:the\\s+)?${discoverySubjectBoundary}`,
-  'i',
-);
-const approvedPassiveDiscoveryDenial = new RegExp([
-  `^${discoveryFormatting}no\\s+(?:requests?|calls?)\\b[^.!?;\\n]{0,40}\\b(?:accepted|supported|handled|served|made)\\b[^.!?;\\n]{0,30}\\b(?:by|to)\\s+(?:the\\s+)?${discoverySubjectBoundary}[.!?]*${discoveryFormatting}$`,
-  `^${discoveryFormatting}(?:requests?|calls?)\\b[^.!?;\\n]{0,30}\\b(?:not|never)\\s+(?:accepted|supported|handled|served|made)\\b[^.!?;\\n]{0,30}\\b(?:by|to)\\s+(?:the\\s+)?${discoverySubjectBoundary}[.!?]*${discoveryFormatting}$`,
-].join('|'), 'i');
+const discoverySubjectSignal = /\b(?:api(?:\s+(?:calls?|endpoints?))?|oauth(?:\s+(?:registration|endpoints?))?|credentials?|servers?|base\s+urls?|mcp(?:\s+endpoints?)?)\b/i;
+const discoveryAvailabilitySignal = /\b(?:access|accept(?:s|ed|ing)?|activ(?:e|ated|ation)|availab(?:le|ility)|call(?:s|ed|able|ing)?|deploy(?:ed|ment)?|enabled?|exists?|live|none|not\s+applicable|online|operational|process(?:ed|es|ing)?|ready|required|requests?|registration|runtime|support(?:s|ed|ing)?|traffic|use|usable|using|working)\b/i;
+const approvedGenericDiscoveryStatements = new Set([
+  'no public api is callable today',
+  'the api is not live',
+  'the oauth endpoint cannot be called',
+  'the server does not accept requests',
+  'the mcp endpoint does not support requests',
+  'neither the api nor the mcp endpoint is available',
+  'no credentials are required',
+  'the credentials are not required',
+  'requests are not accepted by the api',
+  'no requests are accepted by the mcp endpoint',
+  'api none',
+  'api not applicable',
+]);
+const approvedApiDocumentStatements = new Set([
+  'no public mains world api endpoint is callable today',
+  'there is no server or base url to call',
+  'there is no public oauth registration',
+  'there is no public write api sdk or mcp endpoint',
+  'they provide neither runtime access nor credentials',
+  'post /oauth/token not callable',
+  'post /connectives/v1/link sessions not callable',
+  'get /connectives/v1/link sessions/session id not callable',
+  'post /connectives/v1/grants/grant id/vibe candidates not callable',
+  'get /connectives/v1/grants/grant id/candidates/candidate id not callable',
+]);
+const approvedLlmsDocumentStatements = new Set([
+  'no public mains world api endpoint is callable today',
+  'it provides no server or base url sandbox credentials self service keys public oauth registration public write api sdk or mcp endpoint',
+  'api none',
+  'api not applicable',
+]);
+const approvedLlmsFullDocumentStatements = new Set([
+  'there are no public self service mains world api endpoints to call today',
+  'no base url credential sandbox public endpoint or mcp endpoint exists',
+  'it is not a runtime api and provides neither activation nor access',
+  'post /oauth/token not callable',
+  'post /connectives/v1/link sessions not callable',
+  'get /connectives/v1/link sessions/session id not callable',
+  'post /connectives/v1/grants/grant id/vibe candidates not callable',
+  'get /connectives/v1/grants/grant id/candidates/candidate id not callable',
+  'it never grants credentials callbacks provider access runtime registration or production activation',
+  'new external listings are proposed with no public api access until a separate reviewed promotion',
+  'api none',
+  'api not applicable',
+]);
 const networkPathReference = /(^|[^A-Za-z0-9+.\-:/])\/\/(?:(?:[A-Za-z0-9._~!$&'()*+,;=:]|%[0-9A-Fa-f]{2})*@)?(?:\[[^\]\s]+\]|(?:[A-Za-z0-9._~!$&'()*+,;=-]|%[0-9A-Fa-f]{2})*)(?::\d*)?(?:\/[^\s"'<>?#]*)*(?:\?[^\s"'<>#]*)?(?:#[^\s"'<>]*)?(?=$|[\s"'<>])/im;
-const absoluteAuthorityUri = /\b[A-Za-z][A-Za-z0-9+.-]*:\/\/[^\s"'<>]+/i;
-const absoluteHttpReference = /\bhttps?:\/\/[^\s"'<>)}\]]+/ig;
-const rootRelativeTargetReference = /(?:\]\(\s*|(?:href|src|action)\s*=\s*["']?|["'][A-Za-z0-9_.-]+["']\s*:\s*["'])(\/(?!\/)[^\s"'<>)]*)/ig;
+const absoluteUriStart = /(?:^|[\s"'(<])([A-Za-z][A-Za-z0-9+.-]*):(?=\S)/i;
+const absoluteAuthorityReference = /\b[A-Za-z][A-Za-z0-9+.-]*:\/\/[^\s"'<>)}\]]+/ig;
+const rootRelativeTargetPatterns = [
+  /\]\(\s*(\/(?!\/)[^\s"'<>)]*)/ig,
+  /(?:href|src|srcset|action|poster|formaction|data|cite|manifest|xlink:href)\s*=\s*["']?(\/(?!\/)[^\s,"'<>)]*)/ig,
+  /content\s*=\s*["'][^"']*?\burl\s*=\s*(\/(?!\/)[^\s;"'<>)]*)/ig,
+  /url\(\s*["']?(\/(?!\/)[^\s"'<>)]*)/ig,
+  /^[ \t]*(?:[-*][ \t]*)?(?:\[[^\]]+\]|[^:\n]+):[ \t]*(\/(?!\/)[^\s"'<>)]*)/igm,
+  /["'](\/(?!\/)[^\s"'<>]*)["'](?!\s*:)/ig,
+];
 const reviewedPublicMachinePaths = new Set([
   '/api/connectives/v1/openapi.json',
   '/api/connectives/v1/discord-connected-group-membership.json',
   '/api/connectives/v1/luma-vibe-candidate.json',
+]);
+const reviewedProductReferences = new Set([
+  'https://mains.world',
+  'https://mains.world/space',
+  'https://mains.world/how-it-works/safety-alerts',
+]);
+const reviewedPublicSitePaths = new Set([
+  '/', '/connect-your-app', '/contribute', '/country-availability', '/developers',
+  '/developers/api', '/developers/apps', '/developers/submit-an-app', '/faq', '/glossary',
+  '/how-it-works/crews', '/how-it-works/getting-started', '/how-it-works/moments',
+  '/how-it-works/safety-alerts', '/how-it-works/signing-in', '/how-it-works/the-worlds',
+  '/how-it-works/vibes', '/manifesto', '/privacy', '/roadmap', '/terms', '/the-economy',
+  '/what-is-ship', '/whitepaper', '/your-main-on-chain', '/apps.json', '/llms.txt',
+  '/llms-full.txt', '/robots.txt', '/sitemap.xml',
 ]);
 const privateMachinePath = /^\/(?:api|oauth|mcp|connectives)(?:[/?#]|$)/i;
 
@@ -507,8 +560,8 @@ function findUnsafeSnapshotValue(
     if (networkPathReference.test(value)) {
       return `${location} contains a protocol-relative network-path URI reference`;
     }
-    if (absoluteAuthorityUri.test(value) && !isReviewedSnapshotUriValue(pathSegments, value, reviewedUriValues)) {
-      return `${location} contains an unreviewed absolute network URI`;
+    if (absoluteUriStart.test(value) && !isReviewedSnapshotUriValue(pathSegments, value, reviewedUriValues)) {
+      return `${location} contains an unreviewed absolute URI`;
     }
     return null;
   }
@@ -583,25 +636,37 @@ function findDisallowedOpenApiReference(value, location = '$') {
   return null;
 }
 
-function hasContradictoryDiscoveryClaim(statement) {
-  if (
-    approvedCoordinatedDiscoveryDenial.test(statement) ||
-    approvedPassiveDiscoveryDenial.test(statement)
-  ) return false;
-  if (passiveDiscoveryAvailability.test(statement)) return true;
-  let previousPositiveEnd = 0;
-  for (const match of statement.matchAll(positiveDiscoveryAvailability)) {
-    const predicatePrefix = statement.slice(previousPositiveEnd, match.index);
-    previousPositiveEnd = match.index + match[0].length;
-    if (
-      freshDiscoveryDenialPrefix.test(predicatePrefix) ||
-      predicateBoundDiscoveryDenial.test(match[0])
-    ) {
-      continue;
-    }
-    return true;
+function normalizeDiscoveryStatement(statement) {
+  return statement
+    .normalize('NFKC')
+    .replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F\u007F-\u009F\u200B-\u200F\u202A-\u202E\u2060-\u206F\uFEFF]/g, '')
+    .replace(/&#(?:39|x27);|&apos;|[\u2018\u2019']/gi, '')
+    .replace(/&[A-Za-z0-9#]+;/g, ' ')
+    .replace(/[^A-Za-z0-9/]+/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim()
+    .toLowerCase();
+}
+
+function approvedDiscoveryStatementsFor(documentPath) {
+  if (/(?:^|\/)docs\/developers\/api\.md$|(?:^|\/)build\/developers\/api\/index\.html$/.test(documentPath)) {
+    return approvedApiDocumentStatements;
   }
-  return false;
+  if (/(?:^|\/)(?:(?:static|build)\/)?llms\.txt$/.test(documentPath)) {
+    return approvedLlmsDocumentStatements;
+  }
+  if (/(?:^|\/)(?:(?:static|build)\/)?llms-full\.txt$/.test(documentPath)) {
+    return approvedLlmsFullDocumentStatements;
+  }
+  return approvedGenericDiscoveryStatements;
+}
+
+function hasUnapprovedDiscoveryAvailability(statement, approvedStatements) {
+  let normalized = normalizeDiscoveryStatement(statement);
+  for (const approved of approvedStatements) {
+    normalized = ` ${normalized} `.replaceAll(` ${approved} `, ' ').trim();
+  }
+  return discoverySubjectSignal.test(normalized) && discoveryAvailabilitySignal.test(normalized);
 }
 
 function validateDiscoveryDocumentMap(documents) {
@@ -616,40 +681,119 @@ function validateDiscoveryDocumentMap(documents) {
 }
 
 function normalizedDiscoveryPath(reference) {
-  const pathname = new URL(reference, 'https://mainsworld.org').pathname;
-  try {
-    return decodeURIComponent(pathname);
-  } catch {
-    return pathname;
+  let pathname = new URL(reference, 'https://mainsworld.org').pathname.normalize('NFKC');
+  for (let attempts = 0; attempts < 4; attempts += 1) {
+    try {
+      const decoded = decodeURIComponent(pathname);
+      if (decoded === pathname) break;
+      pathname = decoded;
+    } catch {
+      break;
+    }
   }
+  return pathname;
 }
 
-function findPrivateMachineReference(content) {
-  for (const match of content.matchAll(absoluteHttpReference)) {
+function canonicalPublicPath(pathname) {
+  return pathname !== '/' ? pathname.replace(/\/+$/, '') : pathname;
+}
+
+function decodedDiscoveryContent(content) {
+  return content
+    .normalize('NFKC')
+    .replace(/&#(?:x([0-9a-f]+)|(\d+));/gi, (_, hex, decimal) =>
+      String.fromCodePoint(Number.parseInt(hex ?? decimal, hex ? 16 : 10)))
+    .replace(/&(colon|sol|quest|num|amp);/gi, (_, name) => ({
+      colon: ':', sol: '/', quest: '?', num: '#', amp: '&',
+    })[name.toLowerCase()])
+    .replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F\u007F-\u009F\u200B-\u200F\u202A-\u202E\u2060-\u206F\uFEFF]/g, '');
+}
+
+function isPrivateDiscoveryHostname(hostname) {
+  const labels = hostname.split('.');
+  return (
+    hostname === 'localhost' ||
+    hostname === '127.0.0.1' ||
+    hostname === '0.0.0.0' ||
+    hostname === 'supabase.co' ||
+    hostname.endsWith('.supabase.co') ||
+    hostname === 'workers.dev' ||
+    hostname.endsWith('.workers.dev') ||
+    labels.some((label) => ['internal', 'private', 'staging', 'dev'].includes(label))
+  );
+}
+
+function isReviewedLocalPreview(documentPath, reference) {
+  return (
+    reference === 'http://localhost:3000' &&
+    /(?:^|\/)(?:docs\/contribute\.md|build\/contribute\/index\.html)$/.test(documentPath)
+  );
+}
+
+function normalizedPublicPaths(publicPaths) {
+  if (!publicPaths || typeof publicPaths[Symbol.iterator] !== 'function') {
+    throw new TypeError('Public discovery paths must be iterable.');
+  }
+  return new Set([...publicPaths].map((publicPath) => canonicalPublicPath(normalizedDiscoveryPath(publicPath))));
+}
+
+function isAllowedRootReference(reference, allowedBuildPaths) {
+  let target;
+  try {
+    target = new URL(reference, 'https://mainsworld.org');
+  } catch {
+    return false;
+  }
+  if (target.search) return false;
+  const pathname = canonicalPublicPath(normalizedDiscoveryPath(target.href));
+  if (reviewedPublicMachinePaths.has(pathname)) return !target.hash;
+  if (target.hash) {
+    return new Set([
+      '/contribute#what-belongs-here',
+      '/the-economy#reading-the-community-numbers',
+    ]).has(`${pathname}${target.hash}`);
+  }
+  if (reviewedPublicSitePaths.has(pathname)) return true;
+  return (
+    (pathname.startsWith('/assets/') || pathname.startsWith('/img/')) &&
+    allowedBuildPaths.has(pathname)
+  );
+}
+
+function findDisallowedDiscoveryReference(content, documentPath, allowedBuildPaths) {
+  const decodedContent = decodedDiscoveryContent(content);
+  for (const match of decodedContent.matchAll(absoluteAuthorityReference)) {
+    const reference = match[0];
     let target;
     try {
-      target = new URL(match[0]);
+      target = new URL(reference);
     } catch {
-      continue;
+      return reference;
     }
-    const hostname = target.hostname.toLowerCase().replace(/\.$/, '');
+    const hostname = target.hostname.toLowerCase();
+    const scopedHostname = hostname.replace(/\.+$/, '');
     const pathname = normalizedDiscoveryPath(target.href);
+    if (isPrivateDiscoveryHostname(scopedHostname) && !isReviewedLocalPreview(documentPath, reference)) {
+      return reference;
+    }
     if (
-      hostname.endsWith('.mains.world') ||
-      (hostname === 'mains.world' && privateMachinePath.test(pathname)) ||
-      hostname.endsWith('.mainsworld.org') ||
+      scopedHostname === 'mains.world' && !reviewedProductReferences.has(reference)
+    ) return reference;
+    if (
+      scopedHostname.endsWith('.mains.world') ||
+      scopedHostname.endsWith('.mainsworld.org') ||
       (
-        hostname === 'mainsworld.org' &&
+        scopedHostname === 'mainsworld.org' &&
         (target.protocol !== 'https:' ||
-          (privateMachinePath.test(pathname) && !reviewedPublicMachinePaths.has(pathname)))
+          (privateMachinePath.test(pathname) &&
+            (!reviewedPublicMachinePaths.has(pathname) || target.search || target.hash)))
       )
-    ) return match[0];
+    ) return reference;
   }
 
-  for (const match of content.matchAll(rootRelativeTargetReference)) {
-    const pathname = normalizedDiscoveryPath(match[1]);
-    if (privateMachinePath.test(pathname) && !reviewedPublicMachinePaths.has(pathname)) {
-      return match[1];
+  for (const pattern of rootRelativeTargetPatterns) {
+    for (const match of decodedContent.matchAll(pattern)) {
+      if (!isAllowedRootReference(match[1], allowedBuildPaths)) return match[1];
     }
   }
   return null;
@@ -658,33 +802,37 @@ function findPrivateMachineReference(content) {
 export function validateNetworkPathReferences(documents) {
   validateDiscoveryDocumentMap(documents);
   for (const [documentPath, content] of Object.entries(documents)) {
-    if (networkPathReference.test(content)) {
+    if (networkPathReference.test(decodedDiscoveryContent(content))) {
       throw new Error(`Discovery document ${documentPath} contains a protocol-relative network-path URI reference.`);
     }
   }
   return documents;
 }
 
-export function validateDiscoveryReferences(documents) {
+export function validateDiscoveryReferences(documents, { publicPaths = [] } = {}) {
   validateNetworkPathReferences(documents);
+  const allowedBuildPaths = normalizedPublicPaths(publicPaths);
   for (const [documentPath, content] of Object.entries(documents)) {
-    const privateReference = findPrivateMachineReference(content);
-    if (privateReference) {
-      throw new Error(`Discovery document ${documentPath} contains a private machine target: ${privateReference}`);
+    const disallowedReference = findDisallowedDiscoveryReference(content, documentPath, allowedBuildPaths);
+    if (disallowedReference) {
+      throw new Error(`Discovery document ${documentPath} contains an unreviewed private target or route: ${disallowedReference}`);
     }
   }
   return documents;
 }
 
-export function validateDiscoveryDocuments(documents) {
-  validateDiscoveryReferences(documents);
+export function validateDiscoveryDocuments(documents, options) {
+  validateDiscoveryReferences(documents, options);
   for (const [documentPath, content] of Object.entries(documents)) {
-    const contradictoryClaim = content
+    const approvedStatements = approvedDiscoveryStatementsFor(documentPath);
+    const contradictoryClaim = decodedDiscoveryContent(content)
+      .replace(/<\/?(?:article|aside|div|footer|h[1-6]|header|li|main|nav|ol|p|section|table|tbody|td|th|thead|tr|ul)\b[^>]*>/gi, '.')
       .replace(/<[^>]*>/g, ' ')
-      .split(/(?<=[.!?;])(?:\s+|$)|\n+|\s+(?:and|but|however|yet)\s+/i)
-      .find(hasContradictoryDiscoveryClaim);
+      .replace(/\s+/g, ' ')
+      .split(/[.!?;]+/)
+      .find((statement) => hasUnapprovedDiscoveryAvailability(statement, approvedStatements));
     if (contradictoryClaim) {
-      throw new Error(`Discovery document ${documentPath} contains a contradictory availability claim.`);
+      throw new Error(`Discovery document ${documentPath} contains a contradictory availability claim: ${normalizeDiscoveryStatement(contradictoryClaim)}.`);
     }
   }
   return documents;
