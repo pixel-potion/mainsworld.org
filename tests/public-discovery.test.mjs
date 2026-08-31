@@ -28,6 +28,9 @@ const semanticDiscoveryDocuments = () => ({
   'build/llms.txt': read('build/llms.txt'),
   'build/llms-full.txt': read('build/llms-full.txt'),
 });
+const allDiscoveryArtifactDocuments = () => Object.fromEntries(
+  discoveryArtifacts().map((path) => [path, read(path)]),
+);
 const discoveryArtifacts = () => [
   'build/robots.txt',
   'build/sitemap.xml',
@@ -122,6 +125,8 @@ for (const claim of [
   'No public API is callable, but its OAuth endpoint can be called.',
   'No public API is callable while the MCP endpoint supports requests.',
   'No public API is callable, the MCP endpoint is available.',
+  'No public API is callable or the MCP endpoint is available.',
+  'No credentials are required because the API is live.',
   'The server accepts requests.',
   'The MCP endpoint supports requests.',
 ]) {
@@ -145,6 +150,8 @@ test('keeps approved exact denials and neutral discovery text valid', () => {
       'The server does not accept requests.',
       'The MCP endpoint does not support requests.',
       'Neither the API nor the MCP endpoint is available.',
+      'No credentials are required.',
+      'The credentials are not required.',
       'API: None',
       'API: Not Applicable',
       'Use an API or MCP endpoint.',
@@ -165,6 +172,37 @@ test('rejects a single-label protocol-relative host in rendered discovery text',
   assert.throws(
     () => registryPolicy.validateDiscoveryDocuments({
       'build/developers/api/index.html': '<a href="//localhost/api/token">Token endpoint</a>',
+    }),
+    /network-path|protocol-relative|URI|URL/i,
+  );
+});
+
+for (const reference of [
+  '//user@example.com/api',
+  '//%65xample.com/api',
+]) {
+  test(`rejects protocol-relative authority form in discovery text: ${reference}`, () => {
+    assert.throws(
+      () => registryPolicy.validateDiscoveryDocuments({
+        'build/developers/api/index.html': `<a href="${reference}">Endpoint</a>`,
+      }),
+      /network-path|protocol-relative|URI|URL/i,
+    );
+  });
+}
+
+test('rejects a generic network-path URI across the complete generated discovery artifact set', () => {
+  assert.equal(
+    typeof registryPolicy.validateNetworkPathReferences,
+    'function',
+    'the registry policy must expose its generic network-path validator',
+  );
+  const artifacts = allDiscoveryArtifactDocuments();
+  assert.doesNotThrow(() => registryPolicy.validateNetworkPathReferences(artifacts));
+  assert.throws(
+    () => registryPolicy.validateNetworkPathReferences({
+      ...artifacts,
+      'build/apps.json': `${artifacts['build/apps.json']}\n//evil.example/endpoint\n`,
     }),
     /network-path|protocol-relative|URI|URL/i,
   );

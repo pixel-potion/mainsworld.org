@@ -200,12 +200,13 @@ const reviewedSyntheticSnapshots = {
   },
 };
 const discoverySubject = '(?:public\\s+)?(?:api(?:\\s+endpoints?)?|oauth(?:\\s+(?:registration|endpoints?))?|credentials?|servers?|base\\s+urls?|mcp(?:\\s+endpoints?)?)';
+const discoveryAvailabilityPredicate = '(?:live|callable|available|enabled|active|ready|required|deployed|exists?|can\\s+be\\s+called|accepts?\\s+requests?|supports?\\s+requests?)';
 const positiveDiscoveryAvailability = new RegExp(
-  `\\b${discoverySubject}\\b[^.!?;\\n]{0,80}?\\b(?:live|callable|available|enabled|active|ready|deployed|exists?|can\\s+be\\s+called|accepts?\\s+requests?|supports?\\s+requests?)\\b`,
+  `\\b${discoverySubject}\\b[^.!?;\\n]{0,80}?\\b${discoveryAvailabilityPredicate}\\b`,
   'ig',
 );
 const predicateBoundDiscoveryDenial = new RegExp([
-  `\\b${discoverySubject}\\b[^.!?;\\n]{0,40}\\b(?:is|are)\\s+(?:not|never)\\s+(?:live|callable|available|enabled|active|ready|deployed)\\b`,
+  `\\b${discoverySubject}\\b[^.!?;\\n]{0,40}\\b(?:is|are)\\s+(?:not|never)\\s+(?:live|callable|available|enabled|active|ready|required|deployed)\\b`,
   `\\b${discoverySubject}\\b[^.!?;\\n]{0,40}\\b(?:cannot|can\\s+not|can't)\\s+be\\s+called\\b`,
   `\\b${discoverySubject}\\b[^.!?;\\n]{0,40}\\bdoes\\s+not\\s+(?:accept|support)\\s+requests?\\b`,
   `\\b${discoverySubject}\\b[^.!?;\\n]{0,40}\\bdoes\\s+not\\s+exist\\b`,
@@ -213,7 +214,8 @@ const predicateBoundDiscoveryDenial = new RegExp([
   `\\b${discoverySubject}\\b[^.!?;\\n]{0,40}\\b(?:is|are)\\s+(?:unavailable|non-callable)\\b`,
   `\\b${discoverySubject}\\b\\s*:\\s*(?:none|not\\s+applicable)\\b`,
 ].join('|'), 'i');
-const networkPathReference = /(^|[^A-Za-z0-9+.-:])\/\/(?:\[[^\]\s]+\]|[A-Za-z0-9._~-]+)(?::\d+)?(?:[/?#][^\s"'<>]*)?(?=$|[\s"'<>])/im;
+const freshDiscoveryDenialPrefix = /^(?:\s|,|[*_~`>])*(?:(?:and|or|nor|but|because|while|although|though|yet)\s+)?(?:(?:there\s+(?:is|are)\s+)?no|neither)(?:\s+(?:a|an|any|the|public|self-service|currently|main(?:'s)?|world))*\s*$/i;
+const networkPathReference = /(^|[^A-Za-z0-9+.-:])\/\/(?:(?:[A-Za-z0-9._~!$&'()*+,;=:]|%[0-9A-Fa-f]{2})+@)?(?:\[[^\]\s]+\]|(?:[A-Za-z0-9._~!$&'()*+,;=-]|%[0-9A-Fa-f]{2})+)(?::\d+)?(?:[/?#][^\s"'<>]*)?(?=$|[\s"'<>])/im;
 
 function isSafeCatalogSourcePath(value) {
   return (
@@ -558,13 +560,12 @@ function findDisallowedOpenApiReference(value, location = '$') {
 }
 
 function hasContradictoryDiscoveryClaim(statement) {
+  let previousPositiveEnd = 0;
   for (const match of statement.matchAll(positiveDiscoveryAvailability)) {
-    const prefix = statement.slice(0, match.index);
-    const predicatePrefix = prefix
-      .split(/[,;]|\b(?:and|but|however|yet|while|whereas|although|though)\b/i)
-      .at(-1);
+    const predicatePrefix = statement.slice(previousPositiveEnd, match.index);
+    previousPositiveEnd = match.index + match[0].length;
     if (
-      /\b(?:no|neither)\b[^.!?\n]{0,50}$/i.test(predicatePrefix) ||
+      freshDiscoveryDenialPrefix.test(predicatePrefix) ||
       predicateBoundDiscoveryDenial.test(match[0])
     ) {
       continue;
@@ -574,7 +575,7 @@ function hasContradictoryDiscoveryClaim(statement) {
   return false;
 }
 
-export function validateDiscoveryDocuments(documents) {
+export function validateNetworkPathReferences(documents) {
   if (!documents || typeof documents !== 'object' || Array.isArray(documents)) {
     throw new TypeError('Discovery documents must be an object keyed by path.');
   }
@@ -585,6 +586,13 @@ export function validateDiscoveryDocuments(documents) {
     if (networkPathReference.test(content)) {
       throw new Error(`Discovery document ${documentPath} contains a protocol-relative network-path URI reference.`);
     }
+  }
+  return documents;
+}
+
+export function validateDiscoveryDocuments(documents) {
+  validateNetworkPathReferences(documents);
+  for (const [documentPath, content] of Object.entries(documents)) {
     const contradictoryClaim = content
       .replace(/<[^>]*>/g, ' ')
       .split(/(?<=[.!?;])(?:\s+|$)|\n+|\s+(?:and|but|however|yet)\s+/i)

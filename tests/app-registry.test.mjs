@@ -1020,11 +1020,18 @@ for (const [name, mutate] of [
     contract.components.securitySchemes.PartnerOAuth.flows.clientCredentials.authorizationUrl =
       '//mains.world/api/authorize';
   }],
-  ['a protocol-relative OAuth token URL outside the reviewed scheme', (contract) => {
-    contract.info.tokenUrl = '//mains.world/api/token';
+  ['a protocol-relative reviewed OAuth token URL', (contract) => {
+    contract.components.securitySchemes.PartnerOAuth.flows.clientCredentials.tokenUrl =
+      '//mains.world/api/token';
   }],
   ['a single-label protocol-relative host', (contract) => {
     contract.info.authorizationUrl = '//localhost/authorize';
+  }],
+  ['a protocol-relative authority with userinfo', (contract) => {
+    contract.info.authorizationUrl = '//user@example.com/api';
+  }],
+  ['a protocol-relative percent-encoded reg-name', (contract) => {
+    contract.info.authorizationUrl = '//%65xample.com/api';
   }],
 ]) {
   test(`rejects ${name} even when the OpenAPI hash is recomputed`, async () => {
