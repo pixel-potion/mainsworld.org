@@ -111,12 +111,7 @@ test('rejects contradictory API and MCP availability claims in both AI discovery
     }
   }
   assert.doesNotThrow(() => validateDiscoveryDocuments({
-    'llms.txt': [
-      read('build/llms.txt'),
-      'API: None',
-      'API: Not Applicable',
-      'Human guide: https://mainsworld.org/developers/',
-    ].join('\n'),
+    'llms.txt': read('build/llms.txt'),
   }));
 });
 
@@ -156,6 +151,14 @@ for (const claim of [
   'Call the API.',
   'The server accepts requests.',
   'The MCP endpoint supports requests.',
+  'No public API is callable today but is live.',
+  'No public API is callable today. It is live.',
+  'Requests can be made now.',
+  'The endpoint is live.',
+  'The endpoint is reachable.',
+  'Credentials are obtainable.',
+  'The server responds.',
+  'The base URL resolves.',
 ]) {
   test(`rejects semantic discovery bypass: ${claim}`, () => {
     for (const [path, content] of Object.entries(semanticDiscoveryDocuments())) {
@@ -185,6 +188,16 @@ test('keeps approved exact denials and neutral discovery text valid', () => {
       'API: Not Applicable',
     ].join('\n'),
   }));
+});
+
+test('rejects availability prose transplanted into a structured llms-full catalog row', () => {
+  const current = read('build/llms-full.txt');
+  const mutated = current.replace('- RunPal (runpal):', '- API is live (runpal):');
+  assert.notEqual(mutated, current, 'catalog-row mutation must apply');
+  assert.throws(
+    () => validateDiscoveryDocuments({ 'build/llms-full.txt': mutated }),
+    /unreviewed|availability claim|semantic change/i,
+  );
 });
 
 test('rejects a protocol-relative product API reference in rendered discovery text', () => {
@@ -335,6 +348,61 @@ test('applies a default-private product and root-relative route allowlist', () =
   }));
 });
 
+test('parses every browser URL candidate before applying the default-private allowlist', () => {
+  for (const content of [
+    '<a href="https:api.mains.world/oauth/token">Token</a>',
+    String.raw`<a href="https:\\api.mains.world/oauth/token">Token</a>`,
+    String.raw`<a href="\vault">Vault</a>`,
+    '<img srcset="/ 1x, /vault 2x">',
+    '<a href="https://mainsworld.org/vault">Vault</a>',
+    '<video poster="/vault"></video>',
+    '<meta http-equiv="refresh" content="0;url=/vault">',
+    '<style>.card { background-image: url(/vault); }</style>',
+    '[Vault][private]\n\n[private]: /vault',
+    '{"images":["/","/vault"]}',
+  ]) {
+    assert.throws(
+      () => validateDiscoveryReferences({ 'unsafe.html': content }),
+      /private|product|route|target|reference|URL/i,
+      `must reject hidden browser URL candidate: ${content}`,
+    );
+  }
+});
+
+test('rejects IP literals and reserved local DNS origins in discovery references', () => {
+  for (const target of [
+    'https://10.0.0.1/rest/v1/moments',
+    'https://169.254.169.254/latest/meta-data',
+    'https://192.0.2.1/documentation',
+    'https://[::1]/private',
+    'https://[fc00::1]/private',
+    'https://[fe80::1]/private',
+    'https://[2001:db8::1]/documentation',
+    'https://service.local/private',
+    'https://service.lan/private',
+    'https://localhost.localdomain/private',
+  ]) {
+    assert.throws(
+      () => validateDiscoveryReferences({ 'unsafe.md': `[Private origin](${target})` }),
+      /private|origin|target|reference|URL/i,
+      `must reject non-public discovery origin: ${target}`,
+    );
+  }
+});
+
+test('keeps the localhost preview exception exact and document scoped', () => {
+  assert.doesNotThrow(() => validateDiscoveryReferences({
+    'docs/contribute.md': read('docs/contribute.md'),
+    'build/contribute/index.html': read('build/contribute/index.html'),
+  }));
+  assert.throws(
+    () => validateDiscoveryReferences({
+      'docs/other.md': 'Preview at `http://localhost:3000`.',
+    }),
+    /private|origin|target|reference|URL/i,
+  );
+});
+
 test('rejects a private endpoint injected into an arbitrary non-developer sitemap page', () => {
   assert.equal(typeof registryPolicy.validateDiscoveryReferences, 'function');
   const page = renderedSitemapPages().find((path) => !path.includes('/developers/'));
@@ -402,3 +470,16 @@ test('retains the exact non-routable OpenAPI preview boundary', () => {
     }
   }
 });
+
+for (const html of [
+  'A<b>P</b>I is live.',
+  'A<span>PI</span> is live.',
+  '<table><tr><td>POST /oauth/token</td><td>Live</td></tr></table>',
+]) {
+  test(`rejects semantic availability split across rendered inline or table markup: ${html}`, () => {
+    assert.throws(
+      () => validateDiscoveryDocuments({ 'discovery.html': html }),
+      /contradictory|availability claim/i,
+    );
+  });
+}

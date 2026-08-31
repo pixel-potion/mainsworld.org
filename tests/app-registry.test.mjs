@@ -937,6 +937,22 @@ for (const [name, value, mutate] of [
   });
 }
 
+for (const [name, value] of [
+  ['bracket-delimited malformed HTTPS URI', 'Docs=[https:api.mains.world/oauth/token]'],
+  ['comma-delimited malformed HTTPS URI', 'Docs,https:api.mains.world/oauth/token'],
+  ['equals-delimited JavaScript URI', 'Endpoint=javascript:alert(1)'],
+  ['brace-delimited data URI', 'Docs {data:text/plain,public-api}'],
+  ['em-dash-delimited malformed HTTPS URI', 'Docs—https:api.mains.world/oauth/token'],
+]) {
+  test(`rejects ${name} anywhere in a snapshot string after recomputing its hash`, async () => {
+    await withMutatedOpenApi((contract) => {
+      contract.info.description = value;
+    }, async (platform, root) => {
+      await assert.rejects(validatePlatform(platform, root), /OpenAPI|URI|URL|unsafe/i);
+    });
+  });
+}
+
 test('rejects altered snapshot bytes and contract deployment claims', async () => {
   const root = await mkdtemp(path.join(tmpdir(), 'mainsworld-platform-'));
   try {

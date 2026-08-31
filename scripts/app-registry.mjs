@@ -70,6 +70,7 @@ const reservedDnsSuffixes = [
   'internal',
   'home',
   'lan',
+  'localdomain',
   'corp',
 ];
 
@@ -172,6 +173,18 @@ const reviewedSnapshotUriValues = {
     { path: ['components', 'schemas', 'PartnerTokenClaims', 'properties', 'iss', 'enum', 0], value: 'urn:mains-world:connectives:sandbox' },
     { path: ['components', 'schemas', 'PartnerTokenClaims', 'properties', 'iss', 'enum', 1], value: 'urn:mains-world:connectives:production' },
     { path: ['components', 'schemas', 'PartnerTokenClaims', 'properties', 'aud', 'const'], value: 'urn:mains-world:connectives:v1' },
+    {
+      path: ['components', 'schemas', 'PartnerTokenClaims', 'properties', 'scope', 'pattern'],
+      value: '^(?:candidate-status:read|link-sessions:create|vibe-candidates:write)(?:[\\t-\\r ]+(?:candidate-status:read|link-sessions:create|vibe-candidates:write))*$',
+    },
+    {
+      path: ['components', 'schemas', 'ConnectedGroupMembership', 'properties', 'display', 'properties', 'icon_url', 'pattern'],
+      value: '^https://',
+    },
+    {
+      path: ['components', 'schemas', 'ExternalCrewHostRef', 'properties', 'icon_url_snapshot', 'pattern'],
+      value: '^https://',
+    },
     { path: ['components', 'schemas', 'LinkSessionCreateRequest', 'properties', 'requested_scopes', 'items', 'enum', 0], value: 'candidate-status:read' },
     { path: ['components', 'schemas', 'LinkSessionCreateRequest', 'properties', 'requested_scopes', 'items', 'enum', 1], value: 'vibe-candidates:write' },
   ],
@@ -214,8 +227,8 @@ const reviewedSyntheticSnapshots = {
     },
   },
 };
-const discoverySubjectSignal = /\b(?:api(?:\s+(?:calls?|endpoints?))?|oauth(?:\s+(?:registration|endpoints?))?|credentials?|servers?|base\s+urls?|mcp(?:\s+endpoints?)?)\b/i;
-const discoveryAvailabilitySignal = /\b(?:access|accept(?:s|ed|ing)?|activ(?:e|ated|ation)|availab(?:le|ility)|call(?:s|ed|able|ing)?|deploy(?:ed|ment)?|enabled?|exists?|live|none|not\s+applicable|online|operational|process(?:ed|es|ing)?|ready|required|requests?|registration|runtime|support(?:s|ed|ing)?|traffic|use|usable|using|working)\b/i;
+const discoverySubjectSignal = /\b(?:api(?:\s+(?:calls?|endpoints?))?|oauth(?:\s+(?:registration|endpoints?))?|credentials?|endpoints?|requests?|servers?|base\s+urls?|mcp(?:\s+endpoints?)?)\b/i;
+const discoveryAvailabilitySignal = /\b(?:access|accept(?:s|ed|ing)?|activ(?:e|ated|ation)|availab(?:le|ility)|call(?:s|ed|able|ing)?|deploy(?:ed|ment)?|enabled?|exists?|live|made|none|not\s+applicable|obtainable|online|operational|process(?:ed|es|ing)?|reachable|ready|required|requests?|registration|resolv(?:e|es|ed|ing)|respond(?:s|ed|ing)?|runtime|support(?:s|ed|ing)?|traffic|use|usable|using|working)\b/i;
 const approvedGenericDiscoveryStatements = new Set([
   'no public api is callable today',
   'the api is not live',
@@ -230,49 +243,22 @@ const approvedGenericDiscoveryStatements = new Set([
   'api none',
   'api not applicable',
 ]);
-const approvedApiDocumentStatements = new Set([
-  'no public mains world api endpoint is callable today',
-  'there is no server or base url to call',
-  'there is no public oauth registration',
-  'there is no public write api sdk or mcp endpoint',
-  'they provide neither runtime access nor credentials',
-  'post /oauth/token not callable',
-  'post /connectives/v1/link sessions not callable',
-  'get /connectives/v1/link sessions/session id not callable',
-  'post /connectives/v1/grants/grant id/vibe candidates not callable',
-  'get /connectives/v1/grants/grant id/candidates/candidate id not callable',
-]);
-const approvedLlmsDocumentStatements = new Set([
-  'no public mains world api endpoint is callable today',
-  'it provides no server or base url sandbox credentials self service keys public oauth registration public write api sdk or mcp endpoint',
-  'api none',
-  'api not applicable',
-]);
-const approvedLlmsFullDocumentStatements = new Set([
-  'there are no public self service mains world api endpoints to call today',
-  'no base url credential sandbox public endpoint or mcp endpoint exists',
-  'it is not a runtime api and provides neither activation nor access',
-  'post /oauth/token not callable',
-  'post /connectives/v1/link sessions not callable',
-  'get /connectives/v1/link sessions/session id not callable',
-  'post /connectives/v1/grants/grant id/vibe candidates not callable',
-  'get /connectives/v1/grants/grant id/candidates/candidate id not callable',
-  'it never grants credentials callbacks provider access runtime registration or production activation',
-  'new external listings are proposed with no public api access until a separate reviewed promotion',
-  'api none',
-  'api not applicable',
-]);
 const networkPathReference = /(^|[^A-Za-z0-9+.\-:/])\/\/(?:(?:[A-Za-z0-9._~!$&'()*+,;=:]|%[0-9A-Fa-f]{2})*@)?(?:\[[^\]\s]+\]|(?:[A-Za-z0-9._~!$&'()*+,;=-]|%[0-9A-Fa-f]{2})*)(?::\d*)?(?:\/[^\s"'<>?#]*)*(?:\?[^\s"'<>#]*)?(?:#[^\s"'<>]*)?(?=$|[\s"'<>])/im;
-const absoluteUriStart = /(?:^|[\s"'(<])([A-Za-z][A-Za-z0-9+.-]*):(?=\S)/i;
-const absoluteAuthorityReference = /\b[A-Za-z][A-Za-z0-9+.-]*:\/\/[^\s"'<>)}\]]+/ig;
-const rootRelativeTargetPatterns = [
-  /\]\(\s*(\/(?!\/)[^\s"'<>)]*)/ig,
-  /(?:href|src|srcset|action|poster|formaction|data|cite|manifest|xlink:href)\s*=\s*["']?(\/(?!\/)[^\s,"'<>)]*)/ig,
-  /content\s*=\s*["'][^"']*?\burl\s*=\s*(\/(?!\/)[^\s;"'<>)]*)/ig,
-  /url\(\s*["']?(\/(?!\/)[^\s"'<>)]*)/ig,
-  /^[ \t]*(?:[-*][ \t]*)?(?:\[[^\]]+\]|[^:\n]+):[ \t]*(\/(?!\/)[^\s"'<>)]*)/igm,
-  /["'](\/(?!\/)[^\s"'<>]*)["'](?!\s*:)/ig,
-];
+const absoluteUriToken = /[A-Za-z][A-Za-z0-9+.-]*:(?=\S)/i;
+const absoluteAuthorityReference = /\b[A-Za-z][A-Za-z0-9+.-]*:\/\/[^\s"'<>`)}\]]+/ig;
+const specialNetworkScheme = /^(?:https?|wss?|ftp):/i;
+const anyUriScheme = /^[A-Za-z][A-Za-z0-9+.-]*:/;
+const urlBearingHtmlAttribute = /\b(href|src|srcset|action|poster|formaction|data|cite|manifest|xlink:href)\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s"'=<>`]+))/ig;
+const htmlContentAttribute = /\bcontent\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s"'=<>`]+))/ig;
+const markdownInlineTarget = /!?\[[^\]]*\]\(\s*(?:<([^>]+)>|([^\s)]+))/ig;
+const markdownReferenceTarget = /^[ \t]*\[[^\]]+\]:[ \t]*(?:<([^>]+)>|([^\s]+))/igm;
+const cssUrlTarget = /url\(\s*(?:"([^"]*)"|'([^']*)'|([^\s)'"<>]+))/ig;
+const reviewedSemanticDocumentFingerprints = new Map([
+  ['api-source', 'a11ae8b0c8360ace4b8f46300a2716b415d3afe3587d4715d0756279b5a8cdfc'],
+  ['api-rendered', '7d888d156b29c61b5e97542526902ace281f78a8c7391f7472ce48b4e2efd874'],
+  ['llms', '67bac4ede5071efa617f3a354abb18332bedf0dac86ba7eb29f526bbfca5c77b'],
+  ['llms-full', '50fb01c483232de2fcbd22eae08ef173e6f73c1bb0601053c6a49f75a5d3861f'],
+]);
 const reviewedPublicMachinePaths = new Set([
   '/api/connectives/v1/openapi.json',
   '/api/connectives/v1/discord-connected-group-membership.json',
@@ -283,6 +269,24 @@ const reviewedProductReferences = new Set([
   'https://mains.world/space',
   'https://mains.world/how-it-works/safety-alerts',
 ]);
+const reviewedNonHttpDiscoveryReferences = new Set([
+  'mailto:hello@mains.world',
+]);
+const reviewedReservedDiscoveryReferences = new Map([
+  ['docs/developers/api.md', new Set([
+    'https://example.invalid',
+  ])],
+  ['build/developers/api/index.html', new Set([
+    'https://example.invalid',
+  ])],
+  ['build/api/connectives/v1/openapi.json', new Set([
+    'https://example.invalid',
+    'https://example.invalid/oauth/token',
+  ])],
+  ['build/api/connectives/v1/discord-connected-group-membership.json', new Set([
+    'https://cdn.example.test/icon.png',
+  ])],
+]);
 const reviewedPublicSitePaths = new Set([
   '/', '/connect-your-app', '/contribute', '/country-availability', '/developers',
   '/developers/api', '/developers/apps', '/developers/submit-an-app', '/faq', '/glossary',
@@ -292,7 +296,6 @@ const reviewedPublicSitePaths = new Set([
   '/what-is-ship', '/whitepaper', '/your-main-on-chain', '/apps.json', '/llms.txt',
   '/llms-full.txt', '/robots.txt', '/sitemap.xml',
 ]);
-const privateMachinePath = /^\/(?:api|oauth|mcp|connectives)(?:[/?#]|$)/i;
 
 function isSafeCatalogSourcePath(value) {
   return (
@@ -377,26 +380,33 @@ function isValidDnsHostname(hostname) {
   );
 }
 
+function normalizedHostname(hostname) {
+  return hostname.toLowerCase().replace(/^\[|\]$/g, '').replace(/\.$/, '');
+}
+
+function isNonPublicHostname(hostname) {
+  const normalized = normalizedHostname(hostname);
+  return (
+    !normalized ||
+    Boolean(isIP(normalized)) ||
+    !normalized.includes('.') ||
+    !isValidDnsHostname(normalized) ||
+    reservedDnsSuffixes.some(
+      (suffix) => normalized === suffix || normalized.endsWith(`.${suffix}`),
+    )
+  );
+}
+
 function isPublicHttpsUrl(value) {
   try {
     const url = new URL(value);
-    const parsedHostname = url.hostname.toLowerCase().replace(/^\[|\]$/g, '');
-    const hostname = parsedHostname.endsWith('.') ? parsedHostname.slice(0, -1) : parsedHostname;
+    const hostname = normalizedHostname(url.hostname);
 
     if (url.protocol !== 'https:' || url.username || url.password || !hostname) {
       return false;
     }
 
-    if (isIP(hostname) || !hostname.includes('.') || !isValidDnsHostname(hostname)) {
-      return false;
-    }
-    if (
-      reservedDnsSuffixes.some(
-        (suffix) => hostname === suffix || hostname.endsWith(`.${suffix}`),
-      )
-    ) {
-      return false;
-    }
+    if (isNonPublicHostname(url.hostname)) return false;
 
     return true;
   } catch {
@@ -537,6 +547,14 @@ function isReviewedSnapshotUriValue(pathSegments, value, reviewedUriValues) {
   );
 }
 
+function containsAbsoluteUriToken(value) {
+  const withoutIsoTimestamps = value.replace(
+    /\b\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?Z\b/g,
+    '',
+  );
+  return absoluteUriToken.test(withoutIsoTimestamps);
+}
+
 function findUnsafeSnapshotValue(
   value,
   location = '$',
@@ -560,7 +578,7 @@ function findUnsafeSnapshotValue(
     if (networkPathReference.test(value)) {
       return `${location} contains a protocol-relative network-path URI reference`;
     }
-    if (absoluteUriStart.test(value) && !isReviewedSnapshotUriValue(pathSegments, value, reviewedUriValues)) {
+    if (containsAbsoluteUriToken(value) && !isReviewedSnapshotUriValue(pathSegments, value, reviewedUriValues)) {
       return `${location} contains an unreviewed absolute URI`;
     }
     return null;
@@ -648,25 +666,55 @@ function normalizeDiscoveryStatement(statement) {
     .toLowerCase();
 }
 
-function approvedDiscoveryStatementsFor(documentPath) {
-  if (/(?:^|\/)docs\/developers\/api\.md$|(?:^|\/)build\/developers\/api\/index\.html$/.test(documentPath)) {
-    return approvedApiDocumentStatements;
-  }
-  if (/(?:^|\/)(?:(?:static|build)\/)?llms\.txt$/.test(documentPath)) {
-    return approvedLlmsDocumentStatements;
-  }
-  if (/(?:^|\/)(?:(?:static|build)\/)?llms-full\.txt$/.test(documentPath)) {
-    return approvedLlmsFullDocumentStatements;
-  }
-  return approvedGenericDiscoveryStatements;
+function hasUnapprovedDiscoveryAvailability(statement, approvedStatements) {
+  const normalized = normalizeDiscoveryStatement(statement);
+  if (approvedStatements.has(normalized)) return false;
+  return discoverySubjectSignal.test(normalized) && discoveryAvailabilitySignal.test(normalized);
 }
 
-function hasUnapprovedDiscoveryAvailability(statement, approvedStatements) {
-  let normalized = normalizeDiscoveryStatement(statement);
-  for (const approved of approvedStatements) {
-    normalized = ` ${normalized} `.replaceAll(` ${approved} `, ' ').trim();
+function semanticDocumentKind(documentPath) {
+  if (/(?:^|\/)docs\/developers\/api\.md$/.test(documentPath)) return 'api-source';
+  if (/(?:^|\/)build\/developers\/api\/index\.html$/.test(documentPath)) return 'api-rendered';
+  if (/(?:^|\/)(?:(?:static|build)\/)?llms-full\.txt$/.test(documentPath)) return 'llms-full';
+  if (/(?:^|\/)(?:(?:static|build)\/)?llms\.txt$/.test(documentPath)) return 'llms';
+  return null;
+}
+
+function semanticVisibleText(content, { lineBreaksAsStatements = false } = {}) {
+  let visible = decodedDiscoveryContent(content);
+  visible = visible
+    .replace(/<(script|style)\b[^>]*>[\s\S]*?<\/\1>/gi, ' ')
+    .replace(/<\/?(?:article|aside|div|footer|h[1-6]|header|li|main|nav|ol|p|section|table|tbody|thead|tr|ul)\b[^>]*>/gi, '.')
+    .replace(/<\/?(?:td|th)\b[^>]*>/gi, ' ')
+    .replace(/<[^>]*>/g, '');
+  if (lineBreaksAsStatements) visible = visible.replace(/\r?\n+/g, '.');
+  return visible
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+function semanticDocumentFingerprint(documentPath, content) {
+  const kind = semanticDocumentKind(documentPath);
+  if (!kind) return null;
+  if (kind === 'llms-full') {
+    const markers = [...content.matchAll(/^## SPACE catalog \((\d{4}-\d{2}-\d{2})\)$/gm)];
+    if (markers.length !== 1) return '';
+    const marker = markers[0];
+    const rows = content.slice(marker.index + marker[0].length).trim().split(/\r?\n/).filter(Boolean);
+    const rowPattern = /^- (.+) \([a-z0-9](?:[a-z0-9-]*[a-z0-9])?\): (?:Connected|First Party|Coming Soon|Proposed|Wishlist); API: (?:None|Not Applicable); SPACE: [a-z]+(?:, [a-z]+)*; https:\/\/\S+$/;
+    if (
+      rows.length === 0 ||
+      rows.some((row) => {
+        const match = row.match(rowPattern);
+        return !match || hasUnapprovedDiscoveryAvailability(match[1], new Set());
+      })
+    ) return '';
+    const reviewedPrefix = `${content.slice(0, marker.index)}## SPACE catalog`;
+    const normalizedPrefix = semanticVisibleText(reviewedPrefix);
+    return createHash('sha256').update(normalizedPrefix.toLowerCase()).digest('hex');
   }
-  return discoverySubjectSignal.test(normalized) && discoveryAvailabilitySignal.test(normalized);
+  const visible = semanticVisibleText(content);
+  return createHash('sha256').update(visible.toLowerCase()).digest('hex');
 }
 
 function validateDiscoveryDocumentMap(documents) {
@@ -710,15 +758,14 @@ function decodedDiscoveryContent(content) {
 }
 
 function isPrivateDiscoveryHostname(hostname) {
-  const labels = hostname.split('.');
+  const normalized = normalizedHostname(hostname);
+  const labels = normalized.split('.');
   return (
-    hostname === 'localhost' ||
-    hostname === '127.0.0.1' ||
-    hostname === '0.0.0.0' ||
-    hostname === 'supabase.co' ||
-    hostname.endsWith('.supabase.co') ||
-    hostname === 'workers.dev' ||
-    hostname.endsWith('.workers.dev') ||
+    isNonPublicHostname(hostname) ||
+    normalized === 'supabase.co' ||
+    normalized.endsWith('.supabase.co') ||
+    normalized === 'workers.dev' ||
+    normalized.endsWith('.workers.dev') ||
     labels.some((label) => ['internal', 'private', 'staging', 'dev'].includes(label))
   );
 }
@@ -760,41 +807,153 @@ function isAllowedRootReference(reference, allowedBuildPaths) {
   );
 }
 
-function findDisallowedDiscoveryReference(content, documentPath, allowedBuildPaths) {
+function firstCapturedValue(match, start = 1) {
+  return match.slice(start).find((value) => value !== undefined);
+}
+
+function trimBareUrlPunctuation(reference) {
+  return reference.trim().replace(/[`.,;!?]+$/g, '');
+}
+
+function parseSrcsetCandidates(value) {
+  const candidates = [];
+  let position = 0;
+  while (position < value.length) {
+    while (position < value.length && /[\s,]/.test(value[position])) position += 1;
+    if (position >= value.length) break;
+
+    const start = position;
+    while (position < value.length && !/\s/.test(value[position])) position += 1;
+    let candidate = value.slice(start, position);
+    const trailingCommas = candidate.match(/,+$/)?.[0].length ?? 0;
+    if (trailingCommas) candidate = candidate.slice(0, -trailingCommas);
+    if (candidate) candidates.push(candidate);
+    if (trailingCommas) continue;
+
+    let parentheses = 0;
+    while (position < value.length) {
+      const character = value[position];
+      if (character === '(') parentheses += 1;
+      if (character === ')' && parentheses > 0) parentheses -= 1;
+      position += 1;
+      if (character === ',' && parentheses === 0) break;
+    }
+  }
+  return candidates;
+}
+
+function collectJsonUrlCandidates(value, candidates) {
+  if (Array.isArray(value)) {
+    for (const item of value) collectJsonUrlCandidates(item, candidates);
+    return;
+  }
+  if (value && typeof value === 'object') {
+    for (const child of Object.values(value)) collectJsonUrlCandidates(child, candidates);
+    return;
+  }
+  if (
+    typeof value === 'string' &&
+    /^(?:[/#]|(?:https?|wss?|ftp|javascript|data):)/i.test(value.trim())
+  ) {
+    candidates.push({ reference: value.trim(), bare: false });
+  }
+}
+
+function discoveryUrlCandidates(content) {
   const decodedContent = decodedDiscoveryContent(content);
-  for (const match of decodedContent.matchAll(absoluteAuthorityReference)) {
-    const reference = match[0];
-    let target;
-    try {
-      target = new URL(reference);
-    } catch {
-      return reference;
+  const candidates = [];
+
+  for (const match of decodedContent.matchAll(urlBearingHtmlAttribute)) {
+    const attribute = match[1].toLowerCase();
+    const value = firstCapturedValue(match, 2) ?? '';
+    const references = attribute === 'srcset' ? parseSrcsetCandidates(value) : [value];
+    for (const reference of references) candidates.push({ reference, bare: false });
+  }
+  for (const match of decodedContent.matchAll(htmlContentAttribute)) {
+    const contentValue = firstCapturedValue(match);
+    const refreshTarget = contentValue?.match(/(?:^|;)\s*url\s*=\s*(.+)$/i)?.[1];
+    if (refreshTarget) candidates.push({ reference: refreshTarget.trim(), bare: false });
+  }
+  for (const pattern of [markdownInlineTarget, markdownReferenceTarget, cssUrlTarget]) {
+    for (const match of decodedContent.matchAll(pattern)) {
+      candidates.push({ reference: firstCapturedValue(match), bare: true });
     }
-    const hostname = target.hostname.toLowerCase();
-    const scopedHostname = hostname.replace(/\.+$/, '');
-    const pathname = normalizedDiscoveryPath(target.href);
-    if (isPrivateDiscoveryHostname(scopedHostname) && !isReviewedLocalPreview(documentPath, reference)) {
-      return reference;
-    }
-    if (
-      scopedHostname === 'mains.world' && !reviewedProductReferences.has(reference)
-    ) return reference;
-    if (
-      scopedHostname.endsWith('.mains.world') ||
-      scopedHostname.endsWith('.mainsworld.org') ||
-      (
-        scopedHostname === 'mainsworld.org' &&
-        (target.protocol !== 'https:' ||
-          (privateMachinePath.test(pathname) &&
-            (!reviewedPublicMachinePaths.has(pathname) || target.search || target.hash)))
-      )
-    ) return reference;
   }
 
-  for (const pattern of rootRelativeTargetPatterns) {
-    for (const match of decodedContent.matchAll(pattern)) {
-      if (!isAllowedRootReference(match[1], allowedBuildPaths)) return match[1];
+  const trimmedContent = decodedContent.trim();
+  if (trimmedContent.startsWith('{') || trimmedContent.startsWith('[')) {
+    try {
+      collectJsonUrlCandidates(JSON.parse(trimmedContent), candidates);
+    } catch {
+      // Non-JSON documents are handled by their native URL grammars.
     }
+  }
+
+  for (const match of decodedContent.matchAll(absoluteAuthorityReference)) {
+    candidates.push({ reference: match[0], bare: true });
+  }
+  return candidates;
+}
+
+function isReviewedReservedDiscoveryReference(documentPath, reference) {
+  for (const [reviewedPath, references] of reviewedReservedDiscoveryReferences) {
+    if (
+      (documentPath === reviewedPath || documentPath.endsWith(`/${reviewedPath}`)) &&
+      references.has(reference)
+    ) return true;
+  }
+  return false;
+}
+
+function findDisallowedUrlCandidate(candidate, documentPath, allowedBuildPaths) {
+  const rawReference = candidate.bare
+    ? trimBareUrlPunctuation(candidate.reference)
+    : candidate.reference.trim();
+  if (!rawReference || rawReference.startsWith('#')) return null;
+  if (reviewedNonHttpDiscoveryReferences.has(rawReference)) return null;
+
+  const reference = rawReference.replaceAll('\\', '/');
+  if (reference.startsWith('//')) return rawReference;
+  if (specialNetworkScheme.test(reference) && !/^(?:https?|wss?|ftp):\/\//i.test(reference)) {
+    return rawReference;
+  }
+  if (!anyUriScheme.test(reference)) {
+    if (reference.startsWith('/')) {
+      return isAllowedRootReference(reference, allowedBuildPaths) ? null : rawReference;
+    }
+    return rawReference;
+  }
+  if (!/^https?:\/\//i.test(reference)) return rawReference;
+
+  let target;
+  try {
+    target = new URL(reference);
+  } catch {
+    return rawReference;
+  }
+  const hostname = normalizedHostname(target.hostname);
+  const pathname = normalizedDiscoveryPath(target.href);
+  if (isReviewedReservedDiscoveryReference(documentPath, rawReference)) return null;
+  if (isPrivateDiscoveryHostname(target.hostname)) {
+    return isReviewedLocalPreview(documentPath, rawReference) ? null : rawReference;
+  }
+  if (hostname === 'mains.world') {
+    return reviewedProductReferences.has(rawReference) ? null : rawReference;
+  }
+  if (hostname.endsWith('.mains.world') || hostname.endsWith('.mainsworld.org')) return rawReference;
+  if (hostname === 'mainsworld.org') {
+    if (
+      target.protocol !== 'https:' || target.username || target.password || target.port ||
+      !isAllowedRootReference(`${pathname}${target.search}${target.hash}`, allowedBuildPaths)
+    ) return rawReference;
+  }
+  return null;
+}
+
+function findDisallowedDiscoveryReference(content, documentPath, allowedBuildPaths) {
+  for (const candidate of discoveryUrlCandidates(content)) {
+    const disallowed = findDisallowedUrlCandidate(candidate, documentPath, allowedBuildPaths);
+    if (disallowed) return disallowed;
   }
   return null;
 }
@@ -824,13 +983,17 @@ export function validateDiscoveryReferences(documents, { publicPaths = [] } = {}
 export function validateDiscoveryDocuments(documents, options) {
   validateDiscoveryReferences(documents, options);
   for (const [documentPath, content] of Object.entries(documents)) {
-    const approvedStatements = approvedDiscoveryStatementsFor(documentPath);
-    const contradictoryClaim = decodedDiscoveryContent(content)
-      .replace(/<\/?(?:article|aside|div|footer|h[1-6]|header|li|main|nav|ol|p|section|table|tbody|td|th|thead|tr|ul)\b[^>]*>/gi, '.')
-      .replace(/<[^>]*>/g, ' ')
-      .replace(/\s+/g, ' ')
+    const documentKind = semanticDocumentKind(documentPath);
+    if (documentKind) {
+      const expectedFingerprint = reviewedSemanticDocumentFingerprints.get(documentKind);
+      if (semanticDocumentFingerprint(documentPath, content) !== expectedFingerprint) {
+        throw new Error(`Discovery document ${documentPath} contains an unreviewed availability claim or semantic change.`);
+      }
+      continue;
+    }
+    const contradictoryClaim = semanticVisibleText(content, { lineBreaksAsStatements: true })
       .split(/[.!?;]+/)
-      .find((statement) => hasUnapprovedDiscoveryAvailability(statement, approvedStatements));
+      .find((statement) => hasUnapprovedDiscoveryAvailability(statement, approvedGenericDiscoveryStatements));
     if (contradictoryClaim) {
       throw new Error(`Discovery document ${documentPath} contains a contradictory availability claim: ${normalizeDiscoveryStatement(contradictoryClaim)}.`);
     }
