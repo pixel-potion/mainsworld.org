@@ -196,6 +196,13 @@ This automatic joining applies only to Vibe invite links. Moment links and
 other special links remain read-only windows, even for someone who is signed
 in.
 
+When you send an invite link, it previews as the event: the vibe's name, its
+cover, when the doors open in the venue's local time, and the place. Anyone who
+sees the message sees that much, so share the link where you'd be happy to
+announce the vibe. A public SKY vibe's link previews the same way, no invite
+needed. Once a vibe has ended, or its links are turned off, the link goes back
+to a plain "A Vibe on Main's World" preview.
+
 Anyone on the vibe can create an invite link, and the vibe shows everyone on it
 whether a link is currently live. Turning them off is a host's call: a host can
 revoke all of that vibe's links at once, and every copy stops working. There's more on how special links respect the worlds
