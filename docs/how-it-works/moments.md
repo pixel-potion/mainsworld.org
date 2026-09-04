@@ -127,8 +127,17 @@ live one. Time travel to the day it happened and it's there, in its place.
 
 Its stay on today's map is measured from when the photo was **taken**, the same
 clock as its timestamp — so a throwback of a photo from years ago is not on
-today's map at all. It lives where it belongs: rewind to the day it happened
-and it's there.
+today's map at all. It lives where it belongs, on the map of the day it
+happened.
+
+You don't have to go looking for it. When you post a throwback, the map
+**rewinds itself** to the photo's date and flies to its spot, so the new moment
+is right there in front of you. The rewind button turns red while you're away
+from now, and the clock in the corner of the map shows the date you're looking
+at; tap the rewind button to eject back to now. If the photo is older than the
+map's window, the app says so before you post, so nothing comes as a surprise.
+And if the post doesn't go through and you dismiss the error, the map comes
+back to now on its own.
 
 ## What can go on the public world
 
