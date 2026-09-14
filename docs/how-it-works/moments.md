@@ -60,9 +60,18 @@ where in the world they happen to live.
 Where several moments share a spot, the map gathers them into a small **stack
 of photo cards** with a count of how many are inside. Tap a stack and the map
 glides closer while the feed opens, listing just the moments in that stack. One
-more tap opens a moment itself, and the map flies to where it was recorded
-behind it; closing the moment returns you to the list. Browsing a busy corner
-feels like flipping through a box of photos, not scrolling a feed.
+more tap opens a moment itself. An upcoming update will let you read it without
+moving the map, changing its time, or switching worlds. Choose **Locate** when
+you do want to travel to the moment: the map will move to its place, time, and
+world. Closing the moment returns you to the list. Browsing a busy corner feels
+like flipping through a box of photos, not scrolling a feed.
+
+## Reading and editing safely
+
+The same upcoming update will keep an edit of your own moment in the same
+detail view when you save or cancel. If you try to leave a profile or moment
+edit with changes still unsaved, it will ask whether to keep editing or discard
+those changes, so an accidental close does not quietly lose your work.
 
 ## Finding a moment
 
