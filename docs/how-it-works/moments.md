@@ -28,8 +28,10 @@ That's why Main's World is a map you can travel through. The rewind button at
 the bottom of the screen unfolds a **tape deck** — playback controls for the
 map itself. Drag the dial (or press anywhere on its timeline) to scrub back
 through time, skip from moment to moment, or jump straight back to the very
-first one; eject and you're back at now. The app calls all of this **time
-travel**, marked ◀◀: revisit what happened somewhere earlier — your own story,
+first one; eject and you're back at now, still looking at the same place and
+zoom. Use the location button when you want to return to where you are.
+The app calls all of this **time travel**, marked ◀◀: revisit what happened
+somewhere earlier — your own story,
 and the shared story of a place.
 
 ## What the shared totals show
@@ -60,11 +62,11 @@ where in the world they happen to live.
 Where several moments share a spot, the map gathers them into a small **stack
 of photo cards** with a count of how many are inside. Tap a stack and the map
 glides closer while the feed opens, listing just the moments in that stack. One
-more tap opens a moment itself. You can read it without moving the map,
-changing its time, or switching worlds. Choose **Locate** when
-you do want to travel to the moment: the map will move to its place, time, and
-world. Closing the moment returns you to the list. Browsing a busy corner feels
-like flipping through a box of photos, not scrolling a feed.
+more tap opens a moment itself and zooms to its individual pin. The chosen pin
+stands above nearby pins, with its label visible in the map above the moment
+on a phone, or beside it on a larger screen. The map keeps its time and worlds.
+Closing the moment returns you to the same stack's list. Browsing a busy corner
+feels like flipping through a box of photos, not scrolling a feed.
 
 ## Reading and editing safely
 
@@ -79,6 +81,9 @@ The bar at the bottom of the app holds three things: **moments**, the camera
 button, and **vibes**. Tapping moments slides up a list of everything you're
 allowed to see, newest first, across all three privacy worlds and any visible
 external-app sources.
+
+Reading a moment from the ordinary feed keeps the map where you left it.
+Choose **Locate** when you want to travel to its place, time, and world.
 
 **Search** sits at the top of that list. Type a word and the list keeps only
 the moments whose label contains it. You are only ever searching what you could
