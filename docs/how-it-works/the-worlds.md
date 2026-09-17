@@ -50,6 +50,14 @@ The first fixed four-world rail, nested visibility tree, and fixed
 review. That interface is not live while a simpler mobile and desktop
 presentation is designed. The product decision above remains unchanged.
 
+### In dev preview: a new filter drawer
+
+**Not live yet.** A smaller drawer in development will keep SPACE, SKY, LAND,
+DEEP, people, connected apps, and map style choices in one place. It will apply
+people choices to moments and vibes, and keep app choices available even when
+SPACE is off. Applying or closing that drawer changes only your view. It never
+changes a moment's world, privacy, audience, or who can open it.
+
 ## Tagging opens a door
 
 Tagging someone you're connected with lets them see a moment they otherwise
