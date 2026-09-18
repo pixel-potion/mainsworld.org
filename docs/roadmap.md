@@ -26,17 +26,15 @@ What's still ahead:
 
 ## SPACE and connections to other apps
 
-**The connected-app direction is settled; the new map controls are not live.**
+**The connected-app direction and the smaller map filter drawer are live.**
 SPACE is Main's World's fourth client-facing world for authorized content from
-external apps, not a new privacy setting. The current SPACE experience remains
-the place to review and manage apps, and authorized app moments can appear on
-the Earth map under SKY, LAND, or DEEP.
+external apps, not a new privacy setting. SPACE remains the place to review and
+manage apps, and authorized app moments can appear on the Earth map under SKY,
+LAND, or DEEP.
 
 The first fixed four-world rail, SPACE/EARTH switcher, and nested visibility
-tree were rolled back on August 29, 2026 after live mobile review. A smaller,
-more focused mobile and desktop presentation is now being designed. Until that
-ships, the map uses its earlier controls and no page should describe the
-four-world filter hierarchy as live.
+tree were rolled back on August 29, 2026 after live mobile review. The smaller
+filter drawer replaces that interface on mobile and desktop.
 
 **RunPal, a running app, is the first — and it is live.** Once connected, a
 finished run arrives as a moment with its route drawn on the map, so something
@@ -52,6 +50,22 @@ your map stay yours.
 
 More apps are planned. The list is worth arguing about — if there's one you
 want, say so via [Contribute](/contribute).
+
+### Map filter drawer
+
+One drawer decides what the map and its lists show. It keeps choices together
+without changing what any moment or vibe means:
+
+- **Visibility** starts with SPACE, then lets you choose SKY, LAND, and DEEP.
+- **People** choices apply to both moments and vibes, plus any released
+  upcoming items that are available to you.
+- **Apps** stay editable even when SPACE is off, so you can set them up before
+  bringing their items into view.
+- **Map style** sits in the same drawer.
+
+Choose **Apply** to use the changes. **Close** discards changes that have not
+been applied. These are view choices only: they never change a record's
+privacy, its audience, or what anyone else can see.
 
 ### Future exploration: gatherings without a place
 

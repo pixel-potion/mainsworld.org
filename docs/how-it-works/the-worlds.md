@@ -1,7 +1,7 @@
 ---
 sidebar_position: 1
 title: The worlds & privacy
-description: SKY, LAND, and DEEP decide who can see what; SPACE gathers connected-app content while its map controls are redesigned.
+description: SKY, LAND, and DEEP decide who can see what; SPACE gathers connected-app content and the map filter drawer controls the current view.
 ---
 
 # The worlds & privacy
@@ -47,8 +47,17 @@ anything already published.
 
 The first fixed four-world rail, nested visibility tree, and fixed
 **SPACE/EARTH switcher** were rolled back on August 29, 2026 after live mobile
-review. That interface is not live while a simpler mobile and desktop
-presentation is designed. The product decision above remains unchanged.
+review. A smaller filter drawer now replaces that interface on mobile and
+desktop. The product decision above remains unchanged.
+
+### Map filter drawer
+
+A smaller drawer keeps SPACE, SKY, LAND, DEEP, people, connected apps, and map
+style choices in one place. People choices apply to both moments and vibes, and
+to any released upcoming items available to you. App choices remain available
+when SPACE is off. Choose **Apply** to use the changes; **Close** discards
+changes that have not been applied. The drawer changes only your view. It never
+changes a moment's world, privacy, audience, or who can open it.
 
 ## Tagging opens a door
 
