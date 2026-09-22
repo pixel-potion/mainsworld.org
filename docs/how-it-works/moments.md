@@ -143,11 +143,13 @@ Where the date and place come from is up to the photo. A photo straight from
 your camera roll usually carries both inside the file, and the app reads them
 for you. A photo that was sent to you in a message, saved from another app, or
 taken as a screenshot usually carries neither. When that happens the app does
-not guess: before you post, it asks you when and where the photo was taken, and
-you can also correct a date or place the photo got wrong (a camera clock that
-was never set, say). A photo whose stored location points at open water is
-shown to you with a warning rather than pinned there quietly. You can pick the
-real spot, or keep the photo's if that really is where you were.
+not guess: before you post, it asks you when and where the photo was taken. For
+the place you can search for it, use where you are standing, or move the map
+until the crosshair sits on the spot. A date or place the photo itself carries
+is shown as read-only. If the file says when and where, that is what the moment
+gets. The one exception is a stored location that points at open water: that is
+shown to you with a warning rather than pinned there quietly, and you can pick
+the real spot, or keep the photo's if that really is where you were.
 
 A throwback is your word about when and where, not something the map can
 verify. That is why it always wears its marker, and why a throwback never
