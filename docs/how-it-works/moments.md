@@ -139,6 +139,20 @@ the timestamp is when the photo was actually taken, not when you posted it, and
 the moment wears a small **◀◀ THROWBACK** marker so no one mistakes it for a
 live one. Time travel to the day it happened and it's there, in its place.
 
+Where the date and place come from is up to the photo. A photo straight from
+your camera roll usually carries both inside the file, and the app reads them
+for you. A photo that was sent to you in a message, saved from another app, or
+taken as a screenshot usually carries neither. When that happens the app does
+not guess: before you post, it asks you when and where the photo was taken, and
+you can also correct a date or place the photo got wrong (a camera clock that
+was never set, say). A photo whose stored location points at open water is
+shown to you with a warning rather than pinned there quietly. You can pick the
+real spot, or keep the photo's if that really is where you were.
+
+A throwback is your word about when and where, not something the map can
+verify. That is why it always wears its marker, and why a throwback never
+counts toward anything that depends on being somewhere at a certain time.
+
 Its stay on today's map is measured from when the photo was **taken**, the same
 clock as its timestamp — so a throwback of a photo from years ago is not on
 today's map at all. It lives where it belongs, on the map of the day it
