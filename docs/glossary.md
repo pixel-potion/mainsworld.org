@@ -107,7 +107,9 @@ Main's World has its own vocabulary. Here's what everything means.
   revisit earlier moments.
 - **Throwback (◀◀ THROWBACK)** — a moment posted from your gallery after the fact.
   Its timestamp is when the photo was actually taken, and it carries a small
-  ◀◀ THROWBACK marker so it isn't mistaken for a live one. See
+  ◀◀ THROWBACK marker so it isn't mistaken for a live one. If the photo carries
+  no date or place, the app asks you for them before posting. A throwback is
+  your word about when and where, not something the map verifies. See
   [Moments](/how-it-works/moments).
 - **Ghost dot** — a small, faint, world-colored dot on the map marking a moment
   outside your current filters, or a connections-only moment from someone you
