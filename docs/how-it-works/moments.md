@@ -153,7 +153,11 @@ the real spot, or keep the photo's if that really is where you were.
 
 A throwback is your word about when and where, not something the map can
 verify. That is why it always wears its marker, and why a throwback never
-counts toward anything that depends on being somewhere at a certain time.
+counts toward anything that depends on being somewhere at a certain time. When
+the photo's own data supplied both the date and the place, the marker reads
+**◀◀ THROWBACK · PHOTO DATA** instead. That is still not proof, since a file's
+data can be edited before it is shared, but it does say the Main did not type
+either one in.
 
 Its stay on today's map is measured from when the photo was **taken**, the same
 clock as its timestamp — so a throwback of a photo from years ago is not on
