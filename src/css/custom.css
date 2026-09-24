@@ -148,3 +148,11 @@ blockquote {
 .navbar__logo {
   height: 2.1rem;
 }
+
+/* Text fields never trigger zoom (DESIGN.md §3): iOS Safari zooms the page
+   when a focused field computes under 16px. This floors every field. */
+input:where(:not([type='checkbox'], [type='radio'], [type='range'], [type='file'])),
+textarea,
+select {
+  font-size: max(1rem, 1em);
+}
