@@ -81,6 +81,23 @@ Basic **[crews](/how-it-works/crews)** are live: create one, invite people, join
 and bail. Shared ownership, crew wallets, and member-approved earnings splits are
 still ahead.
 
+## Paid access for external agents
+
+**Not live.** We are building an optional way for external software agents to
+pay for access to selected content created in Main's World. It covers moments,
+vibes, crew names, and profile fields that their owners explicitly choose
+to share. Publishing something publicly will not automatically enable paid access.
+
+The first tests use x402, a protocol for payments alongside web requests, with
+test tokens that have no monetary value. Owners will choose the fields they
+permit and can withdraw permission for future requests. Private worlds,
+membership lists, wallets, and account activity are outside this access.
+Withdrawing permission cannot erase copies already received.
+
+The pilot focuses on selected text fields. Production pricing, creator
+compensation, and paid media have not launched. This work does not change
+today's reading experience or the $MAIN economy.
+
 ## Light mode
 
 **Not live.** The app is dark on every phone today. A light mode was briefly
