@@ -83,20 +83,23 @@ still ahead.
 
 ## Paid access for external agents
 
-**Not live.** We are building an optional way for external software agents to
-pay for access to selected content created in Main's World. It covers moments,
-vibes, crew names, and profile fields that their owners explicitly choose
-to share. Publishing something publicly will not automatically enable paid access.
+**Not live.** We plan to let external software agents pay to read public moments
+and vibes created in Main's World. Existing and future SKY posts would follow
+the same rule, without a separate opt-in. LAND and DEEP content would remain
+outside this access. Moving a post out of SKY would stop future paid reads,
+but cannot erase copies already received.
 
-The first tests use x402, a protocol for payments alongside web requests, with
-test tokens that have no monetary value. Owners will choose the fields they
-permit and can withdraw permission for future requests. Private worlds,
-membership lists, wallets, and account activity are outside this access.
-Withdrawing permission cannot erase copies already received.
+The planned revenue split is 70% to the creator and 30% to Main's World, with
+payment and operating costs covered by Main's World's share. Creator balances
+and payouts are still to be built; publishing in SKY does not currently earn
+these payments.
 
-The pilot focuses on selected text fields. Production pricing, creator
-compensation, and paid media have not launched. This work does not change
-today's reading experience or the $MAIN economy.
+The first phase tests x402, a protocol for payments alongside web requests,
+using Cloudflare Workers and World Chain Sepolia test tokens with no monetary
+value. It focuses on limited text fields. Crews, profiles, and paid media need
+further work before they can join this access. Membership lists, wallets, and
+account activity remain excluded. This work does not change today's reading
+experience or the $MAIN economy.
 
 ## Light mode
 
