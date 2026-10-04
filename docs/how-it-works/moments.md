@@ -68,6 +68,19 @@ on a phone, or beside it on a larger screen. The map keeps its time and worlds.
 Closing the moment returns you to the same stack's list. Browsing a busy corner
 feels like flipping through a box of photos, not scrolling a feed.
 
+## Stepping from moment to moment
+
+When you tap a moment's pin, a small card opens at the bottom of the map. Swipe
+that card sideways to move to the moment just before or after it in time, among
+the moments that were on the map when you opened it. The map moves with you and
+the time dial follows. At the first or the last moment, the card springs back
+instead of wrapping around.
+
+On a computer, an open moment card also has arrow buttons, and the left and
+right arrow keys work while the card has focus. There, a moment opened from a
+stack steps through that stack, and one opened from the Moments list steps
+through that list and leaves the map where it was.
+
 ## Reading and editing safely
 
 Editing your own moment returns you to the same detail view when you save or
