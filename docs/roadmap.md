@@ -83,23 +83,25 @@ still ahead.
 
 ## Paid access for external agents
 
-**Not live.** We plan to let external software agents pay to read public moments
-and vibes created in Main's World. Existing and future SKY posts would follow
-the same rule, without a separate opt-in. LAND and DEEP content would remain
-outside this access. Moving a post out of SKY would stop future paid reads,
-but cannot erase copies already received.
+**Not live.** We plan to let external software agents pay to read limited text
+from public moments and vibes created in Main's World. Existing and future SKY
+posts would follow the same rule, without a separate opt-in or special process
+for older posts. LAND and DEEP content would remain outside this access. Moving
+a post out of SKY would stop future paid reads, but cannot erase copies already
+received.
 
-The planned revenue split is 70% to the creator and 30% to Main's World, with
-payment and operating costs covered by Main's World's share. Creator balances
-and payouts are still to be built; publishing in SKY does not currently earn
-these payments.
+The planned creator-majority revenue split is 70% to the creator and 30% to
+Main's World. Payment and operating costs come from Main's World's share, not
+the creator's 70%. Creator balances, claims, and payouts are still to be built;
+publishing in SKY does not currently earn these payments.
 
 The first phase tests x402, a protocol for payments alongside web requests,
 using Cloudflare Workers and World Chain Sepolia test tokens with no monetary
-value. It focuses on limited text fields. Crews, profiles, and paid media need
-further work before they can join this access. Membership lists, wallets, and
-account activity remain excluded. This work does not change today's reading
-experience or the $MAIN economy.
+value. It focuses on limited text fields and safe handling when payment or
+delivery is uncertain. Crews, profiles, and paid media need further work before
+they can join this access. Membership lists, wallets, and account activity
+remain excluded. This work does not change today's reading experience or the
+$MAIN economy.
 
 ## Light mode
 
@@ -111,5 +113,5 @@ than merely available. There is no date.
 
 ---
 
-*Have thoughts on any of this? This roadmap is community-editable — open a
-suggestion via [Contribute](/contribute).*
+_Have thoughts on any of this? This roadmap is community-editable — open a
+suggestion via [Contribute](/contribute)._
