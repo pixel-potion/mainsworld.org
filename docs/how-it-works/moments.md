@@ -81,6 +81,31 @@ right arrow keys work while the card has focus. There, a moment opened from a
 stack steps through that stack, and one opened from the Moments list steps
 through that list and leaves the map where it was.
 
+## Reading a moment on your phone
+
+On a phone, opening a moment in full gives the screen over to it. A strip of the
+live map stays across the top, with the moment's pin in the middle of it, so you
+never lose your place.
+
+Every photo and video in the moment is shown whole, one at a time and as large
+as the screen allows. A moment with no photo shows its words instead, and a run
+brought in from RunPal shows its route. Tap the right side of the screen for the
+next photo and the left side for the one before. After the last photo, a tap
+moves on to the next moment in time.
+
+Swipe sideways to go straight to the moment just before or after it, the same
+way the small card does; the map and the time dial follow. A moment you opened
+from a stack moves through that stack, and one you opened from the Moments list
+moves through that list and leaves the map where it was. Swipe down to close the
+moment.
+
+The thumbs up, comment and share buttons float near the bottom. Swipe up, or tap
+the comment button, to pull up the details: the whole caption, the people tagged
+in it, and the comments. The details stop just below the map strip, and a swipe
+down puts them away.
+
+On a computer, a moment still opens in a panel beside the map.
+
 ## Reading and editing safely
 
 Editing your own moment returns you to the same detail view when you save or
