@@ -46,9 +46,14 @@ take on the vibe's world (SKY, LAND, or DEEP). A vibe is the shared thread; the
 moments are the beads on it.
 
 They also stay **inside** the vibe while it's running. Everyone at the gathering
-sees them in its live story, but they don't go out onto the map, and people
-looking in from outside don't see them at all. What happens at the vibe stays
-there until you say otherwise.
+sees them in its live story, and a valid Vibe invite lets its holder read that
+live story too. They don't go out onto the map, and an ordinary Moment link
+cannot open them. What happens at the vibe stays there until you say otherwise.
+
+When the Vibe ends, each sealed moment is visible only to its author in the
+close-out review. The author can publish it to the map or bin it. Until then it
+is not part of the recap and cannot be opened through the Vibe's link; the link
+shows published moments only after the gathering has ended.
 
 ## The heart and the vibe talk
 

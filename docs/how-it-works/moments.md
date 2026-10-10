@@ -106,6 +106,9 @@ down puts them away.
 
 On a computer, a moment still opens in a panel beside the map.
 
+The moment detail names the moment's world and sharing audience, so you can
+check who it is for while you read it.
+
 ## Reading and editing safely
 
 Editing your own moment returns you to the same detail view when you save or
@@ -132,6 +135,10 @@ a NEARBY heading, and everything else sits below it under GLOBAL. Folding the
 nearby group away is the quick route down to the rest of the world. Nothing is
 hidden by this — it is an ordering, not a filter — and when everything happens
 to be in one group or the other, there are no headings at all.
+
+If moments fail to load, the list shows a retry action. An empty
+list means the load succeeded and there are no moments matching the current
+view; it is not used to hide a loading failure.
 
 ## Narrowing what you see
 
