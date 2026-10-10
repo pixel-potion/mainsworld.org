@@ -47,6 +47,11 @@ heart lands, and the voter always excluded. Your first heart on a comment in
 the talk gives 1 $MAIN to the Main who wrote it. That's the heartbeat of the
 whole economy: value travels from one Main's action to other Mains.
 
+If your daily energy credits are empty when you give a Vibe its first heart and
+you have earned $MAIN available, Main's World asks you to confirm before using
+one earned $MAIN. You can cancel without changing the heart. Taking the heart
+back and giving it again remains free after that first charge.
+
 There is no downvote — appreciation is the only reaction, so no one can be
 piled on or drained. You can change your mind at any time: take a thumbs up or
 a heart back, give it again — only your first one on any particular moment,

@@ -64,7 +64,8 @@ changes a moment's world, privacy, audience, or who can open it.
 Tagging someone you're connected with lets them see a moment they otherwise
 couldn't — a private (DEEP) moment becomes visible to the people you tag. Tagging
 never makes something more public than the world you chose; it just invites
-specific people in.
+specific people in. The tag applies to that moment only: it does not open the
+rest of the world or the rest of a Vibe.
 
 ## Ghost dots: seeing that something is there
 
@@ -105,6 +106,12 @@ requires World App sign-in. A signed-in visitor with a valid Vibe invite joins
 automatically; a guest who signs in returns to the same Vibe and joins then.
 Only Vibe invite links can do that — Moment links and other special links always
 stay read-only.
+
+While a Vibe is live, a sealed moment is readable by its author, the Vibe's
+members, and anyone holding a valid Vibe invite. When the Vibe ends, that moment
+returns to the author's close-out review only. It stays there until the author
+publishes or bins it; an ended Vibe link can show the published recap, but cannot
+open an unpublished sealed moment.
 
 A few things keep this honest:
 
