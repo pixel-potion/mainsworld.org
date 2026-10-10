@@ -15,7 +15,7 @@ Main's World has its own vocabulary. Here's what everything means.
   you like, and a name you give up becomes free for someone else to take.
 - **SHIP** — a **Secure Human Interaction Protocol**: the category Main's World
   belongs to. See [What is SHIP](/what-is-ship).
-- **Mini app** — an app that runs inside World App instead of being installed on
+- **Mini app** — an app that runs inside World Money instead of being installed on
   its own. Main's World is one, which is why there is nothing in an app store
   called "Main's World". See
   [Getting started](/how-it-works/getting-started).
@@ -125,9 +125,10 @@ Main's World has its own vocabulary. Here's what everything means.
 - **Zero-knowledge proof** — cryptography that can prove a statement without
   revealing the underlying private information. Main's World records any
   verification status separately from wallet sign-in.
-- **World App** — the app that provides the wallet used to sign in to Main's
-  World. A sign-in proves wallet control; it is not by itself a recorded
-  personhood or uniqueness check.
+- **World App** — now called **World Money**, the wallet app that provides the
+  wallet used to sign in to Main's World and hosts Mini Apps. A sign-in proves
+  wallet control; it is not by itself a recorded personhood or uniqueness check.
+  **World ID** is the separate app for identity proofs.
 - **World Chat** — World App's own end-to-end encrypted messenger. Main's World
   had a button that opened a draft conversation
   there; it was removed in August 2026, so there is no messaging in Main's World
