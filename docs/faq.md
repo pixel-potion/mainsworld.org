@@ -15,12 +15,12 @@ take part.
 ### Do I have to give my name or email?
 
 No — and you can't, because Main's World never asks. Signing in proves control
-of your World App wallet without sharing a name or email. See
+of your World Money wallet without sharing a name or email. See
 [the worlds & privacy](/how-it-works/the-worlds).
 
 ### Does signing in verify that every Main is human?
 
-No. Signing in with World App proves control of a wallet; it does not by itself
+No. Signing in with World Money proves control of a wallet; it does not by itself
 prove personhood or uniqueness. Main's World records verification separately,
 and the stats page distinguishes Orb verification, other recorded verification,
 and wallet sign-in only. Orb verification is required only for Vault claims.
@@ -74,11 +74,11 @@ moment's author.
 
 ### Can I use Main's World on my computer?
 
-Yes. Open [mains.world](https://mains.world) in a browser and you'll be shown a
-square code to scan with World App on your phone; approve it there and the
-computer signs in. Topping up credits and the Vault stay on your phone, because
-they need World App itself. Only ever approve a code you can see on your own
-screen — see [Signing in](/how-it-works/signing-in).
+Yes. Open [mains.world](https://mains.world) in a browser and choose **LOG IN**.
+The square code that appears can be scanned with World Money on your phone;
+approve it there and the computer signs in. Topping up credits and the Vault
+stay on your phone, because they need World Money itself. Only ever approve a
+code you can see on your own screen — see [Signing in](/how-it-works/signing-in).
 
 ### Does Main's World have a light mode?
 
@@ -108,10 +108,12 @@ The community. Every page is openly editable on GitHub — see
 
 ### Do I have to download something?
 
-Yes, one thing: World App. Main's World is a *mini app*, which means it runs
-inside World App rather than being installed on its own — there is nothing in an
-app store called "Main's World". World App is free, and it provides the wallet
-used to sign in without Main's World asking for your name or email.
+Yes, one thing: [World Money](https://world.org/world-money), formerly called
+World App. Main's World is a *mini app*, which means it runs inside World Money
+rather than being installed on its own — there is nothing in an app store called
+"Main's World". World Money is free, and it provides the wallet used to sign in
+without Main's World asking for your name or email. The separate World ID app is
+for identity proofs, not for opening Main's World.
 [Getting started](/how-it-works/getting-started) walks through the whole path.
 
 ### Do I need to find an Orb?
@@ -123,6 +125,6 @@ vibes and crews all work without it. See
 
 ### How do I actually use the app?
 
-Open **[mains.world](https://mains.world)** in World App to get started. If you
-don't have World App yet, start with
+Open **[mains.world](https://mains.world)** in World Money to get started. If you
+don't have World Money yet, start with
 [Getting started](/how-it-works/getting-started).
