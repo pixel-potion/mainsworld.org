@@ -184,6 +184,10 @@ meaningfully more real, not certifiably so.
 
 ### Vibes
 
+A gathering remains reachable through past time travel after it ends, beyond
+30 days and with the same audience rules. Its moments stay inside its story;
+publishing one does not create a separate map pin.
+
 A vibe is a live gathering on the map that moments feed into. It has one rule that
 tells you what we're for:
 

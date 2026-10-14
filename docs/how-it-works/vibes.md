@@ -32,8 +32,9 @@ None of that changes the rules of a gathering itself:
 
 - **A vibe isn't normally alive until people join.** Anyone can *start* one, but
   another Main normally has to join before it comes to life.
-- **A vibe ends on its own.** There's no owner keeping it running and no page
-  that lingers empty forever. A vibe wraps up when the last person leaves, when
+- **A vibe ends on its own.** No host keeps a gathering live indefinitely. Its
+  story remains available after it ends. A vibe wraps up when the last person
+  leaves, when
   it reaches the end time it was given, or after about two hours of quiet —
   whichever comes first. One nobody joins at all gives up after ten minutes.
 - **Bigger gatherings look bigger.** A vibe's footprint on the map grows with the
@@ -45,13 +46,16 @@ When you're at a vibe, the moments you record become part of its story, and they
 take on the vibe's world (SKY, LAND, or DEEP). A vibe is the shared thread; the
 moments are the beads on it.
 
-They also stay **inside** the vibe while it's running. Everyone at the gathering
+They stay **inside** the vibe, both while it is running and afterward. Everyone
+at the gathering
 sees them in its live story, and a valid Vibe invite lets its holder read that
 live story too. They don't go out onto the map, and an ordinary Moment link
-cannot open them. What happens at the vibe stays there until you say otherwise.
+cannot open sealed contributions. Publishing a Moment later adds it to the
+vibe's story; it never creates a separate Moment pin on the map.
 
 When the Vibe ends, each sealed moment is visible only to its author in the
-close-out review. The author can publish it to the map or bin it. Until then it
+close-out review. The author can publish it inside the vibe or bin it. Until then
+it
 is not part of the recap and cannot be opened through the Vibe's link; the link
 shows published moments only after the gathering has ended.
 
@@ -76,50 +80,40 @@ As everywhere in Main's World, appreciation never pays the person giving it:
 hearting your own vibe or your own comment spends the credit but mints nothing.
 The details live in **[The economy](/the-economy)**.
 
-## When it's over, you decide what leaves
+## When it ends, choose what to publish
 
-A vibe ending doesn't publish anything. Once the lights go out, the moments you
-recorded there are yours alone — nobody else can see them, not even the people
-who were with you — and each one waits for you to make a call:
+Ending a vibe does not publish anything. Your unpublished moments become yours
+alone in the close-out review. For each one, choose:
 
-- **Put it on the map**, where it becomes an ordinary moment in the vibe's world
-  and joins the vibe's recap.
-- **Bin it**, and it's gone.
+- **Publish in Vibe**, to add it to the gathering's shared story.
+- **Bin it**, to delete it.
 
-Nothing publishes itself and nothing deletes itself. Moments you don't decide
-about stay private for as long as you leave them there, and the app keeps asking
-until you do.
+Undecided moments stay private. Publishing keeps the moment inside its vibe;
+it does not place an individual pin on the map or add it to the ordinary
+Moments list.
 
-## The recap reel
+## Return to a past vibe
 
-An ended vibe leaves a **recap reel** behind for 30 days: a short, tap-through
-story of what the gathering was — how many moments, how many people, how long it
-ran, and then the published moments themselves, in the order they happened. A
-busy vibe doesn't play all of them; the reel picks the most appreciated handful,
-so it stays a highlight reel rather than an archive.
+Past vibes remain available beyond 30 days. Use time travel to return to when
+a gathering happened, select its pin, and open its recap. Backstage's
+**Past vibes** shelf also keeps the gatherings you were on, newest first.
+An ended vibe appears in its past time, not as a gathering happening now.
 
-The reel only ever plays published moments. Anything still waiting on someone's
-decision isn't in it, and never will be unless that person puts it on the map.
-So the reel fills out as people work through what they shot — which is why it's
-worth doing your own decisions before you watch it. Photos show as they were
-posted, and video moments play right in the reel, silently, on a loop.
+The recap contains every moment its author has published, in the order it
+happened. Open a moment
+inside the vibe to read it; moving between moments stays within that vibe.
+Closing returns to the gathering without changing your map position or time.
+Photos and videos remain part of the story.
 
-You don't have to catch the reel the moment the lights go out. Backstage — your
-settings and profile area — has a **Past vibes** shelf listing every vibe you
-were on whose reel is still within its 30 days, newest first, and tapping one
-plays it. The reel also has a share button: it hands out the vibe's own link,
-the same one that invited people while the gathering was live. After the vibe
-ends, that link plays the reel instead — and it works for anyone holding it,
-no account or sign-in needed. For a vibe in one of the more private worlds,
-the shared link quietly carries a special link — the same revocable guest
-pass members could hand out while the vibe was live — so the person you send
-it to can watch the reel too. Special links for a vibe stay available to its
-members for the reel's whole 30 days, and a host can still kill them, which
-cuts off every copy at once.
+The same audience rules apply after the gathering ends. A private vibe does
+not become public with age, and unpublished moments stay out of its recap.
+Existing deletion and moderation rules still apply.
 
-After 30 days the vibe and its reel are gone for good. The moments people
-published live on as ordinary moments on the map; the gathering itself doesn't
-linger.
+The recap's share button uses the vibe's own link. Members can create a new
+special link for a private recap, and hosts can revoke the vibe's links.
+Each link still has its own expiry: keeping a past vibe available does not
+restore an expired or revoked invitation. A link to just one moment does not
+give its reader access to other moments or private details of the vibe.
 
 ## Plan a vibe ahead
 

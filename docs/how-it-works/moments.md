@@ -109,6 +109,18 @@ On a computer, a moment still opens in a panel beside the map.
 The moment detail names the moment's world and sharing audience, so you can
 check who it is for while you read it.
 
+## Moments inside a vibe
+
+A moment recorded in a vibe stays inside that gathering. It does not appear as
+a separate map pin or in the ordinary Moments list, even after its author
+publishes it. Use the vibe's story to find it; previous and next stay within
+the moments you can read there. Closing the moment returns to its vibe and
+preserves the map and selected time.
+
+Past vibes remain reachable through time travel beyond 30 days. Their
+[recaps](/how-it-works/vibes#return-to-a-past-vibe) show published moments under
+the same audience rules.
+
 ## Reading and editing safely
 
 Editing your own moment returns you to the same detail view when you save or
