@@ -118,7 +118,7 @@ the moments you can read there. Closing the moment returns to its vibe and
 preserves the map and selected time.
 
 Past vibes remain reachable through time travel beyond 30 days. Their
-[recaps](/how-it-works/vibes#return-to-a-past-vibe) show published moments under
+[recaps](/how-it-works/vibes) show published moments under
 the same audience rules.
 
 ## Reading and editing safely
