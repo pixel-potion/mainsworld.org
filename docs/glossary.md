@@ -49,7 +49,8 @@ Main's World has its own vocabulary. Here's what everything means.
   for audience and content from other apps. They change only your view, never
   who can open a moment. See
   [the worlds & privacy](/how-it-works/the-worlds).
-- **Vibe** — a live, shared gathering on the map — hosted, never owned. See
+- **Vibe** — a shared gathering tied to a place and time — hosted, never owned.
+  Its moments stay inside it, and its story remains available after it ends. See
   [Vibes](/how-it-works/vibes).
 - **Host** — a Main or crew named on a vibe as the ones behind the gathering.
   The Main who starts a vibe is always a host and can name others. Hosting is
